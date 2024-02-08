@@ -18,3 +18,9 @@
 		<li><button on:click={seedDb}>Seed DB</button></li>
 	</ul>
 </section>
+
+<style lang="scss">
+	:global(body) {
+		padding: 1rem;
+	}
+</style>
