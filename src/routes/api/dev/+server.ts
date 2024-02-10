@@ -1,5 +1,6 @@
-import { sql } from "$lib/data/query";
-import { createJsonResponse, parsePartial } from "$lib/utils/api.utils";
+import { sql } from "$lib/server/query";
+import { createJsonResponse } from "$lib/util/api.util";
+import { parsePartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 interface DevRequest {
@@ -11,7 +12,7 @@ async function initDb() {
 		CREATE TABLE IF NOT EXISTS "user" (
 			id SERIAL PRIMARY KEY,
 			email VARCHAR(50) NOT NULL,
-			password_hash CHAR(128) NOT NULL
+			passwordHash CHAR(128) NOT NULL
 		);
 	`;
 

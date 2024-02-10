@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { http } from "$lib/utils/api.utils";
+	import { http } from "$lib/util/api.util";
 
 	let email = "";
 	let password = "";
@@ -8,7 +8,6 @@
 	// TODO #6: validation
 
 	async function register() {
-		// TODO #3
 		const response = await http.post("/api/users", { email, password });
 
 		console.log(response);

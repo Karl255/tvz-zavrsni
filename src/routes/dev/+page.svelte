@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { http } from "$lib/utils/api.utils";
+	import { http } from "$lib/util/api.util";
 
 	let output = "";
 

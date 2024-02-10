@@ -1,4 +1,6 @@
-import { createJsonResponse, searchParamsHasAll } from "$lib/utils/api.utils";
+import { attemptLogin, registerUser } from "$lib/server/service/auth.service";
+import { createJsonResponse, searchParamsToObject } from "$lib/util/api.util";
+import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 interface LoginQueryParams {
@@ -11,19 +13,19 @@ interface RegisterRequest {
 	password: string;
 }
 
-export const GET: RequestHandler<Partial<LoginQueryParams>> = ({ url }) => {
+export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) => {
 	const requiredParams: (keyof LoginQueryParams)[] = ["email", "password"];
+	const params = parseFromPartial(searchParamsToObject<LoginQueryParams>(url.searchParams), requiredParams);
 
-	if (!searchParamsHasAll(url.searchParams, requiredParams)) {
+	if (!params) {
 		const message = "Required query params: " + requiredParams.join(", ");
 		return createJsonResponse({ message }, 400);
 	}
 
-	// TODO #4: login logic
-	const loginSuccess = true;
+	const user = await attemptLogin(params.email, params.password);
 
-	if (loginSuccess) {
-		return createJsonResponse({ message: "TODO #4" });
+	if (user) {
+		return createJsonResponse({ user });
 	} else {
 		return createJsonResponse({ message: "Invalid credentials" }, 400);
 	}
@@ -31,18 +33,17 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = ({ url }) => {
 
 export const POST: RequestHandler = async ({ request }) => {
 	const requiredFields: (keyof RegisterRequest)[] = ["email", "password"];
+	const payload = parseFromPartial((await request.json()) as Partial<RegisterRequest>, requiredFields);
 
-	const payload = (await request.json()) as Partial<RegisterRequest>;
-
-	if (!requiredFields.every((prop) => !!payload[prop])) {
+	if (!payload) {
 		const message = "Required fields in body: " + requiredFields.join(", ");
 		return createJsonResponse({ message }, 400);
 	}
 
-	const registerSuccess = true;
+	const createdUser = await registerUser(payload.email, payload.password);
 
-	if (registerSuccess) {
-		return createJsonResponse({ message: "TODO #3" });
+	if (createdUser) {
+		return createJsonResponse({ user: createdUser });
 	} else {
 		return createJsonResponse({ message: "Email is already registered" }, 400);
 	}

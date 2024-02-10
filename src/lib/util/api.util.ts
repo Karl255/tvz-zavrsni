@@ -6,12 +6,12 @@ export function createJsonResponse(body: object, status: number = 200) {
 	return new Response(JSON.stringify(body), { status });
 }
 
-export function parsePartial<T extends object>(data: Partial<T>, requiredKeys: (keyof T)[]): T | null {
-	if (requiredKeys.every((key) => Object.hasOwn(data, key))) {
-		return data as T;
-	} else {
-		return null;
-	}
+export function searchParamsToObject<T>(searchParams: URLSearchParams): Partial<T> {
+	// prettier-ignore
+	return [...searchParams.entries()].reduce(
+		(object, [key, value]) => ({...object, [decodeURIComponent(key)]: decodeURIComponent(value)}),
+		{}
+	);
 }
 
 async function requestWithBody<T>(method: string, endpoint: string, body: object): Promise<T> {
