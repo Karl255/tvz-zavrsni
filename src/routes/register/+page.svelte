@@ -1,12 +1,17 @@
 <script lang="ts">
+	import { http } from "$lib/utils/api.utils";
+
 	let email = "";
 	let password = "";
 	let passwordRepeat = "";
 
 	// TODO #6: validation
 
-	function register() {
+	async function register() {
 		// TODO #3
+		const response = await http.post("/api/users", { email, password });
+
+		console.log(response);
 	}
 </script>
 

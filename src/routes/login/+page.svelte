@@ -1,11 +1,16 @@
 <script lang="ts">
+	import { http } from "$lib/utils/api.utils";
+
 	let email = "";
 	let password = "";
 
 	// TODO #6: validation
 
-	function login() {
+	async function login() {
 		// TODO #4
+		const response = await http.get("/api/users", { email, password });
+
+		console.log(response);
 	}
 </script>
 
