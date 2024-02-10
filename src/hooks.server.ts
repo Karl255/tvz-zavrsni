@@ -2,6 +2,7 @@ import { AUTH_TOKEN_NAME, verifyAuthToken, type AuthTokenPayload } from "$lib/se
 import type { Handle, RequestEvent } from "@sveltejs/kit";
 
 const unauthenticatedRoutes = ["/login", "/register"];
+const unauthenticatedApiRoutes = ["/api/user"];
 const apiRoutePrefix = "/api";
 
 // https://stackoverflow.com/questions/2839585/what-is-correct-http-status-code-when-redirecting-to-a-login-page
@@ -31,11 +32,23 @@ export const handle: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+async function authenticate(event: RequestEvent): Promise<AuthTokenPayload | null> {
+	const token = event.cookies.get(AUTH_TOKEN_NAME);
+
+	if (!token) {
+		return null;
+	}
+
+	return (await verifyAuthToken(token))?.payload ?? null;
+}
+
 async function handleApiRoutes(event: RequestEvent, resolve: ResolveHandler, isAuthenticated: boolean): Promise<Response> {
+	const routeNeedsAuthentication = !unauthenticatedApiRoutes.some((route) => event.url.pathname.startsWith(route));
+
 	// prettier-ignore
-	return isAuthenticated
-		? await resolve(event)
-		: new Response("Unauthorized", { status: UNAUTHORIZED_STATUS });
+	return !isAuthenticated && routeNeedsAuthentication
+		? new Response("Unauthorized", { status: UNAUTHORIZED_STATUS })
+		: await resolve(event);
 }
 
 function determineRedirectLocation(pathname: string, isAuthenticated: boolean): string | null {
@@ -48,15 +61,4 @@ function determineRedirectLocation(pathname: string, isAuthenticated: boolean): 
 	}
 
 	return null;
-}
-
-async function authenticate(event: RequestEvent): Promise<AuthTokenPayload | null> {
-	const token = event.cookies.get(AUTH_TOKEN_NAME);
-
-	if (!token) {
-		console.log(event.cookies.getAll());
-		return null;
-	}
-
-	return (await verifyAuthToken(token))?.payload ?? null;
 }

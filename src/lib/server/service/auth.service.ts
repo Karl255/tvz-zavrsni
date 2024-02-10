@@ -1,5 +1,6 @@
 import type { User } from "$lib/model/user.model";
 import { createUser, getUsersByEmailAndPasswordHash } from "$lib/server/repo/user.repo";
+import { getSecondsSinceEpoch } from "$lib/util/time.util";
 import * as jose from "jose";
 
 const { createHash } = await import("node:crypto");
@@ -12,9 +13,11 @@ function hashAsHex(password: string): string {
 const secret = new Uint8Array([...atob("4XOj3bFVrVrZrCVC4HkQyV++43VUP7rxMgOKJ2ku630xNy3nWqMGCVyQK+lKcQb/xyLVXClzrz7G8AmdaC5G1A==")].map((x) => x.charCodeAt(0)));
 
 export const AUTH_TOKEN_NAME = "authToken";
+const TOKEN_LIFETIME_SECONDS = 24 * 60 * 60; // 24h
 
 export interface AuthTokenPayload extends jose.JWTPayload {
 	userId: number;
+	exp: number;
 }
 
 export async function attemptLogin(email: string, password: string): Promise<User | null> {
@@ -40,8 +43,9 @@ export async function registerUser(email: string, password: string): Promise<Use
 }
 
 export async function createToken(userId: number): Promise<string> {
-	// TODO: add expiration
-	return await createAuthToken({ userId }, "HS512", secret);
+	const exp = getSecondsSinceEpoch() + TOKEN_LIFETIME_SECONDS;
+
+	return await createAuthToken({ userId, exp }, "HS512", secret);
 }
 
 export async function createAuthToken(payload: AuthTokenPayload, alg: string, secret: Uint8Array) {
@@ -50,7 +54,15 @@ export async function createAuthToken(payload: AuthTokenPayload, alg: string, se
 
 export async function verifyAuthToken(token: string): Promise<jose.JWTVerifyResult<AuthTokenPayload> | null> {
 	try {
-		return await jose.jwtVerify<AuthTokenPayload>(token, secret);
+		const verificationResult = await jose.jwtVerify<AuthTokenPayload>(token, secret);
+		const now = getSecondsSinceEpoch();
+
+		if (now > verificationResult.payload.exp) {
+			console.info(`JWT token expired ${token}`);
+			return null;
+		}
+
+		return verificationResult;
 	} catch (error) {
 		console.warn(`JWT verification failed for token ${token}`);
 		return null;
