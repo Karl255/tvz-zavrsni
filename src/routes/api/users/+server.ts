@@ -1,4 +1,4 @@
-import { attemptLogin, createToken, registerUser } from "$lib/server/service/auth.service";
+import { attemptLogin, createAuthHeaders, createToken, registerUser } from "$lib/server/service/auth.service";
 import { createJsonResponse, searchParamsToObject } from "$lib/util/api.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
@@ -26,9 +26,7 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 
 	if (user) {
 		const token = await createToken(user.id);
-
-		const headers = new Headers();
-		headers.set("Set-Cookie", `authToken=${token}; Secure`);
+		const headers = createAuthHeaders(token);
 
 		return createJsonResponse({ user }, { headers });
 	} else {
@@ -48,8 +46,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	const createdUser = await registerUser(payload.email, payload.password);
 
 	if (createdUser) {
-		const headers = new Headers();
-		headers.set("Set-Cookie", "jwt=test");
+		const token = await createToken(createdUser.id);
+		const headers = createAuthHeaders(token);
 
 		return createJsonResponse({ user: createdUser }, { headers });
 	} else {
