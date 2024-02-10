@@ -6,6 +6,14 @@ export function createJsonResponse(body: object, status: number = 200) {
 	return new Response(JSON.stringify(body), { status });
 }
 
+export function parsePartial<T extends object>(data: Partial<T>, requiredKeys: (keyof T)[]): T | null {
+	if (requiredKeys.every((key) => Object.hasOwn(data, key))) {
+		return data as T;
+	} else {
+		return null;
+	}
+}
+
 async function requestWithBody<T>(method: string, endpoint: string, body: object): Promise<T> {
 	const url = new URL(endpoint, window.location.origin);
 

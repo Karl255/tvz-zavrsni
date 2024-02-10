@@ -32,9 +32,9 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = ({ url }) => {
 export const POST: RequestHandler = async ({ request }) => {
 	const requiredFields: (keyof RegisterRequest)[] = ["email", "password"];
 
-	const body = (await request.json()) as Partial<RegisterRequest>;
+	const payload = (await request.json()) as Partial<RegisterRequest>;
 
-	if (!requiredFields.every((prop) => !!body[prop])) {
+	if (!requiredFields.every((prop) => !!payload[prop])) {
 		const message = "Required fields in body: " + requiredFields.join(", ");
 		return createJsonResponse({ message }, 400);
 	}
