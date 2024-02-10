@@ -1,4 +1,4 @@
-import { attemptLogin, registerUser } from "$lib/server/service/auth.service";
+import { attemptLogin, createToken, registerUser } from "$lib/server/service/auth.service";
 import { createJsonResponse, searchParamsToObject } from "$lib/util/api.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
@@ -25,7 +25,12 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 	const user = await attemptLogin(params.email, params.password);
 
 	if (user) {
-		return createJsonResponse({ user });
+		const token = await createToken(user.id);
+
+		const headers = new Headers();
+		headers.set("Set-Cookie", `authToken=${token}; Secure`);
+
+		return createJsonResponse({ user }, { headers });
 	} else {
 		return createJsonResponse({ message: "Invalid credentials" }, 400);
 	}
@@ -43,7 +48,10 @@ export const POST: RequestHandler = async ({ request }) => {
 	const createdUser = await registerUser(payload.email, payload.password);
 
 	if (createdUser) {
-		return createJsonResponse({ user: createdUser });
+		const headers = new Headers();
+		headers.set("Set-Cookie", "jwt=test");
+
+		return createJsonResponse({ user: createdUser }, { headers });
 	} else {
 		return createJsonResponse({ message: "Email is already registered" }, 400);
 	}

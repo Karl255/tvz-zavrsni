@@ -2,8 +2,11 @@ export function searchParamsHasAll(searchParams: URLSearchParams, params: string
 	return params.every((param) => searchParams.has(param));
 }
 
-export function createJsonResponse(body: object, status: number = 200) {
-	return new Response(JSON.stringify(body), { status });
+export function createJsonResponse(body: object, initOrStatus: ResponseInit | number = 200) {
+	initOrStatus = typeof initOrStatus === "number" ? { status: initOrStatus } : initOrStatus;
+	initOrStatus = initOrStatus.status ? { ...initOrStatus, status: 200 } : initOrStatus;
+
+	return new Response(JSON.stringify(body), initOrStatus);
 }
 
 export function searchParamsToObject<T>(searchParams: URLSearchParams): Partial<T> {
