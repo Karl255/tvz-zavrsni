@@ -1,5 +1,60 @@
 :root {
-	font-family: sans-serif;
+	font-family: "Poppins";
+	line-height: 1.5;
+	font-size: $fw-normal;
+	font-weight: $fw-normal;
 }
 
-// TODO: put reset here
+* {
+	font: inherit;
+}
+
+img,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+p,
+h1,
+h2,
+h3 {
+	margin: 0;
+	font-size: 1rem;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+ul, ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+// util
+
+.sr-only {
+	// source: tailwindcss
+	// https://tailwindcss.com/docs/screen-readers#screen-reader-only-elements
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+// element

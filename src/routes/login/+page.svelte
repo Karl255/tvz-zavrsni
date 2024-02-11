@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { http } from "$lib/util/api.util";
 
 	let email = "";
@@ -10,6 +11,8 @@
 		const response = await http.get("/api/users", { email, password });
 
 		console.log(response);
+
+		goto("/");
 	}
 </script>
 
