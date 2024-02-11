@@ -6,9 +6,10 @@ async function requestWithBody(method: string, endpoint: string, body: object): 
 }
 
 export const httpClient = {
-	get: async (endpoint: string, params: Record<string, string>): Promise<Response> => {
+	get: async (endpoint: string, params: Record<string, string | number | boolean | null | undefined>): Promise<Response> => {
 		const queryParams = Object.entries(params)
-			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+			.filter(([_, value]) => value !== undefined && value !== null)
+			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string | number | boolean)}`)
 			.join("&");
 
 		const url = `${endpoint}?${queryParams}`;

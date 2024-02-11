@@ -6,7 +6,7 @@ export function searchParamsHasAll(searchParams: URLSearchParams, params: string
 
 export function createJsonResponse(body: JsonValue, initOrStatus: ResponseInit | number = 200) {
 	initOrStatus = typeof initOrStatus === "number" ? { status: initOrStatus } : initOrStatus;
-	initOrStatus = initOrStatus.status ? { ...initOrStatus, status: 200 } : initOrStatus;
+	initOrStatus = initOrStatus.status ? initOrStatus : { ...initOrStatus, status: 200 }; // TODO: use that new assignment feature
 
 	return new Response(JSON.stringify(body), initOrStatus);
 }
@@ -21,11 +21,11 @@ export function createCreatedResponse(body: JsonValue) {
 }
 
 export function createNoContentResponse() {
-	return createJsonResponse("", 204);
+	return createJsonResponse("No content", 204);
 }
 
 export function createNotFoundResponse() {
-	return createJsonResponse("", 404);
+	return createJsonResponse("Not found", 404);
 }
 
 export function searchParamsToObject<T>(searchParams: URLSearchParams): Partial<T> {

@@ -6,8 +6,10 @@ import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
 import { getUserId } from "../../../hooks.server";
 
-export const GET: RequestHandler = async ({ locals }) => {
-	return createJsonResponse(await transactionRepo.getAll(getUserId(locals)));
+export const GET: RequestHandler = async ({ url, locals }) => {
+	const accountId = url.searchParams.get("accountId");
+
+	return createJsonResponse(await transactionRepo.getAll(getUserId(locals), accountId ? parseInt(accountId, 10) : null));
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {

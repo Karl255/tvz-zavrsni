@@ -2,8 +2,8 @@ import type { Transaction, TransactionWithLabels } from "$lib/model/transaction.
 import { sql } from "$lib/server/query";
 
 interface JoinedTransaction extends Transaction {
-	labelId: number;
-	labelName: string;
+	labelId: number | null;
+	labelName: string | null;
 }
 
 function transformWithJoinedLabels(records: JoinedTransaction[]): TransactionWithLabels[] {
@@ -17,11 +17,13 @@ function transformWithJoinedLabels(records: JoinedTransaction[]): TransactionWit
 			amount: relevantRecords[0].amount,
 			description: relevantRecords[0].description,
 			userId: relevantRecords[0].userId,
-			labels: relevantRecords.map((record) => ({
-				id: record.labelId,
-				name: record.labelName,
-				userId: record.userId,
-			})),
+			labels: relevantRecords
+				.filter((record) => !!record.labelId)
+				.map((record) => ({
+					id: record.labelId as number,
+					name: record.labelName as string,
+					userId: record.userId,
+				})),
 		};
 	});
 
@@ -41,13 +43,16 @@ export const transactionRepo = {
 		return transactions[0];
 	},
 
-	getAll: async (userId: number): Promise<TransactionWithLabels[]> => {
+	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithLabels[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, t.userId, l.id labelId, l.name labelName
+			SELECT t.id, t.amount, t.description, l.id labelId, l.name labelName
 			FROM transaction t
-			JOIN transactionLabel tl ON t.id = tl.transactionId
+			LEFT JOIN transactionLabel tl ON t.id = tl.transactionId
 			JOIN label l ON tl.labelId = l.id
-			WHERE t.userId = ${userId} AND l.userId = ${userId}
+			JOIN account a ON t.accountId = a.id
+			WHERE a.userId = ${userId}
+				AND l.userId = ${userId}
+				${accountId ? sql`AND t.accountId = ${accountId}` : sql``}
 		`;
 
 		return transformWithJoinedLabels(records);

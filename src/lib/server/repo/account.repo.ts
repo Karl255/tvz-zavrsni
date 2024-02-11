@@ -16,17 +16,21 @@ export const accountRepo = {
 
 	getAll: async (userId: number): Promise<Account[]> => {
 		return await sql<Account[]>`
-			SELECT id, name, type, userId
-			FROM account
-			WHERE userId = ${userId}
+			SELECT a.id, a.name, a.type, a.userId, SUM(COALESCE(t.amount, 0)) balance
+			FROM account a
+			LEFT JOIN transaction t ON a.id = t.accountId
+			WHERE a.userId = ${userId}
+			GROUP BY a.id, a.name, a.type, a.userId
 		`;
 	},
 
 	getOne: async (userId: number, accountId: number): Promise<Account | null> => {
 		const accounts = await sql<Account[]>`
-			SELECT id, name, type, userId
-			FROM account
-			WHERE userId = ${userId} AND id = ${accountId}
+			SELECT a.id, a.name, a.type, a.userId, SUM(COALESCE(t.amount, 0)) balance
+			FROM account a
+			LEFT JOIN transaction t ON a.id = t.accountId
+			WHERE a.userId = ${userId} AND a.id = ${accountId}
+			GROUP BY a.id, a.name, a.type, a.userId
 		`;
 
 		return accounts[0] ?? null;
