@@ -6,6 +6,7 @@ export const accountRepo = {
 		const accounts = await sql<Account[]>`
 			INSERT INTO account (name, type, userId)
 			VALUES (${name}, ${type}, ${userId})
+			RETURNING id, name, type, userId
 		`;
 
 		console.info(`Created account "${accounts[0].id}" for user ${userId}`);

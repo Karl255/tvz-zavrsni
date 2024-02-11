@@ -33,6 +33,7 @@ export const transactionRepo = {
 		const transactions = await sql<Transaction[]>`
 			INSERT INTO transaction (amount, description, userId)
 			VALUES (${amount}, ${description}, ${userId})
+			RETURNING id, amount, description, userId
 		`;
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);

@@ -15,12 +15,16 @@ svg {
 	max-width: 100%;
 }
 
-p,
+p {
+	margin: 0;
+}
+
 h1,
 h2,
 h3 {
 	margin: 0;
 	font-size: 1rem;
+	line-height: 1;
 }
 
 a {
@@ -58,3 +62,68 @@ ul, ol {
 }
 
 // element
+
+.title {
+	font-weight: $fw-bold;
+	font-size: $fz-title;
+}
+
+// TODO: refactor
+
+a.btn--primary {
+	color: white;
+	background: $clr-bold-text;
+	
+	padding: 0.75rem;
+	border-radius: 5px;
+	
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+	
+	line-height: 1;
+	
+	transition: opacity 100ms ease-out;
+	
+	&:hover {
+		opacity: 0.8;
+	}
+}
+
+a.btn--tertiary {
+	color: $clr-bold-text;
+	font-weight: $fw-bold;
+
+	padding: 0.75rem;
+	border-radius: 5px;
+
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+
+	transition: background-color 100ms ease-out;
+
+	&:hover {
+		background-color: #00000020;
+	}
+}
+
+button.btn--primary {
+	color: white;
+	background: $clr-bold-text;
+	
+	padding: 0.75rem;
+	border-radius: 5px;
+	
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+	
+	line-height: 1;
+	
+	transition: opacity 100ms ease-out;
+	
+	&:hover {
+		opacity: 0.8;
+	}
+}

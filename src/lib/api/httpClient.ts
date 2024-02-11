@@ -1,7 +1,5 @@
 async function requestWithBody(method: string, endpoint: string, body: object): Promise<Response> {
-	const url = new URL(endpoint, window.location.origin);
-
-	return await fetch(url, {
+	return await fetch(endpoint, {
 		method,
 		body: JSON.stringify(body),
 	});
@@ -9,8 +7,11 @@ async function requestWithBody(method: string, endpoint: string, body: object): 
 
 export const httpClient = {
 	get: async (endpoint: string, params: Record<string, string>): Promise<Response> => {
-		const url = new URL(endpoint, window.location.origin);
-		Object.entries(params).forEach(([key, value]) => url.searchParams.set(encodeURIComponent(key), encodeURIComponent(value)));
+		const queryParams = Object.entries(params)
+			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+			.join("&");
+
+		const url = `${endpoint}?${queryParams}`;
 
 		return await fetch(url, { method: "GET" });
 	},
