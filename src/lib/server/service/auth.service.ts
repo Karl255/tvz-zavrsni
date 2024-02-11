@@ -1,5 +1,5 @@
 import type { User } from "$lib/model/user.model";
-import { createUser, getUsersByEmailAndPasswordHash } from "$lib/server/repo/user.repo";
+import { userRepo } from "$lib/server/repo/user.repo";
 import { getSecondsSinceEpoch } from "$lib/util/time.util";
 import * as jose from "jose";
 
@@ -22,23 +22,17 @@ export interface AuthTokenPayload extends jose.JWTPayload {
 
 export async function attemptLogin(email: string, password: string): Promise<User | null> {
 	const passwordHash = hashAsHex(password);
-	const users = await getUsersByEmailAndPasswordHash(email, passwordHash);
-
-	if (users.length > 0) {
-		return users[0];
-	} else {
-		return null;
-	}
+	return await userRepo.getOneByEmailAndPasswordHash(email, passwordHash);
 }
 
 export async function registerUser(email: string, password: string): Promise<User | null> {
 	const passwordHash = hashAsHex(password);
-	const users = await getUsersByEmailAndPasswordHash(email, passwordHash);
+	const existingUser = await userRepo.getOneByEmail(email);
 
-	if (users.length === 0) {
-		return await createUser(email, passwordHash);
-	} else {
+	if (existingUser) {
 		return null;
+	} else {
+		return await userRepo.create(email, passwordHash);
 	}
 }
 
