@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TransactionsList from "$lib/component/TransactionsList.svelte";
 	import { AccountType } from "$lib/model/account.model";
 	import type { PageData } from "./$types";
 
@@ -23,7 +24,8 @@
 	<p class="account__balance" title="balance">{data.account.balance.toFixed(2)} €</p>
 </article>
 
-<p>TODO: transactions list</p>
+<!-- prettier-ignore -->
+<TransactionsList transactions={data.transactions} accounts={[data.account]} />
 
 <style lang="scss">
 	.account {

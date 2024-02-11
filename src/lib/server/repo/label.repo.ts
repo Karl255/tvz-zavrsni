@@ -4,7 +4,7 @@ import { sql } from "$lib/server/query";
 export const labelRepo = {
 	create: async (userId: number, name: string): Promise<Label> => {
 		const labels = await sql<Label[]>`
-			INSERT INTO label (name, userId)
+			INSERT INTO label (name, user_id)
 			VALUES (${name}, ${userId})
 		`;
 
@@ -15,17 +15,17 @@ export const labelRepo = {
 
 	getAll: async (userId: number): Promise<Label[]> => {
 		return await sql<Label[]>`
-			SELECT id, name, userId
+			SELECT id, name, user_id
 			FROM label
-			WHERE userId = ${userId}
+			WHERE user_id = ${userId}
 		`;
 	},
 
 	getOne: async (userId: number, labelId: number): Promise<Label | null> => {
 		const labels = await sql<Label[]>`
-			SELECT id, name, userId
+			SELECT id, name, user_id
 			FROM label
-			WHERE userId = ${userId} AND id = ${labelId}
+			WHERE user_id = ${userId} AND id = ${labelId}
 		`;
 
 		return labels[0] ?? null;
@@ -35,7 +35,7 @@ export const labelRepo = {
 		await sql`
 			UPDATE label
 			SET name = COALESCE(${name}, name)
-			WHERE userId = ${userId} AND id = ${labelId}
+			WHERE user_id = ${userId} AND id = ${labelId}
 		`;
 
 		console.info(`Updated label ${labelId}`);
@@ -45,7 +45,7 @@ export const labelRepo = {
 		// TODO: cascade?
 		await sql`
 			DELETE FROM label
-			WHERE userId = ${userId} AND id = ${labelId}
+			WHERE user_id = ${userId} AND id = ${labelId}
 		`;
 
 		console.info(`Deleted label ${labelId}`);

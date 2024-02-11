@@ -16,4 +16,5 @@ export const sql = postgres({
 			parse: (x: string) => +x,
 		},
 	},
+	transform: postgres.camel,
 });

@@ -12,7 +12,7 @@ export const transactionLabelRepo = {
 		}
 
 		await sql`
-			INSERT INTO transactionLabel (transactionId, labelId)
+			INSERT INTO transaction_label (transaction_id, label_id)
 			VALUES (${transactionId}, ${labelId})
 		`;
 
@@ -30,8 +30,8 @@ export const transactionLabelRepo = {
 		}
 
 		await sql`
-			DELETE FROM transactionLabel
-			WHERE transactionId = ${transactionId} AND labelId = ${labelId})
+			DELETE FROM transaction_label
+			WHERE transaction_id = ${transactionId} AND label_id = ${labelId})
 		`;
 
 		console.info(`Unlabeled transaction "${transactionId}" with label ${labelId} user ${userId}`);

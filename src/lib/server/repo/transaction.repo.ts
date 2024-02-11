@@ -12,6 +12,7 @@ function transformWithJoinedLabels(records: JoinedTransaction[], userId: number)
 
 	const transactions = transactionIds.map<TransactionWithLabels>((transactionId) => {
 		const relevantRecords = records.filter((jt) => jt.id === transactionId);
+		console.log(relevantRecords);
 
 		return {
 			id: transactionId,
@@ -40,9 +41,9 @@ export const transactionRepo = {
 		}
 
 		const transactions = await sql<Transaction[]>`
-			INSERT INTO transaction (amount, description, accountId)
+			INSERT INTO transaction (amount, description, account_id)
 			VALUES (${amount}, ${description}, ${accountId})
-			RETURNING id, amount, description, accountId
+			RETURNING id, amount, description, account_id
 		`;
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
@@ -52,26 +53,28 @@ export const transactionRepo = {
 
 	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithLabels[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, l.id labelId, l.name labelName
+			SELECT t.id, t.amount, t.description, l.id AS labelId, l.name AS label_name, a.id AS account_id
 			FROM transaction t
-			LEFT JOIN transactionLabel tl ON t.id = tl.transactionId
-			JOIN label l ON tl.labelId = l.id
-			JOIN account a ON t.accountId = a.id
-			WHERE a.userId = ${userId}
-				AND l.userId = ${userId}
-				${accountId ? sql`AND t.accountId = ${accountId}` : sql``}
+			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
+			LEFT JOIN label l ON tl.label_id = l.id
+			JOIN account a ON t.account_id = a.id
+			WHERE a.user_id = ${userId}
+				AND (l.user_id = ${userId} OR l.user_id IS NULL)
+				${accountId ? sql`AND t.account_id = ${accountId}` : sql``}
 		`;
+
+		console.log(records);
 
 		return transformWithJoinedLabels(records, userId);
 	},
 
 	getOne: async (userId: number, transactionId: number): Promise<TransactionWithLabels | null> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT id, amount, description, userId
+			SELECT id, amount, description, user_id
 			FROM transaction t
-			JOIN transactionLabel tl ON t.id = tl.transactionId
-			JOIN label l ON tl.labelId = l.id
-			WHERE userId = ${userId} AND id = ${transactionId}
+			JOIN transaction_label tl ON t.id = tl.transaction_id
+			JOIN label l ON tl.label_id = l.id
+			WHERE user_id = ${userId} AND id = ${transactionId}
 		`;
 
 		return transformWithJoinedLabels(records, userId)[0] ?? null;
@@ -81,7 +84,7 @@ export const transactionRepo = {
 		await sql`
 			UPDATE transaction
 			SET amount = COALESCE(${amount}, amount), description = COALESCE(${description}, description)
-			WHERE userId = ${userId} AND id = ${transactionId}
+			WHERE user_id = ${userId} AND id = ${transactionId}
 		`;
 
 		console.info(`Updated transaction ${transactionId}`);
@@ -91,7 +94,7 @@ export const transactionRepo = {
 		// TODO: cascade?
 		await sql`
 			DELETE FROM transaction
-			WHERE userId = ${userId} AND id = ${transactionId}
+			WHERE user_id = ${userId} AND id = ${transactionId}
 		`;
 
 		console.info(`Deleted transaction ${transactionId}`);

@@ -8,51 +8,74 @@ interface DevRequest {
 }
 
 async function initDb() {
-	const r = await sql`
+	const r = [];
+
+	r[0] = await sql`
 		CREATE TABLE IF NOT EXISTS "user" (
 			id SERIAL PRIMARY KEY,
 			email VARCHAR(50) NOT NULL,
-			passwordHash CHAR(128) NOT NULL
+			password_hash CHAR(128) NOT NULL
 		);
-		
+	`;
+
+	r[1] = await sql`
 		CREATE TABLE IF NOT EXISTS account (
 			id SERIAL PRIMARY KEY,
 			name VARCHAR(50),
 			type VARCHAR(20) NOT NULL,
-			userId SERIAL NOT NULL REFERENCES "user"(id)
+			user_id SERIAL NOT NULL REFERENCES "user"(id)
 		);
-		
+	`;
+
+	r[2] = await sql`
 		CREATE TABLE IF NOT EXISTS transaction (
 			id SERIAL PRIMARY KEY,
 			amount DECIMAL(6, 2) NOT NULL,
 			description VARCHAR(128) NOT NULL,
-			accountId SERIAL NOT NULL REFERENCES account(id)
+			account_id SERIAL NOT NULL REFERENCES account(id)
 		);
-		
+	`;
+
+	r[3] = await sql`
 		CREATE TABLE IF NOT EXISTS label (
 			id SERIAL PRIMARY KEY,
 			name VARCHAR(32),
-			userId SERIAL NOT NULL REFERENCES "user"(id)
+			user_id SERIAL NOT NULL REFERENCES "user"(id)
 		);
-		
-		CREATE TABLE IF NOT EXISTS transactionLabel (
-		    transactionId SERIAL REFERENCES transaction(id),
-		    labelId SERIAL REFERENCES label(id),
-		    PRIMARY KEY(transactionId, labelId)
+	`;
+
+	r[4] = await sql`
+		CREATE TABLE IF NOT EXISTS transaction_label (
+		    transaction_id SERIAL REFERENCES transaction(id),
+		    label_id SERIAL REFERENCES label(id),
+		    PRIMARY KEY(transaction_id, label_id)
 		);
 	`;
 
 	return JSON.stringify(r);
 }
 
-function seedDb() {
+async function seedDb() {
 	// TODO #12: seed admin account with permissions
 	return Promise.resolve("nothing to seed");
+}
+
+async function dropTables() {
+	const r = [];
+
+	r[0] = await sql`DROP TABLE IF EXISTS transaction_label CASCADE`;
+	r[1] = await sql`DROP TABLE IF EXISTS transaction CASCADE`;
+	r[2] = await sql`DROP TABLE IF EXISTS label CASCADE`;
+	r[3] = await sql`DROP TABLE IF EXISTS account CASCADE`;
+	r[4] = await sql`DROP TABLE IF EXISTS "user" CASCADE`;
+
+	return JSON.stringify(r);
 }
 
 const actions: Record<string, (() => Promise<string>) | undefined> = {
 	initDb,
 	seedDb,
+	dropTables,
 };
 
 export const POST: RequestHandler = async ({ request }) => {

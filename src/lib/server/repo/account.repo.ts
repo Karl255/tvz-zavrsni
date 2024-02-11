@@ -4,9 +4,9 @@ import { sql } from "$lib/server/query";
 export const accountRepo = {
 	create: async (userId: number, name: string, type: AccountType): Promise<Account> => {
 		const accounts = await sql<Account[]>`
-			INSERT INTO account (name, type, userId)
+			INSERT INTO account (name, type, user_id)
 			VALUES (${name}, ${type}, ${userId})
-			RETURNING id, name, type, userId
+			RETURNING id, name, type, user_id
 		`;
 
 		console.info(`Created account "${accounts[0].id}" for user ${userId}`);
@@ -16,21 +16,21 @@ export const accountRepo = {
 
 	getAll: async (userId: number): Promise<Account[]> => {
 		return await sql<Account[]>`
-			SELECT a.id, a.name, a.type, a.userId, SUM(COALESCE(t.amount, 0)) balance
+			SELECT a.id, a.name, a.type, a.user_id, SUM(COALESCE(t.amount, 0)) balance
 			FROM account a
-			LEFT JOIN transaction t ON a.id = t.accountId
-			WHERE a.userId = ${userId}
-			GROUP BY a.id, a.name, a.type, a.userId
+			LEFT JOIN transaction t ON a.id = t.account_id
+			WHERE a.user_id = ${userId}
+			GROUP BY a.id, a.name, a.type, a.user_id
 		`;
 	},
 
 	getOne: async (userId: number, accountId: number): Promise<Account | null> => {
 		const accounts = await sql<Account[]>`
-			SELECT a.id, a.name, a.type, a.userId, SUM(COALESCE(t.amount, 0)) balance
+			SELECT a.id, a.name, a.type, a.user_id, SUM(COALESCE(t.amount, 0)) balance
 			FROM account a
-			LEFT JOIN transaction t ON a.id = t.accountId
-			WHERE a.userId = ${userId} AND a.id = ${accountId}
-			GROUP BY a.id, a.name, a.type, a.userId
+			LEFT JOIN transaction t ON a.id = t.account_id
+			WHERE a.user_id = ${userId} AND a.id = ${accountId}
+			GROUP BY a.id, a.name, a.type, a.user_id
 		`;
 
 		return accounts[0] ?? null;
@@ -40,8 +40,8 @@ export const accountRepo = {
 		const accounts = await sql<Account[]>`
 			UPDATE account
 			SET name = COALESCE(${name}, name), type = COALESCE(${type}, type)
-			WHERE userId = ${userId} AND id = ${accountId}
-			RETURNING id, name, type, userId
+			WHERE user_id = ${userId} AND id = ${accountId}
+			RETURNING id, name, type, user_id
 		`;
 
 		console.info(`Updated account ${accounts[0]?.id}`);
@@ -53,7 +53,7 @@ export const accountRepo = {
 		// TODO cascade?
 		await sql`
 			DELETE FROM account
-			WHERE userId = ${userId} AND id = ${accountId}
+			WHERE user_id = ${userId} AND id = ${accountId}
 		`;
 
 		console.info(`Deleted account ${accountId}`);

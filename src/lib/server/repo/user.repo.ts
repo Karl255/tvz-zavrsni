@@ -6,7 +6,7 @@ export const userRepo = {
 		const users = await sql<User[]>`
 			SELECT id, email
 			FROM "user"
-			WHERE email = ${email} AND passwordHash = ${passwordHash}
+			WHERE email = ${email} AND password_hash = ${passwordHash}
 		`;
 
 		return users[0] ?? null;
@@ -24,7 +24,7 @@ export const userRepo = {
 
 	create: async (email: string, passwordHash: string): Promise<User> => {
 		const users = await sql<User[]>`
-			INSERT INTO "user" (email, passwordHash)
+			INSERT INTO "user" (email, password_hash)
 			VALUES (${email}, ${passwordHash})
 			RETURNING id, email
 		`;
