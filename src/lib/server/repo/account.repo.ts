@@ -1,5 +1,5 @@
 import type { Account, AccountType } from "$lib/model/account.model";
-import { sql } from "../query";
+import { sql } from "$lib/server/query";
 
 export const accountRepo = {
 	create: async (userId: number, name: string, type: AccountType): Promise<Account> => {
@@ -37,6 +37,8 @@ export const accountRepo = {
 			SET name = COALESCE(${name}, name), type = COALESCE(${type}, type)
 			WHERE userId = ${userId} AND id = ${accountId}
 		`;
+
+		console.info(`Updated account ${accountId}`);
 	},
 
 	delete: async (userId: number, accountId: number): Promise<void> => {
@@ -44,5 +46,7 @@ export const accountRepo = {
 			DELETE account
 			WHERE userId = ${userId} AND id = ${accountId}
 		`;
+
+		console.info(`Deleted account ${accountId}`);
 	},
 };
