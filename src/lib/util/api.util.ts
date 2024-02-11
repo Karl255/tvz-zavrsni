@@ -1,8 +1,10 @@
+type JsonValue = string | number | boolean | JsonValue[] | object;
+
 export function searchParamsHasAll(searchParams: URLSearchParams, params: string[]) {
 	return params.every((param) => searchParams.has(param));
 }
 
-export function createJsonResponse(body: object, initOrStatus: ResponseInit | number = 200) {
+export function createJsonResponse(body: JsonValue, initOrStatus: ResponseInit | number = 200) {
 	initOrStatus = typeof initOrStatus === "number" ? { status: initOrStatus } : initOrStatus;
 	initOrStatus = initOrStatus.status ? { ...initOrStatus, status: 200 } : initOrStatus;
 
@@ -14,12 +16,16 @@ export function createRequiredFieldsResponse(requiredParams: string[]): Response
 	return createJsonResponse({ message }, 400);
 }
 
-export function createCreatedResponse(body: object) {
+export function createCreatedResponse(body: JsonValue) {
 	return createJsonResponse(body, 201);
 }
 
 export function createNoContentResponse() {
-	return createJsonResponse({}, 204);
+	return createJsonResponse("", 204);
+}
+
+export function createNotFoundResponse() {
+	return createJsonResponse("", 404);
 }
 
 export function searchParamsToObject<T>(searchParams: URLSearchParams): Partial<T> {

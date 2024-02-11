@@ -7,7 +7,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { getUserId } from "../../../hooks.server";
 
 export const GET: RequestHandler = async ({ locals }) => {
-	return createJsonResponse(accountRepo.getAll(getUserId(locals)));
+	return createJsonResponse(await accountRepo.getAll(getUserId(locals)));
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
