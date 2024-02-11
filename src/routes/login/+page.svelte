@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { http } from "$lib/util/api.util";
+	import { httpClient } from "$lib/api/httpClient";
 
 	let email = "";
 	let password = "";
@@ -8,11 +8,13 @@
 	// TODO #6: validation
 
 	async function login() {
-		const response = await http.get("/api/users", { email, password });
+		const response = await httpClient.get("/api/users", { email, password });
 
-		console.log(response);
-
-		goto("/");
+		if (response.ok) {
+			goto("/");
+		} else {
+			console.log(response);
+		}
 	}
 </script>
 
