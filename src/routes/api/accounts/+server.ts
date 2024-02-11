@@ -4,7 +4,7 @@ import { createJsonResponse, createRequiredFieldsResponse } from "$lib/util/api.
 import type { Field, NoId } from "$lib/util/rest.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
-import { getUserId } from "../../../hooks.server";
+import { getUserId } from "$hooks.server";
 
 export const GET: RequestHandler = async ({ locals }) => {
 	return createJsonResponse(await accountRepo.getAll(getUserId(locals)));

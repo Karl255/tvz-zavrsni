@@ -4,7 +4,7 @@ export interface Transaction {
 	id: number;
 	amount: number;
 	description: string;
-	userId: number;
+	accountId: number;
 }
 
 export interface TransactionWithLabels extends Transaction {

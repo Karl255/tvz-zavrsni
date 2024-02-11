@@ -6,4 +6,5 @@ const _idEndpoint = (id: number) => `${endpoint}/${id}`;
 
 export const transactionApi = {
 	getAll: async (accountId?: number) => (await (await httpClient.get(endpoint, { accountId })).json()) as TransactionWithLabels[],
+	create: async (accountId: number, amount: number, description: string) => await httpClient.post(endpoint, { accountId, amount, description }),
 };

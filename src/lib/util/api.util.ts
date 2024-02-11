@@ -24,6 +24,10 @@ export function createNoContentResponse() {
 	return createJsonResponse("No content", 204);
 }
 
+export function createUnauthorizedResponse() {
+	return createJsonResponse("Unauthorized", 401);
+}
+
 export function createNotFoundResponse() {
 	return createJsonResponse("Not found", 404);
 }

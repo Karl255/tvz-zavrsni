@@ -6,8 +6,8 @@
 	let name = "";
 	let type = AccountType.CHECKING;
 
-	let valid = false;
-	$: valid = validate(name, type);
+	let isValid = false;
+	$: isValid = validate(name, type);
 
 	function validate(name: string, type: AccountType) {
 		return name.length >= 5 && Object.values(AccountType).includes(type);
@@ -34,7 +34,7 @@
 	</select>
 
 	<!-- prettier-ignore -->
-	<button class="btn--primary" disabled={!valid}>Create</button>
+	<button class="btn--primary" disabled={!isValid}>Create</button>
 </form>
 
 <style lang="scss">
