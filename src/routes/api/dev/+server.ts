@@ -35,10 +35,10 @@ async function initDb() {
 			userId SERIAL NOT NULL REFERENCES "user"(id)
 		);
 		
-		CREATE TABLE IF NOT EXISTS labeledTransaction (
-			transactionId SERIAL REFERENCES transaction(id),
-			labelId SERIAL REFERENCES label(id),
-			PRIMARY KEY(transactionId, labelId)
+		CREATE TABLE IF NOT EXISTS transactionLabel (
+		    transactionId SERIAL REFERENCES transaction(id),
+		    labelId SERIAL REFERENCES label(id),
+		    PRIMARY KEY(transactionId, labelId)
 		);
 	`;
 

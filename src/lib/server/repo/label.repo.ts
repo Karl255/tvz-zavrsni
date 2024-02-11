@@ -42,8 +42,9 @@ export const labelRepo = {
 	},
 
 	delete: async (userId: number, labelId: number): Promise<void> => {
+		// TODO: cascade?
 		await sql`
-			DELETE label
+			DELETE FROM label
 			WHERE userId = ${userId} AND id = ${labelId}
 		`;
 

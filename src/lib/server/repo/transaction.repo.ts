@@ -1,5 +1,32 @@
-import type { Transaction } from "$lib/model/transaction.model";
+import type { Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
 import { sql } from "$lib/server/query";
+
+interface JoinedTransaction extends Transaction {
+	labelId: number;
+	labelName: string;
+}
+
+function transformWithJoinedLabels(records: JoinedTransaction[]): TransactionWithLabels[] {
+	const transactionIds = records.map((jt) => jt.id);
+
+	const transactions = transactionIds.map<TransactionWithLabels>((transactionId) => {
+		const relevantRecords = records.filter((jt) => jt.id === transactionId);
+
+		return {
+			id: transactionId,
+			amount: relevantRecords[0].amount,
+			description: relevantRecords[0].description,
+			userId: relevantRecords[0].userId,
+			labels: relevantRecords.map((record) => ({
+				id: record.labelId,
+				name: record.labelName,
+				userId: record.userId,
+			})),
+		};
+	});
+
+	return transactions;
+}
 
 export const transactionRepo = {
 	create: async (userId: number, amount: number, description: string): Promise<Transaction> => {
@@ -13,22 +40,28 @@ export const transactionRepo = {
 		return transactions[0];
 	},
 
-	getAll: async (userId: number): Promise<Transaction[]> => {
-		return await sql<Transaction[]>`
-			SELECT id, amount, description, userId
-			FROM transaction
-			WHERE userId = ${userId}
+	getAll: async (userId: number): Promise<TransactionWithLabels[]> => {
+		const records = await sql<JoinedTransaction[]>`
+			SELECT t.id, t.amount, t.description, t.userId, l.id labelId, l.name labelName
+			FROM transaction t
+			JOIN transactionLabel tl ON t.id = tl.transactionId
+			JOIN label l ON tl.labelId = l.id
+			WHERE t.userId = ${userId} AND l.userId = ${userId}
 		`;
+
+		return transformWithJoinedLabels(records);
 	},
 
-	getOne: async (userId: number, transactionId: number): Promise<Transaction | null> => {
-		const transactions = await sql<Transaction[]>`
+	getOne: async (userId: number, transactionId: number): Promise<TransactionWithLabels | null> => {
+		const records = await sql<JoinedTransaction[]>`
 			SELECT id, amount, description, userId
-			FROM transaction
+			FROM transaction t
+			JOIN transactionLabel tl ON t.id = tl.transactionId
+			JOIN label l ON tl.labelId = l.id
 			WHERE userId = ${userId} AND id = ${transactionId}
 		`;
 
-		return transactions[0] ?? null;
+		return transformWithJoinedLabels(records)[0] ?? null;
 	},
 
 	update: async (userId: number, transactionId: number, amount: number | null, description: string | null): Promise<void> => {
@@ -42,8 +75,9 @@ export const transactionRepo = {
 	},
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
+		// TODO: cascade?
 		await sql`
-			DELETE transaction
+			DELETE FROM transaction
 			WHERE userId = ${userId} AND id = ${transactionId}
 		`;
 

@@ -42,8 +42,9 @@ export const accountRepo = {
 	},
 
 	delete: async (userId: number, accountId: number): Promise<void> => {
+		// TODO cascade?
 		await sql`
-			DELETE account
+			DELETE FROM account
 			WHERE userId = ${userId} AND id = ${accountId}
 		`;
 
