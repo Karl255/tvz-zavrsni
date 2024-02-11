@@ -11,11 +11,23 @@ const UNAUTHORIZED_STATUS = 401;
 
 type ResolveHandler = Parameters<Handle>[0]["resolve"];
 
+export interface Locals {
+	userId: number;
+}
+
+export function getUserId(locals: App.Locals): number {
+	return (locals as Locals).userId;
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
 	console.log("requested", pathname);
 
 	const userId = (await authenticate(event))?.userId ?? null;
+
+	if (userId) {
+		(event.locals as Locals).userId = userId;
+	}
 
 	if (pathname.startsWith(apiRoutePrefix)) {
 		return handleApiRoutes(event, resolve, !!userId);

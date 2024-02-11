@@ -31,14 +31,17 @@ export const accountRepo = {
 		return accounts[0] ?? null;
 	},
 
-	update: async (userId: number, accountId: number, name: string | null, type: AccountType | null): Promise<void> => {
-		await sql`
+	update: async (userId: number, accountId: number, name: string | null, type: AccountType | null): Promise<Account | null> => {
+		const accounts = await sql<Account[]>`
 			UPDATE account
 			SET name = COALESCE(${name}, name), type = COALESCE(${type}, type)
 			WHERE userId = ${userId} AND id = ${accountId}
+			RETURNING id, name, type, userId
 		`;
 
-		console.info(`Updated account ${accountId}`);
+		console.info(`Updated account ${accounts[0]?.id}`);
+
+		return accounts[0] ?? null;
 	},
 
 	delete: async (userId: number, accountId: number): Promise<void> => {

@@ -1,5 +1,5 @@
 import type { User } from "$lib/model/user.model";
-import { sql } from "../query";
+import { sql } from "$lib/server/query";
 
 export const userRepo = {
 	getOneByEmailAndPasswordHash: async (email: string, passwordHash: string): Promise<User | null> => {

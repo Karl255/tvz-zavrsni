@@ -1,5 +1,5 @@
 import { attemptLogin, createAuthHeaders, createToken, registerUser } from "$lib/server/service/auth.service";
-import { createJsonResponse, searchParamsToObject } from "$lib/util/api.util";
+import { createJsonResponse, createRequiredFieldsResponse, searchParamsToObject } from "$lib/util/api.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
 
@@ -18,8 +18,7 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 	const params = parseFromPartial(searchParamsToObject<LoginQueryParams>(url.searchParams), requiredParams);
 
 	if (!params) {
-		const message = "Required query params: " + requiredParams.join(", ");
-		return createJsonResponse({ message }, 400);
+		return createRequiredFieldsResponse(requiredParams);
 	}
 
 	const user = await attemptLogin(params.email, params.password);
@@ -36,11 +35,10 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 
 export const POST: RequestHandler = async ({ request }) => {
 	const requiredFields: (keyof RegisterRequest)[] = ["email", "password"];
-	const payload = parseFromPartial((await request.json()) as Partial<RegisterRequest>, requiredFields);
+	const payload = parseFromPartial<RegisterRequest>(await request.json(), requiredFields);
 
 	if (!payload) {
-		const message = "Required fields in body: " + requiredFields.join(", ");
-		return createJsonResponse({ message }, 400);
+		return createRequiredFieldsResponse(requiredFields);
 	}
 
 	const createdUser = await registerUser(payload.email, payload.password);

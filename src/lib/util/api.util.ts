@@ -9,6 +9,19 @@ export function createJsonResponse(body: object, initOrStatus: ResponseInit | nu
 	return new Response(JSON.stringify(body), initOrStatus);
 }
 
+export function createRequiredFieldsResponse(requiredParams: string[]): Response {
+	const message = "Required fields: " + requiredParams.join(", ");
+	return createJsonResponse({ message }, 400);
+}
+
+export function createCreatedResponse(body: object) {
+	return createJsonResponse(body, 201);
+}
+
+export function createNoContentResponse() {
+	return createJsonResponse({}, 204);
+}
+
 export function searchParamsToObject<T>(searchParams: URLSearchParams): Partial<T> {
 	// prettier-ignore
 	return [...searchParams.entries()].reduce(
@@ -44,3 +57,11 @@ export const http = {
 	patch: async <T>(endpoint: string, body: object) => requestWithBody<T>("PATCH", endpoint, body),
 	delete: async <T>(endpoint: string, body: object) => requestWithBody<T>("DELETE", endpoint, body),
 };
+
+export function getIdParam(params: Partial<Record<string, string>>): number {
+	if (params.id) {
+		return parseInt(params.id, 10);
+	} else {
+		throw new Error();
+	}
+}
