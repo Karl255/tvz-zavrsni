@@ -81,7 +81,12 @@ export const transactionRepo = {
 		await sql`
 			UPDATE transaction
 			SET amount = COALESCE(${amount}, amount), description = COALESCE(${description}, description)
-			WHERE user_id = ${userId} AND id = ${transactionId}
+			WHERE id IN (
+				SELECT t.id
+				FROM transaction t
+				JOIN account a ON t.account_id = a.id
+				WHERE t.id = ${transactionId} AND a.user_id = ${userId}
+			);
 		`;
 
 		console.info(`Updated transaction ${transactionId}`);
