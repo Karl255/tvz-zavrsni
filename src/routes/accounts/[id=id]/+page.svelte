@@ -1,9 +1,14 @@
 <script lang="ts">
 	import TransactionsList from "$lib/component/TransactionsList.svelte";
 	import { AccountType } from "$lib/model/account.model";
+	import type { Transaction } from "$lib/model/transaction.model";
 	import type { PageData } from "./$types";
 
 	export let data: PageData;
+
+	function sumBalance(transactions: Transaction[]) {
+		return transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+	}
 </script>
 
 <article class="account">
@@ -21,11 +26,11 @@
 	</div>
 
 	<!-- prettier-ignore -->
-	<p class="account__balance" title="balance">{data.account.balance.toFixed(2)} €</p>
+	<p class="account__balance" title="balance">{sumBalance(data.transactions).toFixed(2)} €</p>
 </article>
 
 <!-- prettier-ignore -->
-<TransactionsList transactions={data.transactions} accounts={[data.account]} />
+<TransactionsList bind:transactions={data.transactions} accounts={[data.account]} />
 
 <style lang="scss">
 	.account {

@@ -4,11 +4,11 @@ export function searchParamsHasAll(searchParams: URLSearchParams, params: string
 	return params.every((param) => searchParams.has(param));
 }
 
-export function createJsonResponse(body: JsonValue, initOrStatus: ResponseInit | number = 200) {
+export function createJsonResponse(body: JsonValue | null, initOrStatus: ResponseInit | number = 200) {
 	initOrStatus = typeof initOrStatus === "number" ? { status: initOrStatus } : initOrStatus;
 	initOrStatus = initOrStatus.status ? initOrStatus : { ...initOrStatus, status: 200 }; // TODO: use that new assignment feature
 
-	return new Response(JSON.stringify(body), initOrStatus);
+	return new Response(body === null ? null : JSON.stringify(body), initOrStatus);
 }
 
 export function createRequiredFieldsResponse(requiredParams: string[]): Response {
@@ -21,7 +21,7 @@ export function createCreatedResponse(body: JsonValue) {
 }
 
 export function createNoContentResponse() {
-	return createJsonResponse("No content", 204);
+	return createJsonResponse(null, 204);
 }
 
 export function createUnauthorizedResponse() {

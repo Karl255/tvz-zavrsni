@@ -12,7 +12,6 @@ function transformWithJoinedLabels(records: JoinedTransaction[], userId: number)
 
 	const transactions = transactionIds.map<TransactionWithLabels>((transactionId) => {
 		const relevantRecords = records.filter((jt) => jt.id === transactionId);
-		console.log(relevantRecords);
 
 		return {
 			id: transactionId,
@@ -63,8 +62,6 @@ export const transactionRepo = {
 				${accountId ? sql`AND t.account_id = ${accountId}` : sql``}
 		`;
 
-		console.log(records);
-
 		return transformWithJoinedLabels(records, userId);
 	},
 
@@ -94,7 +91,12 @@ export const transactionRepo = {
 		// TODO: cascade?
 		await sql`
 			DELETE FROM transaction
-			WHERE user_id = ${userId} AND id = ${transactionId}
+			WHERE id IN (
+				SELECT t.id
+				FROM transaction t
+				JOIN account a ON t.account_id = a.id
+				WHERE t.id = ${transactionId} AND a.user_id = ${userId}
+			);
 		`;
 
 		console.info(`Deleted transaction ${transactionId}`);
