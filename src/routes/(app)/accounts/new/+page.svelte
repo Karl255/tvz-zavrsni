@@ -15,8 +15,8 @@
 	}
 
 	async function create() {
-		const account = await accountApi.create(name, type);
-		goto(`/accounts/${account.id}`);
+		await accountApi.create(name, type);
+		goto(`/accounts`);
 	}
 </script>
 
