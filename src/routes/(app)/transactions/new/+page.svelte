@@ -4,25 +4,27 @@
 	import LabelSelect from "$lib/component/LabelSelect.svelte";
 	import type { Label } from "$lib/model/label.model";
 	import type { Transaction } from "$lib/model/transaction.model";
+	import { validateIsoDate } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
 
 	export let data: PageData;
 
 	let accountId: number | null = null;
-	let amount: number = 0;
-	let description: string = "";
+	let amount = 0;
+	let description = "";
+	let date = "";
 	let selectedLabels: Label[] = [];
 
 	let isValid = false;
-	$: isValid = validate(accountId, amount, description);
+	$: isValid = validate(accountId, amount, description, date);
 
-	function validate(accountId: number | null, amount: number, description: string) {
-		return accountId !== null && amount !== 0 && description.length >= 5;
+	function validate(accountId: number | null, amount: number, description: string, date: string) {
+		return accountId !== null && amount !== 0 && description.length >= 5 && validateIsoDate(date);
 	}
 
 	async function create() {
 		if (accountId) {
-			const response = await transactionApi.create(accountId, amount, description);
+			const response = await transactionApi.create(accountId, amount, description, date);
 
 			if (response.ok) {
 				amount = 0;
@@ -54,15 +56,19 @@
 	</select>
 
 	<label for="amount">Amount</label>
-	<span>
+	<div>
 		<!-- prettier-ignore -->
 		<input type="number" id="amount" step="0.01" bind:value={amount} on:blur={formatCurrency}>
 		€
-	</span>
+	</div>
 
 	<label for="description">Description</label>
 	<!-- prettier-ignore -->
 	<input type="text" id="description" bind:value={description}>
+
+	<label for="date">Date</label>
+	<!-- prettier-ignore -->
+	<input type="date" id="date" bind:value={date}>
 
 	<label for="labels">Labels</label>
 	<!-- prettier-ignore -->

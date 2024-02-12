@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	type Payload = NoId<Transaction>;
-	const requiredFields: Field<Payload>[] = ["accountId", "amount", "description"];
+	const requiredFields: Field<Payload>[] = ["accountId", "amount", "description", "date"];
 
 	const payload = parseFromPartial<Payload>(await request.json(), requiredFields);
 
@@ -22,7 +22,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return createRequiredFieldsResponse(requiredFields);
 	}
 
-	const account = await transactionRepo.create(getLocals(locals).userId, payload.accountId, payload.amount, payload.description);
+	const account = await transactionRepo.create(getLocals(locals).userId, payload.accountId, payload.amount, payload.description, payload.date);
 
 	return account ? createJsonResponse(account) : createUnauthorizedResponse();
 };

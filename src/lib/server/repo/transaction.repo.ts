@@ -1,4 +1,4 @@
-import type { Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
+import type { IsoDate, Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
 import { sql } from "$lib/server/query";
 import { accountRepo } from "./account.repo";
 
@@ -17,6 +17,7 @@ function transformWithJoinedLabels(records: JoinedTransaction[], userId: number)
 			id: transactionId,
 			amount: transactionRecords[0].amount,
 			description: transactionRecords[0].description,
+			date: transactionRecords[0].date,
 			accountId: transactionRecords[0].accountId,
 			labels: transactionRecords
 				.filter((record) => record.labelId)
@@ -32,7 +33,7 @@ function transformWithJoinedLabels(records: JoinedTransaction[], userId: number)
 }
 
 export const transactionRepo = {
-	create: async (userId: number, accountId: number, amount: number, description: string): Promise<Transaction | null> => {
+	create: async (userId: number, accountId: number, amount: number, description: string, date: IsoDate): Promise<Transaction | null> => {
 		const account = accountRepo.getOne(userId, accountId);
 
 		if (!account) {
@@ -40,9 +41,9 @@ export const transactionRepo = {
 		}
 
 		const transactions = await sql<Transaction[]>`
-			INSERT INTO transaction (amount, description, account_id)
-			VALUES (${amount}, ${description}, ${accountId})
-			RETURNING id, amount, description, account_id
+			INSERT INTO transaction (amount, description, date, account_id)
+			VALUES (${amount}, ${description}, ${date}, ${accountId})
+			RETURNING id, amount, description, date, account_id
 		`;
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
@@ -52,7 +53,7 @@ export const transactionRepo = {
 
 	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithLabels[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, l.id AS label_id, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, t.date, l.id AS label_id, l.name AS label_name, a.id AS account_id
 			FROM transaction t
 			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
 			LEFT JOIN label l ON tl.label_id = l.id
@@ -67,7 +68,7 @@ export const transactionRepo = {
 
 	getOne: async (userId: number, transactionId: number): Promise<TransactionWithLabels | null> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, l.id AS labelId, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, t.date, l.id AS labelId, l.name AS label_name, a.id AS account_id
 			FROM transaction t
 			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
 			LEFT JOIN label l ON tl.label_id = l.id
@@ -78,10 +79,13 @@ export const transactionRepo = {
 		return transformWithJoinedLabels(records, userId)[0] ?? null;
 	},
 
-	update: async (userId: number, transactionId: number, amount: number | null, description: string | null): Promise<void> => {
+	update: async (userId: number, transactionId: number, amount: number | null, description: string | null, date: IsoDate | null): Promise<void> => {
 		await sql`
 			UPDATE transaction
-			SET amount = COALESCE(${amount}, amount), description = COALESCE(${description}, description)
+			SET
+				amount = COALESCE(${amount}, amount),
+				description = COALESCE(${description}, description),
+				date = COALESCE(${date}, date)
 			WHERE id IN (
 				SELECT t.id
 				FROM transaction t

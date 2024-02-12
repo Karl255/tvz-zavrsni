@@ -4,6 +4,7 @@ const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
 const passwordMinLength = 8;
 const labelMinLength = 3;
 const accountNameMinLength = 5;
+const isoDateRegex = /\d{4}-[01]\d-[0-3]\d/;
 
 export function validatePassword(password: string) {
 	return password.length >= passwordMinLength;
@@ -27,4 +28,8 @@ export function validateAccountName(name: string) {
 
 export function validateAccountType(accountType: AccountType) {
 	return Object.values(AccountType).includes(accountType);
+}
+
+export function validateIsoDate(date: string) {
+	return !!date.match(isoDateRegex);
 }

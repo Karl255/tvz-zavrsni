@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS transaction (
 	id SERIAL PRIMARY KEY,
 	amount DECIMAL(20, 2) NOT NULL,
 	description VARCHAR(128) NOT NULL,
+	date DATE NOT NULL,
 	account_id SERIAL NOT NULL REFERENCES account(id)
 );
 

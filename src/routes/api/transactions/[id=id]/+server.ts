@@ -14,7 +14,7 @@ export const PATCH: RequestHandler = async ({ request, locals, params }) => {
 	type Payload = Partial<NoId<Transaction>>;
 
 	const payload: Payload = await request.json();
-	await transactionRepo.update(getLocals(locals).userId, getIdParam(params), payload.amount ?? null, payload.description ?? null);
+	await transactionRepo.update(getLocals(locals).userId, getIdParam(params), payload.amount ?? null, payload.description ?? null, payload.date ?? null);
 
 	return createJsonResponse({});
 };
