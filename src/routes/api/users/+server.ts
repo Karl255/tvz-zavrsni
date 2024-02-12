@@ -49,6 +49,6 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		return createJsonResponse({ user: createdUser }, { headers });
 	} else {
-		return createJsonResponse({ message: "Email is already registered" }, 400);
+		return createJsonResponse({ message: "This email is already in use" }, 400);
 	}
 };

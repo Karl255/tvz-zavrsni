@@ -42,6 +42,8 @@
 
 <style lang="scss">
 	.login {
+		place-self: center;
+		width: 100%;
 		max-width: 20rem;
 		padding: 1rem;
 
