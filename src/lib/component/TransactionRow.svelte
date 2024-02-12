@@ -11,8 +11,14 @@
 	let isEditing = false;
 	let newAmount = transaction.amount;
 	let newDescription = transaction.description;
+	let isValid = false;
+	$: isValid = validate(newAmount, newDescription);
 
-	async function startOrFinishEdit() {
+	function validate(amount: number, description: string) {
+		return amount !== 0 && description.length >= 5;
+	}
+
+	async function startOrSaveEdit() {
 		if (isEditing) {
 			if (!(await transactionApi.update(transaction.id, newAmount, newDescription)).ok) {
 				return;
@@ -83,7 +89,8 @@
 <td>{JSON.stringify(transaction.labels)}</td>
 
 <td class="actions">
-	<button on:click={startOrFinishEdit}>
+	<!-- prettier-ignore -->
+	<button on:click={startOrSaveEdit} disabled={isEditing && !isValid}>
 		{#if isEditing}
 			<!-- prettier-ignore -->
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 7v12q0 .825-.587 1.413T19 21H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h12zm-2 .85L16.15 5H5v14h14zM12 18q1.25 0 2.125-.875T15 15q0-1.25-.875-2.125T12 12q-1.25 0-2.125.875T9 15q0 1.25.875 2.125T12 18m-6-8h9V6H6zM5 7.85V19V5z"/></svg>
