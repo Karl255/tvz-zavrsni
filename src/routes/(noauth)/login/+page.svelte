@@ -9,7 +9,6 @@
 
 	let isValid = false;
 	$: isValid = validateEmail(email);
-	$: console.log("isValid", isValid);
 
 	let error: AuthError | null;
 
