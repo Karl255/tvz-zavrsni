@@ -1,6 +1,7 @@
 import type { AuthError } from "$lib/model/AuthError.model";
 import type { User } from "$lib/model/user.model";
 import { attemptLogin, createAuthHeaders, createToken, registerUser } from "$lib/server/service/auth.service";
+import { validateEmail, validatePassword } from "$lib/service/validation.service";
 import { createJsonResponse, createRequiredFieldsResponse, searchParamsToObject } from "$lib/util/api.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
@@ -43,6 +44,10 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	if (!payload) {
 		return createRequiredFieldsResponse(requiredFields);
+	}
+
+	if (!validateEmail(payload.email) || validatePassword(payload.password)) {
+		return createJsonResponse({ message: "Invalid email or password" }, 400);
 	}
 
 	const createdUser = await registerUser(payload.email, payload.password);
