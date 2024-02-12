@@ -54,8 +54,7 @@
 	}
 </script>
 
-<td
->
+<td>
 	{#if isEditing}
 		<span class="new-amount">
 			<!-- prettier-ignore -->
@@ -83,7 +82,14 @@
 </td>
 
 {#if accountResolver}
-	<td>{accountResolver(transaction.accountId).name}</td>
+	<td>
+		<a
+			class="link"
+			href="/accounts/{transaction.accountId}"
+		>
+			{accountResolver(transaction.accountId).name}
+		</a>
+	</td>
 {/if}
 
 <td>{JSON.stringify(transaction.labels)}</td>
@@ -143,5 +149,9 @@
 	svg {
 		color: $clr-bold-text;
 		display: block;
+	}
+
+	.link {
+		text-decoration: underline;
 	}
 </style>

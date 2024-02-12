@@ -11,6 +11,8 @@
 	}
 </script>
 
+<h1 class="title">You are viewing the account:</h1>
+
 <article class="account">
 	<div class="account__info">
 		<!-- prettier-ignore -->
@@ -33,6 +35,10 @@
 <TransactionsList bind:transactions={data.transactions} accounts={[data.account]} />
 
 <style lang="scss">
+	.title {
+		margin-bottom: 2rem;
+	}
+
 	.account {
 		background-color: $clr-light-gray;
 		border-radius: 5px;
