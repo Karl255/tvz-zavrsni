@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Account } from "$lib/model/account.model";
 	import type { TransactionWithLabels } from "$lib/model/transaction.model";
+	import { validateIsoDate } from "$lib/service/validation.service";
 
 	export let transaction: TransactionWithLabels;
 	export let accountResolver: ((accountId: number) => Account) | undefined;
@@ -10,11 +11,13 @@
 	let isEditing = false;
 	let newAmount = transaction.amount;
 	let newDescription = transaction.description;
+	let newDate = transaction.date;
 	let isValid = false;
-	$: isValid = validate(newAmount, newDescription);
+	$: isValid = validate(newAmount, newDescription, newDate);
+	$: console.log("isValid", isValid);
 
-	function validate(amount: number, description: string) {
-		return amount !== 0 && description.length >= 5;
+	function validate(amount: number, description: string, date: string) {
+		return amount !== 0 && description.length >= 5 && validateIsoDate(date);
 	}
 
 	async function startOrSaveEdit() {
@@ -23,12 +26,14 @@
 				id: transaction.id,
 				amount: newAmount,
 				description: newDescription,
+				date: newDate,
 				accountId: transaction.accountId,
 				labels: transaction.labels,
 			});
 		} else {
 			newAmount = transaction.amount;
 			newDescription = transaction.description;
+			newDate = transaction.date;
 		}
 
 		isEditing = !isEditing;
@@ -71,6 +76,15 @@
 		<input type="text" bind:value={newDescription}>
 	{:else}
 		{transaction.description}
+	{/if}
+</td>
+
+<td>
+	{#if isEditing}
+		<!-- prettier-ignore -->
+		<input type="date" bind:value={newDate}>
+	{:else}
+		{transaction.date}
 	{/if}
 </td>
 

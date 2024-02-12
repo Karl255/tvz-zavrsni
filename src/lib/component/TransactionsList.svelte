@@ -15,7 +15,7 @@
 	}
 
 	async function updateTransaction(newTransaction: TransactionWithLabels) {
-		const response = await transactionApi.update(newTransaction.id, newTransaction.amount, newTransaction.description);
+		const response = await transactionApi.update(newTransaction.id, newTransaction.amount, newTransaction.description, newTransaction.date);
 
 		if (response.ok) {
 			transactions = transactions.map((transaction) => (transaction.id === newTransaction.id ? newTransaction : transaction));
@@ -35,6 +35,7 @@
 	<tr>
 		<th>Amount</th>
 		<th>Description</th>
+		<th>Date</th>
 
 		{#if accounts.length > 1}
 			<th>Account</th>
@@ -48,7 +49,7 @@
 		<tr>
 			<TransactionRow
 				{transaction}
-				accountResolver={getAccountById}
+				accountResolver={accounts.length > 1 ? getAccountById : undefined}
 				{updateTransaction}
 				{deleteTransaction}
 			/>

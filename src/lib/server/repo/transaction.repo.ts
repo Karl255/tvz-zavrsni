@@ -43,7 +43,7 @@ export const transactionRepo = {
 		const transactions = await sql<Transaction[]>`
 			INSERT INTO transaction (amount, description, date, account_id)
 			VALUES (${amount}, ${description}, ${date}, ${accountId})
-			RETURNING id, amount, description, date, account_id
+			RETURNING id, amount, description, to_char(date, 'YYYY-MM-DD') as date, account_id
 		`;
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
@@ -53,7 +53,7 @@ export const transactionRepo = {
 
 	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithLabels[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, t.date, l.id AS label_id, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS label_id, l.name AS label_name, a.id AS account_id
 			FROM transaction t
 			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
 			LEFT JOIN label l ON tl.label_id = l.id
@@ -68,7 +68,7 @@ export const transactionRepo = {
 
 	getOne: async (userId: number, transactionId: number): Promise<TransactionWithLabels | null> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, t.date, l.id AS labelId, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS labelId, l.name AS label_name, a.id AS account_id
 			FROM transaction t
 			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
 			LEFT JOIN label l ON tl.label_id = l.id
