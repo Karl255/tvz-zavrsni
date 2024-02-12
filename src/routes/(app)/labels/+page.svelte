@@ -94,7 +94,7 @@
 		gap: 1rem;
 	}
 
-	.list li:nth-child(even) {
+	.list li:nth-child(odd) {
 		background-color: $clr-light-gray;
 	}
 </style>

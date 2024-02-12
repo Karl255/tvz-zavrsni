@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { transactionApi } from "$lib/api/transaction.api";
 	import type { Account } from "$lib/model/account.model";
 	import type { TransactionWithLabels } from "$lib/model/transaction.model";
 
@@ -20,12 +19,6 @@
 
 	async function startOrSaveEdit() {
 		if (isEditing) {
-			if (!(await transactionApi.update(transaction.id, newAmount, newDescription)).ok) {
-				return;
-			}
-
-			// TODO set labels via another api call
-
 			updateTransaction({
 				id: transaction.id,
 				amount: newAmount,
@@ -92,7 +85,7 @@
 	</td>
 {/if}
 
-<td>{JSON.stringify(transaction.labels)}</td>
+<td>{transaction.labels.map((l) => l.name).join(", ")}</td>
 
 <td class="actions">
 	<!-- prettier-ignore -->

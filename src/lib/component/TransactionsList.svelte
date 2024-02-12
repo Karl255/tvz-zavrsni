@@ -14,8 +14,12 @@
 		return accountMap[accountId];
 	}
 
-	function updateTransaction(newTransaction: TransactionWithLabels) {
-		transactions = transactions.map((transaction) => (transaction.id === newTransaction.id ? newTransaction : transaction));
+	async function updateTransaction(newTransaction: TransactionWithLabels) {
+		const response = await transactionApi.update(newTransaction.id, newTransaction.amount, newTransaction.description);
+
+		if (response.ok) {
+			transactions = transactions.map((transaction) => (transaction.id === newTransaction.id ? newTransaction : transaction));
+		}
 	}
 
 	async function deleteTransaction(transactionId: number) {

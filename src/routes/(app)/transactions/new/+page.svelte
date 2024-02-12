@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { transactionApi } from "$lib/api/transaction.api";
+	import { transactionLabelApi } from "$lib/api/transactionLabel.api";
+	import LabelSelect from "$lib/component/LabelSelect.svelte";
+	import type { Label } from "$lib/model/label.model";
+	import type { Transaction } from "$lib/model/transaction.model";
 	import type { PageData } from "./$types";
 
 	export let data: PageData;
@@ -7,6 +11,7 @@
 	let accountId: number | null = null;
 	let amount: number = 0;
 	let description: string = "";
+	let selectedLabels: Label[] = [];
 
 	let isValid = false;
 	$: isValid = validate(accountId, amount, description);
@@ -22,6 +27,12 @@
 			if (response.ok) {
 				amount = 0;
 				description = "";
+
+				const transaction = (await response.json()) as Transaction;
+
+				selectedLabels.forEach((label) => {
+					transactionLabelApi.create(transaction.id, label.id);
+				});
 			}
 		}
 	}
@@ -52,6 +63,12 @@
 	<label for="description">Description</label>
 	<!-- prettier-ignore -->
 	<input type="text" id="description" bind:value={description}>
+
+	<label for="labels">Labels</label>
+	<!-- prettier-ignore -->
+	<div>
+		<LabelSelect labels={data.labels} bind:selectedLabels={selectedLabels} />
+	</div>
 
 	<!-- prettier-ignore -->
 	<button class="btn--primary" disabled={!isValid}>Record</button>

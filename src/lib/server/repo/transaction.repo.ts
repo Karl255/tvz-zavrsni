@@ -8,18 +8,18 @@ interface JoinedTransaction extends Transaction {
 }
 
 function transformWithJoinedLabels(records: JoinedTransaction[], userId: number): TransactionWithLabels[] {
-	const transactionIds = records.map((jt) => jt.id);
+	const transactionIds = [...new Set(records.map((jt) => jt.id))];
 
 	const transactions = transactionIds.map<TransactionWithLabels>((transactionId) => {
-		const relevantRecords = records.filter((jt) => jt.id === transactionId);
+		const transactionRecords = records.filter((jt) => jt.id === transactionId);
 
 		return {
 			id: transactionId,
-			amount: relevantRecords[0].amount,
-			description: relevantRecords[0].description,
-			accountId: relevantRecords[0].accountId,
-			labels: relevantRecords
-				.filter((record) => !!record.labelId)
+			amount: transactionRecords[0].amount,
+			description: transactionRecords[0].description,
+			accountId: transactionRecords[0].accountId,
+			labels: transactionRecords
+				.filter((record) => record.labelId)
 				.map((record) => ({
 					id: record.labelId as number,
 					name: record.labelName as string,
@@ -52,7 +52,7 @@ export const transactionRepo = {
 
 	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithLabels[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, l.id AS labelId, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, l.id AS label_id, l.name AS label_name, a.id AS account_id
 			FROM transaction t
 			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
 			LEFT JOIN label l ON tl.label_id = l.id
@@ -67,11 +67,12 @@ export const transactionRepo = {
 
 	getOne: async (userId: number, transactionId: number): Promise<TransactionWithLabels | null> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT id, amount, description, user_id
+			SELECT t.id, t.amount, t.description, l.id AS labelId, l.name AS label_name, a.id AS account_id
 			FROM transaction t
-			JOIN transaction_label tl ON t.id = tl.transaction_id
-			JOIN label l ON tl.label_id = l.id
-			WHERE user_id = ${userId} AND id = ${transactionId}
+			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
+			LEFT JOIN label l ON tl.label_id = l.id
+			JOIN account a ON t.account_id = a.id
+			WHERE a.user_id = ${userId} AND t.id = ${transactionId}
 		`;
 
 		return transformWithJoinedLabels(records, userId)[0] ?? null;
