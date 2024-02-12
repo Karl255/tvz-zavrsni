@@ -1,13 +1,6 @@
 import postgres from "postgres";
 
-const DATABASE = "tvz-njp-projekt";
-const DEFAULT_DB_USERNAME = "postgres";
-const DEFAULT_DB_PASSWORD = "postgres";
-
-export const sql = postgres({
-	database: DATABASE,
-	username: DEFAULT_DB_USERNAME,
-	password: DEFAULT_DB_PASSWORD,
+const options = {
 	types: {
 		numeric: {
 			to: 0,
@@ -17,4 +10,6 @@ export const sql = postgres({
 		},
 	},
 	transform: postgres.camel,
-});
+};
+
+export const sql = process.env.POSTGRES_URL ? postgres(process.env.POSTGRES_URL, options) : postgres(options);
