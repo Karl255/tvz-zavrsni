@@ -1,3 +1,4 @@
+import { AUTH_TOKEN_COOKIE_NAME } from "$lib/constants";
 import type { AuthError } from "$lib/model/AuthError.model";
 import type { User } from "$lib/model/user.model";
 import { userRepo } from "$lib/server/repo/user.repo";
@@ -13,7 +14,6 @@ function hashAsHex(password: string): string {
 // TODO: get from env
 const secret = new Uint8Array([...atob("4XOj3bFVrVrZrCVC4HkQyV++43VUP7rxMgOKJ2ku630xNy3nWqMGCVyQK+lKcQb/xyLVXClzrz7G8AmdaC5G1A==")].map((x) => x.charCodeAt(0)));
 
-export const AUTH_TOKEN_NAME = "authToken";
 const TOKEN_LIFETIME_SECONDS = 24 * 60 * 60; // 24h
 
 export interface AuthTokenPayload extends jose.JWTPayload {
@@ -85,6 +85,6 @@ export async function verifyAuthToken(token: string): Promise<jose.JWTVerifyResu
 
 export function createAuthHeaders(token: string): Headers {
 	const headers = new Headers();
-	headers.set("Set-Cookie", `${AUTH_TOKEN_NAME}=${token}; Path=/; Secure`);
+	headers.set("Set-Cookie", `${AUTH_TOKEN_COOKIE_NAME}=${token}; Path=/; Secure`);
 	return headers;
 }

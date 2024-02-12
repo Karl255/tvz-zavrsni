@@ -1,9 +1,24 @@
 <script>
+	import { goto } from "$app/navigation";
+	import { AUTH_TOKEN_COOKIE_NAME } from "$lib/constants";
 	import "../../app.scss";
+
+	function logout() {
+		document.cookie = `${AUTH_TOKEN_COOKIE_NAME}=; Max-Age=0; Path=/; Secure`;
+		goto("/login");
+	}
 </script>
 
 <div class="page">
-	<header>TODO header</header>
+	<header>
+		<h1 class="title">Finance tracker</h1>
+
+		<!-- prettier-ignore -->
+		<button class="btn--tertiary logout-button" on:click={logout}>
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4z"/></svg>
+			Logout
+		</button>
+	</header>
 
 	<nav>
 		<ul>
@@ -59,7 +74,11 @@
 
 	header {
 		grid-area: header;
-		padding: 1rem;
+		padding: 0.5rem 1.75rem;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	nav {

@@ -1,4 +1,5 @@
-import { AUTH_TOKEN_NAME, verifyAuthToken, type AuthTokenPayload } from "$lib/server/service/auth.service";
+import { AUTH_TOKEN_COOKIE_NAME } from "$lib/constants";
+import { verifyAuthToken, type AuthTokenPayload } from "$lib/server/service/auth.service";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
 
 const unauthenticatedRoutes = ["/login", "/register"];
@@ -45,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 
 async function authenticate(event: RequestEvent): Promise<AuthTokenPayload | null> {
-	const token = event.cookies.get(AUTH_TOKEN_NAME);
+	const token = event.cookies.get(AUTH_TOKEN_COOKIE_NAME);
 
 	if (!token) {
 		return null;
