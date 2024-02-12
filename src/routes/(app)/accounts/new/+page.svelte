@@ -2,6 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { accountApi } from "$lib/api/account.api";
 	import { AccountType } from "$lib/model/account.model";
+	import { validateAccountName, validateAccountType } from "$lib/service/validation.service";
 
 	let name = "";
 	let type = AccountType.CHECKING;
@@ -10,7 +11,7 @@
 	$: isValid = validate(name, type);
 
 	function validate(name: string, type: AccountType) {
-		return name.length >= 5 && Object.values(AccountType).includes(type);
+		return validateAccountName(name) && validateAccountType(type);
 	}
 
 	async function create() {

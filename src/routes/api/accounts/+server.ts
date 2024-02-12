@@ -1,13 +1,13 @@
+import { getLocals } from "$hooks.server";
 import type { Account } from "$lib/model/account.model";
 import { accountRepo } from "$lib/server/repo/account.repo";
 import { createJsonResponse, createRequiredFieldsResponse } from "$lib/util/api.util";
 import type { Field, NoId } from "$lib/util/rest.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
-import { getUserId } from "$hooks.server";
 
 export const GET: RequestHandler = async ({ locals }) => {
-	return createJsonResponse(await accountRepo.getAll(getUserId(locals)));
+	return createJsonResponse(await accountRepo.getAll(getLocals(locals).userId));
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return createRequiredFieldsResponse(requiredFields);
 	}
 
-	const account = await accountRepo.create(getUserId(locals), payload.name, payload.type);
+	const account = await accountRepo.create(getLocals(locals).userId, payload.name, payload.type);
 
 	return createJsonResponse(account);
 };

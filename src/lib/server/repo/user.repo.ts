@@ -4,7 +4,7 @@ import { sql } from "$lib/server/query";
 export const userRepo = {
 	getOneByEmail: async (email: string): Promise<UserEntity | null> => {
 		const users = await sql<UserEntity[]>`
-			SELECT id, email, password_hash
+			SELECT id, email, password_hash, is_admin
 			FROM "user"
 			WHERE email = ${email}
 		`;
@@ -14,9 +14,9 @@ export const userRepo = {
 
 	create: async (email: string, passwordHash: string): Promise<User> => {
 		const users = await sql<User[]>`
-			INSERT INTO "user" (email, password_hash)
-			VALUES (${email}, ${passwordHash})
-			RETURNING id, email
+			INSERT INTO "user" (email, password_hash, is_admin)
+			VALUES (${email}, ${passwordHash}, FALSE)
+			RETURNING id, email, is_admin
 		`;
 
 		console.info(`Created ${users.length} users with email ${email}`);

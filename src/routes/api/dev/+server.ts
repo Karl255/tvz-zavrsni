@@ -14,7 +14,8 @@ async function initDb() {
 		CREATE TABLE IF NOT EXISTS "user" (
 			id SERIAL PRIMARY KEY,
 			email VARCHAR(50) NOT NULL,
-			password_hash CHAR(128) NOT NULL
+			password_hash CHAR(128) NOT NULL,
+			is_admin BOOLEAN NOT NULL
 		);
 	`;
 

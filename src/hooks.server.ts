@@ -14,27 +14,29 @@ type ResolveHandler = Parameters<Handle>[0]["resolve"];
 
 export interface Locals {
 	userId: number;
+	isAdmin: boolean;
 }
 
-export function getUserId(locals: App.Locals): number {
-	return (locals as Locals).userId;
+export function getLocals(locals: App.Locals): Locals {
+	return locals as Locals;
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
 	console.info("requested", pathname);
 
-	const userId = (await authenticate(event))?.userId ?? null;
+	const authTokenPayload = (await authenticate(event));
 
-	if (userId) {
-		(event.locals as Locals).userId = userId;
+	if (authTokenPayload) {
+		(event.locals as Locals).userId = authTokenPayload.userId;
+		(event.locals as Locals).isAdmin = authTokenPayload.isAdmin;
 	}
 
 	if (pathname.startsWith(apiRoutePrefix)) {
-		return handleApiRoutes(event, resolve, !!userId);
+		return handleApiRoutes(event, resolve, !!authTokenPayload);
 	}
 
-	const redirectLocation = determineRedirectLocation(pathname, !!userId);
+	const redirectLocation = determineRedirectLocation(pathname, !!authTokenPayload);
 
 	if (redirectLocation) {
 		const headers = { Location: redirectLocation };

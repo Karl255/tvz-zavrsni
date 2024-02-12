@@ -94,7 +94,11 @@ export const transactionRepo = {
 	},
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
-		// TODO: cascade?
+		await sql`
+			DELETE FROM transaction_label
+			WHERE transaction_id = ${transactionId}
+		`;
+
 		await sql`
 			DELETE FROM transaction
 			WHERE id IN (
