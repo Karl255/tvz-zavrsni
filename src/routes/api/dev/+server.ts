@@ -92,7 +92,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	if (action) {
 		const answer = await action();
-		console.log(`${payload.action}() = ${answer}`);
+		console.info(`${payload.action}() = ${answer}`);
 
 		return createJsonResponse({ success: true, message: answer });
 	} else {

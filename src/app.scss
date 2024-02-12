@@ -74,18 +74,18 @@ ul, ol {
 a.btn--primary {
 	color: white;
 	background: $clr-bold-text;
-	
+
 	padding: 0.75rem;
 	border-radius: 5px;
-	
+
 	display: inline-flex;
 	align-items: center;
 	gap: 0.75rem;
-	
+
 	line-height: 1;
-	
+
 	transition: opacity 100ms ease-out;
-	
+
 	&:hover {
 		opacity: 0.8;
 	}
@@ -112,22 +112,22 @@ a.btn--tertiary {
 button.btn--primary {
 	color: white;
 	background: $clr-bold-text;
-	
+
 	padding: 0.75rem;
 	border-radius: 5px;
-	
+
 	display: inline-flex;
 	align-items: center;
 	gap: 0.75rem;
-	
+
 	line-height: 1;
-	
+
 	transition: opacity 100ms ease-out;
-	
-	&:hover {
+
+	&:enabled:hover {
 		opacity: 0.8;
 	}
-	
+
 	&:disabled {
 		opacity: 0.7;
 		cursor: default;
@@ -147,7 +147,12 @@ button.btn--tertiary {
 
 	transition: background-color 100ms ease-out;
 
-	&:hover {
+	&:enabled:hover {
 		background-color: #00000020;
+	}
+
+	&:disabled {
+		opacity: 0.7;
+		cursor: default;
 	}
 }

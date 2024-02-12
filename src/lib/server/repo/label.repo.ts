@@ -6,9 +6,10 @@ export const labelRepo = {
 		const labels = await sql<Label[]>`
 			INSERT INTO label (name, user_id)
 			VALUES (${name}, ${userId})
+			RETURNING id, name, user_id
 		`;
 
-		console.info(`Created label "${labels[0].id}" for user ${userId}`);
+		console.info(`Created label ${labels[0].id} for user ${userId}`);
 
 		return labels[0];
 	},

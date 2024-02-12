@@ -22,7 +22,7 @@ export function getUserId(locals: App.Locals): number {
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
-	console.log("requested", pathname);
+	console.info("requested", pathname);
 
 	const userId = (await authenticate(event))?.userId ?? null;
 
