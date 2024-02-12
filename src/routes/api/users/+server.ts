@@ -1,3 +1,5 @@
+import type { AuthError } from "$lib/model/AuthError.model";
+import type { User } from "$lib/model/user.model";
 import { attemptLogin, createAuthHeaders, createToken, registerUser } from "$lib/server/service/auth.service";
 import { createJsonResponse, createRequiredFieldsResponse, searchParamsToObject } from "$lib/util/api.util";
 import { parsePartial as parseFromPartial } from "$lib/util/util";
@@ -21,15 +23,17 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 		return createRequiredFieldsResponse(requiredParams);
 	}
 
-	const user = await attemptLogin(params.email, params.password);
+	const userOrError = await attemptLogin(params.email, params.password);
 
-	if (user) {
+	if ((userOrError as User).email) {
+		const user = userOrError as User;
 		const token = await createToken(user.id);
 		const headers = createAuthHeaders(token);
 
 		return createJsonResponse({ user }, { headers });
 	} else {
-		return createJsonResponse({ message: "Invalid credentials" }, 400);
+		const error = userOrError as AuthError;
+		return createJsonResponse(error, 400);
 	}
 };
 

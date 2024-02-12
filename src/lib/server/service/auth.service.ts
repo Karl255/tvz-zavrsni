@@ -1,3 +1,4 @@
+import type { AuthError } from "$lib/model/AuthError.model";
 import type { User } from "$lib/model/user.model";
 import { userRepo } from "$lib/server/repo/user.repo";
 import { getSecondsSinceEpoch } from "$lib/util/time.util";
@@ -20,9 +21,28 @@ export interface AuthTokenPayload extends jose.JWTPayload {
 	exp: number;
 }
 
-export async function attemptLogin(email: string, password: string): Promise<User | null> {
+export async function attemptLogin(email: string, password: string): Promise<User | AuthError> {
 	const passwordHash = hashAsHex(password);
-	return await userRepo.getOneByEmailAndPasswordHash(email, passwordHash);
+	const userEntity = await userRepo.getOneByEmail(email);
+
+	if (userEntity) {
+		if (userEntity.passwordHash === passwordHash) {
+			return {
+				id: userEntity.id,
+				email: userEntity.email,
+			} satisfies User;
+		} else {
+			return {
+				message: "Wrong password",
+				field: "password",
+			} satisfies AuthError;
+		}
+	} else {
+		return {
+			message: "No account with this email exists",
+			field: "email",
+		} satisfies AuthError;
+	}
 }
 
 export async function registerUser(email: string, password: string): Promise<User | null> {

@@ -41,6 +41,8 @@
 </script>
 
 <div class="register">
+	<h1 class="title">Register</h1>
+
 	<label for="email">Email</label>
 	<!-- prettier-ignore -->
 	<input type="email" id="email" bind:value={email} placeholder="your.email@example.com">
@@ -63,6 +65,9 @@
 	>
 		Register
 	</button>
+
+	<!-- prettier-ignore -->
+	<a href="/login" class="btn--tertiary">Login instead</a>
 </div>
 
 <style lang="scss">
@@ -80,12 +85,19 @@
 		margin-top: 0.25rem;
 	}
 
+	.title {
+		font-size: $fz-jumbo;
+		text-align: center;
+		margin-bottom: 4rem;
+	}
+
 	input {
 		font: inherit;
 		padding: 0.25rem;
 	}
 
-	button {
+	.btn--primary,
+	.btn--tertiary {
 		justify-content: center;
 	}
 

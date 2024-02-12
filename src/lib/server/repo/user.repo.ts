@@ -1,20 +1,10 @@
-import type { User } from "$lib/model/user.model";
+import type { User, UserEntity } from "$lib/model/user.model";
 import { sql } from "$lib/server/query";
 
 export const userRepo = {
-	getOneByEmailAndPasswordHash: async (email: string, passwordHash: string): Promise<User | null> => {
-		const users = await sql<User[]>`
-			SELECT id, email
-			FROM "user"
-			WHERE email = ${email} AND password_hash = ${passwordHash}
-		`;
-
-		return users[0] ?? null;
-	},
-
-	getOneByEmail: async (email: string): Promise<User | null> => {
-		const users = await sql<User[]>`
-			SELECT id, email
+	getOneByEmail: async (email: string): Promise<UserEntity | null> => {
+		const users = await sql<UserEntity[]>`
+			SELECT id, email, password_hash
 			FROM "user"
 			WHERE email = ${email}
 		`;
