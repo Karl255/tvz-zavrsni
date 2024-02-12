@@ -29,6 +29,10 @@
 			transactions = transactions.filter((transaction) => transaction.id !== transactionId);
 		}
 	}
+
+	function sortTransactions(transactions: TransactionWithLabels[]) {
+		return transactions.toSorted((a, b) => (a.date < b.date ? 1 : 0));
+	}
 </script>
 
 <table>
@@ -45,7 +49,7 @@
 		<th>Actions</th>
 	</tr>
 
-	{#each transactions as transaction}
+	{#each sortTransactions(transactions) as transaction}
 		<tr>
 			<TransactionRow
 				{transaction}
