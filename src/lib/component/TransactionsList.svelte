@@ -8,7 +8,7 @@
 	export let transactions: TransactionWithLabels[];
 
 	let accountMap: Record<number, Account> = {};
-	$: accountMap = accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {})
+	$: accountMap = accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {});
 
 	function getAccountById(accountId: number) {
 		return accountMap[accountId];

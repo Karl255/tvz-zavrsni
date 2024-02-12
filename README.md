@@ -32,7 +32,7 @@ export PGPASSWORD=postgres
 
 Ova funkcionalnost dolazi od postgres biblioteke. [Dokumentaicja](https://www.npmjs.com/package/postgres#environmental-variables).
 
-**Bazu je potrebno inicijalizirati sa SQL skriptom `src/scripts/initDb.sql`.**
+**Bazu je potrebno inicijalizirati sa SQL skriptom `src/scripts/initDb.sql` ili `src/scripts/fullExport.sql` (druga skripta takđer sadrži podatke).**
 
 
 
