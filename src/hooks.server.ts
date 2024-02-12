@@ -4,7 +4,9 @@ import type { Handle, RequestEvent } from "@sveltejs/kit";
 
 const unauthenticatedRoutes = ["/login", "/register"];
 const unauthenticatedApiRoutes = ["/api/user"];
+const adminRoutePrefix = "/admin";
 const apiRoutePrefix = "/api";
+const adminApiRoutePrefix = "/api/admin";
 
 // https://stackoverflow.com/questions/2839585/what-is-correct-http-status-code-when-redirecting-to-a-login-page
 const REDIRECT_STATUS = 302;
@@ -23,9 +25,9 @@ export function getLocals(locals: App.Locals): Locals {
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
-	console.info("requested", pathname);
+	console.info("requested", event.request.method, pathname);
 
-	const authTokenPayload = (await authenticate(event));
+	const authTokenPayload = await authenticate(event);
 
 	if (authTokenPayload) {
 		(event.locals as Locals).userId = authTokenPayload.userId;
@@ -33,10 +35,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	if (pathname.startsWith(apiRoutePrefix)) {
-		return handleApiRoutes(event, resolve, !!authTokenPayload);
+		return handleApiRoutes(event, resolve, authTokenPayload);
 	}
 
-	const redirectLocation = determineRedirectLocation(pathname, !!authTokenPayload);
+	const redirectLocation = determineRedirectLocation(pathname, authTokenPayload);
 
 	if (redirectLocation) {
 		const headers = { Location: redirectLocation };
@@ -57,8 +59,13 @@ async function authenticate(event: RequestEvent): Promise<AuthTokenPayload | nul
 	return (await verifyAuthToken(token))?.payload ?? null;
 }
 
-async function handleApiRoutes(event: RequestEvent, resolve: ResolveHandler, isAuthenticated: boolean): Promise<Response> {
+async function handleApiRoutes(event: RequestEvent, resolve: ResolveHandler, authTokenPayload: AuthTokenPayload | null): Promise<Response> {
 	const routeNeedsAuthentication = !unauthenticatedApiRoutes.some((route) => event.url.pathname.startsWith(route));
+	const isAuthenticated = !!authTokenPayload;
+
+	if (event.url.pathname.startsWith(adminApiRoutePrefix) && authTokenPayload?.isAdmin !== true) {
+		return new Response("Unauthorized", { status: UNAUTHORIZED_STATUS });
+	}
 
 	// prettier-ignore
 	return !isAuthenticated && routeNeedsAuthentication
@@ -66,10 +73,13 @@ async function handleApiRoutes(event: RequestEvent, resolve: ResolveHandler, isA
 		: await resolve(event);
 }
 
-function determineRedirectLocation(pathname: string, isAuthenticated: boolean): string | null {
+function determineRedirectLocation(pathname: string, authTokenPayload: AuthTokenPayload | null): string | null {
 	const routeNeedsAuthentication = !unauthenticatedRoutes.some((route) => pathname.startsWith(route));
+	const isAuthenticated = !!authTokenPayload;
 
-	if (isAuthenticated && !routeNeedsAuthentication) {
+	if (pathname.startsWith(adminRoutePrefix) && authTokenPayload?.isAdmin !== true) {
+		return "/";
+	} else if (isAuthenticated && !routeNeedsAuthentication) {
 		return "/";
 	} else if (!isAuthenticated && routeNeedsAuthentication) {
 		return "/login";
