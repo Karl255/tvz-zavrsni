@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { httpClient } from "$lib/api/httpClient";
+	import { validateEmail } from "$lib/service/validation.service";
 
 	let email = "";
 	let password = "";
 
-	// TODO #6: validation
+	let isValid = false;
+	$: isValid = validateEmail(email);
+	$: console.log("isValid", isValid);
 
 	async function login() {
 		const response = await httpClient.get("/api/users", { email, password });
@@ -14,6 +17,7 @@
 			goto("/");
 		} else {
 			console.log(response);
+			// TODO: display error
 		}
 	}
 </script>
@@ -27,7 +31,13 @@
 	<!-- prettier-ignore -->
 	<input type="password" id="password" bind:value={password}>
 
-	<button on:click={login}>Login</button>
+	<button
+		class="btn--primary"
+		on:click={login}
+		disabled={!isValid}
+	>
+		Login
+	</button>
 </div>
 
 <style lang="scss">
@@ -44,12 +54,15 @@
 	}
 
 	label + input {
-		margin-top: 0.5rem;
+		margin-top: 0.25rem;
 	}
 
-	button,
 	input {
 		font: inherit;
 		padding: 0.25rem;
+	}
+
+	button {
+		justify-content: center;
 	}
 </style>

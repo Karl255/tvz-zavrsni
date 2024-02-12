@@ -1,20 +1,25 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { httpClient } from "$lib/api/httpClient";
+	import { validateRegister } from "$lib/service/validation.service";
 
 	let email = "";
 	let password = "";
 	let passwordRepeat = "";
 
-	// TODO #6: validation
+	let isValid = false;
+	$: isValid = validateRegister(email, password, passwordRepeat);
 
 	async function register() {
-		const response = await httpClient.post("/api/users", { email, password });
+		if (isValid) {
+			const response = await httpClient.post("/api/users", { email, password });
 
-		if (response.ok) {
-			goto("/");
-		} else {
-			console.log(response);
+			if (response.ok) {
+				goto("/");
+			} else {
+				console.log(response);
+				// TODO: display error
+			}
 		}
 	}
 </script>
@@ -32,7 +37,13 @@
 	<!-- prettier-ignore -->
 	<input type="password" id="password-repeat" bind:value={passwordRepeat}>
 
-	<button on:click={register}>Register</button>
+	<button
+		class="btn--primary"
+		on:click={register}
+		disabled={!isValid}
+	>
+		Register
+	</button>
 </div>
 
 <style lang="scss">
@@ -49,12 +60,15 @@
 	}
 
 	label + input {
-		margin-top: 0.5rem;
+		margin-top: 0.25rem;
 	}
 
-	button,
 	input {
 		font: inherit;
 		padding: 0.25rem;
+	}
+
+	button {
+		justify-content: center;
 	}
 </style>

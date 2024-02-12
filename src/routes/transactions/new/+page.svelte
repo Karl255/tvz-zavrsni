@@ -74,9 +74,4 @@
 			margin-top: 0.25rem;
 		}
 	}
-
-	button:disabled {
-		opacity: 0.7;
-		cursor: default;
-	}
 </style>
