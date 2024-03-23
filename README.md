@@ -1,9 +1,3 @@
-# Online deploy aplikacije
-
-Aplikacija je javno dostupna na [https://tvz-njp-projekt-kbistrick.vercel.app/](https://tvz-njp-projekt-kbistrick.vercel.app/).
-
-
-
 # Lokalno pokretanje
 
 ## PostgreSQL baza podataka
@@ -25,7 +19,7 @@ Primjer:
 
 ```sh
 # .env.dev
-export PGDATABASE=tvz-njp-projekt
+export PGDATABASE=tvz-zavrsni
 export PGUSERNAME=postgres
 export PGPASSWORD=postgres
 ```
