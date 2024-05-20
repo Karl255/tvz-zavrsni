@@ -1,9 +1,11 @@
-import { accountApi } from "$lib/api/account.api";
+import { AccountApi } from "$lib/api/account.api";
 import type { PageLoad } from "./$types";
 
 export const ssr = false;
 
-export const load: PageLoad = async () => {
+export const load: PageLoad = async ({ fetch }) => {
+	const accountApi = new AccountApi(fetch);
+
 	return {
 		accounts: await accountApi.getAll(),
 	};

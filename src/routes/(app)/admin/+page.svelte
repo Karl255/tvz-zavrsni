@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { userAdminApi } from "$lib/api/user.adminApi";
+	import { UserAdminApi } from "$lib/api/user.adminApi";
 	import type { User } from "$lib/model/user.model";
 	import type { PageData } from "./$types";
 	import UserRow from "./UserRow.svelte";
 
 	export let data: PageData;
+
+	const userAdminApi = new UserAdminApi(fetch);
 
 	async function updateUser(newUser: User) {
 		const response = await userAdminApi.update(newUser.id, newUser.isAdmin);

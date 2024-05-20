@@ -1,9 +1,11 @@
-import { labelApi } from "$lib/api/label.api";
+import { LabelApi } from "$lib/api/label.api";
 import type { PageLoad } from "./$types";
 
 export const ssr = false;
 
-export const load: PageLoad = async () => {
+export const load: PageLoad = async ({ fetch }) => {
+	const labelApi = new LabelApi(fetch);
+
 	return {
 		labels: await labelApi.getAll(),
 	};

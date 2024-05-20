@@ -14,7 +14,6 @@
 	let newDate = transaction.date;
 	let isValid = false;
 	$: isValid = validate(newAmount, newDescription, newDate);
-	$: console.log("isValid", isValid);
 
 	function validate(amount: number, description: string, date: string) {
 		return amount !== 0 && description.length >= 5 && validateIsoDate(date);

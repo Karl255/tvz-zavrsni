@@ -1,11 +1,25 @@
 import type { Account, AccountType } from "$lib/model/account.model";
-import { httpClient } from "./httpClient";
+import { HttpClient } from "./httpClient";
 
 const endpoint = "/api/accounts";
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
-export const accountApi = {
-	getAll: async () => (await (await httpClient.get(endpoint, {})).json()) as Account[],
-	getOne: async (accountId: number) => (await (await httpClient.get(idEndpoint(accountId), {})).json()) as Account,
-	create: async (name: string, type: AccountType) => (await (await httpClient.post(endpoint, { name, type })).json()) as Account,
-};
+export class AccountApi {
+	httpClient: HttpClient;
+
+	constructor(fetchFunction: typeof fetch = fetch) {
+		this.httpClient = new HttpClient(fetchFunction);
+	}
+
+	async getAll() {
+		return (await (await this.httpClient.get(endpoint, {})).json()) as Account[];
+	}
+
+	async getOne(accountId: number) {
+		return (await (await this.httpClient.get(idEndpoint(accountId), {})).json()) as Account;
+	}
+
+	async create(name: string, type: AccountType) {
+		return (await (await this.httpClient.post(endpoint, { name, type })).json()) as Account;
+	}
+}

@@ -1,12 +1,18 @@
-async function requestWithBody(method: string, endpoint: string, body: object): Promise<Response> {
-	return await fetch(endpoint, {
-		method,
-		body: JSON.stringify(body),
-	});
-}
+export class HttpClient {
+	private fetchFunction: typeof fetch;
 
-export const httpClient = {
-	get: async (endpoint: string, params: Record<string, string | number | boolean | null | undefined>): Promise<Response> => {
+	constructor(fetchFunction: typeof fetch) {
+		this.fetchFunction = fetchFunction;
+	}
+
+	private async fetchWithBody(method: string, endpoint: string, body: object) {
+		return await this.fetchFunction(endpoint, {
+			method,
+			body: JSON.stringify(body),
+		});
+	}
+
+	async get(endpoint: string, params: Record<string, string | number | boolean | null | undefined>): Promise<Response> {
 		const queryParams = Object.entries(params)
 			.filter(([_, value]) => value !== undefined && value !== null)
 			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string | number | boolean)}`)
@@ -14,11 +20,22 @@ export const httpClient = {
 
 		const url = `${endpoint}?${queryParams}`;
 
-		return await fetch(url, { method: "GET" });
-	},
+		return await this.fetchFunction(url, { method: "GET" });
+	}
 
-	post: async (endpoint: string, body: object) => requestWithBody("POST", endpoint, body),
-	put: async (endpoint: string, body: object) => requestWithBody("PUT", endpoint, body),
-	patch: async (endpoint: string, body: object) => requestWithBody("PATCH", endpoint, body),
-	delete: async (endpoint: string, body: object) => requestWithBody("DELETE", endpoint, body),
-};
+	async post(endpoint: string, body: object) {
+		return await this.fetchWithBody("POST", endpoint, body);
+	}
+
+	async put(endpoint: string, body: object) {
+		return await this.fetchWithBody("PUT", endpoint, body);
+	}
+
+	async patch(endpoint: string, body: object) {
+		return await this.fetchWithBody("PATCH", endpoint, body);
+	}
+
+	async delete(endpoint: string, body: object) {
+		return await this.fetchWithBody("DELETE", endpoint, body);
+	}
+}

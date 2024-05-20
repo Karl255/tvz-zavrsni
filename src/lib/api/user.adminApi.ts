@@ -1,11 +1,25 @@
 import type { User } from "$lib/model/user.model";
-import { httpClient } from "./httpClient";
+import { HttpClient } from "./httpClient";
 
 const endpoint = "/api/admin/users";
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
-export const userAdminApi = {
-	getAll: async () => (await (await httpClient.get(endpoint, {})).json()) as User[],
-	update: async (userId: number, newIsAdmin: boolean) => await httpClient.patch(idEndpoint(userId), { isAdmin: newIsAdmin } satisfies Partial<User>),
-	delete: async (userId: number) => await httpClient.delete(idEndpoint(userId), {}),
-};
+export class UserAdminApi {
+	httpClient: HttpClient;
+
+	constructor(fetchFunction: typeof fetch = fetch) {
+		this.httpClient = new HttpClient(fetchFunction);
+	}
+
+	async getAll() {
+		return (await (await this.httpClient.get(endpoint, {})).json()) as User[];
+	}
+
+	async update(userId: number, newIsAdmin: boolean) {
+		return await this.httpClient.patch(idEndpoint(userId), { isAdmin: newIsAdmin } satisfies Partial<User>);
+	}
+
+	async delete(userId: number) {
+		return await this.httpClient.delete(idEndpoint(userId), {});
+	}
+}

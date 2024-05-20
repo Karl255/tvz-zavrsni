@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { labelApi } from "$lib/api/label.api";
+	import { LabelApi } from "$lib/api/label.api";
 	import type { Label } from "$lib/model/label.model";
 	import { validateLabelName } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
 	import LabelRow from "./LabelRow.svelte";
 
 	export let data: PageData;
+
+	const labelApi = new LabelApi(fetch);
 
 	let searchInput = "";
 	let isValidLabelName = false;

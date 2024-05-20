@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { httpClient } from "$lib/api/httpClient";
+	import { HttpClient } from "$lib/api/httpClient";
+
+	const httpClient = new HttpClient(fetch);
 
 	let output = "";
 

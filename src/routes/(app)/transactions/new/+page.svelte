@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { transactionApi } from "$lib/api/transaction.api";
-	import { transactionLabelApi } from "$lib/api/transactionLabel.api";
+	import { TransactionApi } from "$lib/api/transaction.api";
+	import { TransactionLabelApi } from "$lib/api/transactionLabel.api";
 	import LabelSelect from "$lib/component/LabelSelect.svelte";
 	import type { Label } from "$lib/model/label.model";
 	import type { Transaction } from "$lib/model/transaction.model";
@@ -8,6 +8,9 @@
 	import type { PageData } from "./$types";
 
 	export let data: PageData;
+
+	const transactionApi = new TransactionApi(fetch);
+	const transactionLabelApi = new TransactionLabelApi(fetch);
 
 	let accountId: number | null = null;
 	let amount = 0;

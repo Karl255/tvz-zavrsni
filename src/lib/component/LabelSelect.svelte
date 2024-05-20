@@ -12,7 +12,6 @@
 
 	function updateSelected() {
 		selectedLabels = checkableLabels.filter((label) => label.checked);
-		console.log("selectedLabels", selectedLabels);
 	}
 </script>
 

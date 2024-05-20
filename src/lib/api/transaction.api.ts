@@ -1,23 +1,35 @@
 import type { IsoDate, Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
-import { httpClient } from "./httpClient";
+import { HttpClient } from "./httpClient";
 
 const endpoint = "/api/transactions";
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
-export const transactionApi = {
-	getAll: async (accountId?: number) => (await (await httpClient.get(endpoint, { accountId })).json()) as TransactionWithLabels[],
+export class TransactionApi {
+	httpClient: HttpClient;
 
-	create: async (accountId: number, amount: number, description: string, date: IsoDate) => await httpClient.post(endpoint, { accountId, amount, description, date }),
+	constructor(fetchFunction: typeof fetch = fetch) {
+		this.httpClient = new HttpClient(fetchFunction);
+	}
 
-	update: async (transactionId: number, newAmount: number, newDescription: string, newDate: IsoDate) => {
+	async getAll(accountId?: number) {
+		return (await (await this.httpClient.get(endpoint, { accountId })).json()) as TransactionWithLabels[];
+	}
+
+	async create(accountId: number, amount: number, description: string, date: IsoDate) {
+		return await this.httpClient.post(endpoint, { accountId, amount, description, date });
+	}
+
+	async update(transactionId: number, newAmount: number, newDescription: string, newDate: IsoDate) {
 		const payload: Partial<Transaction> = {
 			amount: newAmount,
 			description: newDescription,
 			date: newDate,
 		};
 
-		return await httpClient.patch(idEndpoint(transactionId), payload);
-	},
+		return await this.httpClient.patch(idEndpoint(transactionId), payload);
+	}
 
-	delete: async (transactionId: number) => await httpClient.delete(idEndpoint(transactionId), {}),
-};
+	async delete(transactionId: number) {
+		return await this.httpClient.delete(idEndpoint(transactionId), {});
+	}
+}

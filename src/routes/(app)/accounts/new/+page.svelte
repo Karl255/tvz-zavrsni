@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { accountApi } from "$lib/api/account.api";
+	import { AccountApi } from "$lib/api/account.api";
 	import { AccountType } from "$lib/model/account.model";
 	import { validateAccountName, validateAccountType } from "$lib/service/validation.service";
+
+	const accountApi = new AccountApi(fetch);
 
 	let name = "";
 	let type = AccountType.CHECKING;

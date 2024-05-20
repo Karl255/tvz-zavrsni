@@ -1,7 +1,15 @@
-import { httpClient } from "./httpClient";
+import { HttpClient } from "./httpClient";
 
 const endpoint = "/api/transactionLabels";
 
-export const transactionLabelApi = {
-	create: async (transactionId: number, labelId: number) => await httpClient.post(endpoint, { transactionId, labelId }),
-};
+export class TransactionLabelApi {
+	httpClient: HttpClient;
+
+	constructor(fetchFunction: typeof fetch = fetch) {
+		this.httpClient = new HttpClient(fetchFunction);
+	}
+
+	async create(transactionId: number, labelId: number) {
+		return await this.httpClient.post(endpoint, { transactionId, labelId });
+	}
+}

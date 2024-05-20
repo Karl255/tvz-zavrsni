@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { httpClient } from "$lib/api/httpClient";
+	import { HttpClient } from "$lib/api/httpClient";
 	import { validateEmail, validateEqual, validatePassword } from "$lib/service/validation.service";
+
+	const httpClient = new HttpClient(fetch);
 
 	let email = "";
 	let password = "";

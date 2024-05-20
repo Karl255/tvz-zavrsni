@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { transactionApi } from "$lib/api/transaction.api";
+	import { TransactionApi } from "$lib/api/transaction.api";
 	import type { Account } from "$lib/model/account.model";
 	import type { TransactionWithLabels } from "$lib/model/transaction.model";
 	import TransactionRow from "./TransactionRow.svelte";
+
+	const transactionApi = new TransactionApi(fetch);
 
 	export let accounts: Account[];
 	export let transactions: TransactionWithLabels[];
