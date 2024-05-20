@@ -1,6 +1,5 @@
-import { getLocals } from "$hooks.server";
-import type { PageLoad } from "./$types";
+import type { LayoutServerLoad } from "./$types";
 
-export const load: PageLoad = ({ locals }) => {
-	return { locals: getLocals(locals) };
+export const load: LayoutServerLoad = ({ locals }) => {
+	return { locals };
 };

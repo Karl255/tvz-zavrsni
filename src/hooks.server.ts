@@ -14,13 +14,8 @@ const UNAUTHORIZED_STATUS = 401;
 
 type ResolveHandler = Parameters<Handle>[0]["resolve"];
 
-export interface Locals {
-	userId: number;
-	isAdmin: boolean;
-}
-
-export function getLocals(locals: App.Locals): Locals {
-	return locals as Locals;
+function setRequestEventLocals(event: RequestEvent, locals: App.Locals) {
+	event.locals = locals;
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -30,8 +25,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const authTokenPayload = await authenticate(event);
 
 	if (authTokenPayload) {
-		(event.locals as Locals).userId = authTokenPayload.userId;
-		(event.locals as Locals).isAdmin = authTokenPayload.isAdmin;
+		setRequestEventLocals(event, {
+			userId: authTokenPayload.userId,
+			isAdmin: authTokenPayload.isAdmin,
+		});
 	}
 
 	if (pathname.startsWith(apiRoutePrefix)) {
