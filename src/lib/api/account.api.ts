@@ -1,7 +1,7 @@
 import type { Account, AccountType } from "$lib/model/account.model";
-import { HttpClient } from "./httpClient";
+import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = "/api/accounts";
+const endpoint = resolveEndpoint("/api/accounts");
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
 export class AccountApi {

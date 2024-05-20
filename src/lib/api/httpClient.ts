@@ -1,3 +1,5 @@
+import { browser } from "$app/environment";
+
 export class HttpClient {
 	private fetchFunction: typeof fetch;
 
@@ -38,4 +40,8 @@ export class HttpClient {
 	async delete(endpoint: string, body: object) {
 		return await this.fetchWithBody("DELETE", endpoint, body);
 	}
+}
+
+export function resolveEndpoint(endpoint: string): string {
+	return browser ? location.origin + endpoint : endpoint;
 }

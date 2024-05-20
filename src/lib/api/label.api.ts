@@ -1,7 +1,7 @@
 import type { Label } from "$lib/model/label.model";
-import { HttpClient } from "./httpClient";
+import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = "/api/labels";
+const endpoint = resolveEndpoint("/api/labels");
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
 export class LabelApi {

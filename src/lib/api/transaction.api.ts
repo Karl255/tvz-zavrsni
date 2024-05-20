@@ -1,7 +1,7 @@
 import type { IsoDate, Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
-import { HttpClient } from "./httpClient";
+import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = "/api/transactions";
+const endpoint = resolveEndpoint("/api/transactions");
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
 export class TransactionApi {

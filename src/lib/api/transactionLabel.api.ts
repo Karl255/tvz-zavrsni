@@ -1,6 +1,6 @@
-import { HttpClient } from "./httpClient";
+import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = "/api/transactionLabels";
+const endpoint = resolveEndpoint("/api/transactionLabels");
 
 export class TransactionLabelApi {
 	httpClient: HttpClient;

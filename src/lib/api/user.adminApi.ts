@@ -1,7 +1,7 @@
 import type { User } from "$lib/model/user.model";
-import { HttpClient } from "./httpClient";
+import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = "/api/admin/users";
+const endpoint = resolveEndpoint("/api/admin/users");
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
 export class UserAdminApi {
