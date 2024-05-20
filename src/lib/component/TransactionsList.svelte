@@ -4,7 +4,7 @@
 	import type { TransactionWithLabels } from "$lib/model/transaction.model";
 	import TransactionRow from "./TransactionRow.svelte";
 
-	const transactionApi = new TransactionApi(fetch);
+	const transactionApi = new TransactionApi();
 
 	export let accounts: Account[];
 	export let transactions: TransactionWithLabels[];

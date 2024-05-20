@@ -7,7 +7,7 @@
 
 	export let data: PageData;
 
-	const labelApi = new LabelApi(fetch);
+	const labelApi = new LabelApi();
 
 	let searchInput = "";
 	let isValidLabelName = false;

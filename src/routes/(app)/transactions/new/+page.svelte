@@ -9,8 +9,8 @@
 
 	export let data: PageData;
 
-	const transactionApi = new TransactionApi(fetch);
-	const transactionLabelApi = new TransactionLabelApi(fetch);
+	const transactionApi = new TransactionApi();
+	const transactionLabelApi = new TransactionLabelApi();
 
 	let accountId: number | null = null;
 	let amount = 0;

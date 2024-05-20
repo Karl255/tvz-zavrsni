@@ -4,7 +4,7 @@
 	import { AccountType } from "$lib/model/account.model";
 	import { validateAccountName, validateAccountType } from "$lib/service/validation.service";
 
-	const accountApi = new AccountApi(fetch);
+	const accountApi = new AccountApi();
 
 	let name = "";
 	let type = AccountType.CHECKING;

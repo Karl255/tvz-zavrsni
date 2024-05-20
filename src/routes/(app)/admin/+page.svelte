@@ -6,7 +6,7 @@
 
 	export let data: PageData;
 
-	const userAdminApi = new UserAdminApi(fetch);
+	const userAdminApi = new UserAdminApi();
 
 	async function updateUser(newUser: User) {
 		const response = await userAdminApi.update(newUser.id, newUser.isAdmin);
