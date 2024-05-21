@@ -1,28 +1,28 @@
 <script lang="ts">
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { Tag } from "$lib/model/tag.model";
-	import { validateTagName } from "$lib/service/validation.service";
+	import type { Attribute } from "$lib/model/attribute.model";
+	import { validateAttributeName } from "$lib/service/validation.service";
 
-	export let tag: Tag;
-	export let updateTag: (newTag: Tag) => void;
-	export let deleteTag: (tagId: number) => void;
+	export let attribute: Attribute;
+	export let updateAttribute: (newAttribute: Attribute) => void;
+	export let deleteAttribute: (attributeId: number) => void;
 
-	let newName = tag.name;
+	let newName = attribute.name;
 	let isEditing = false;
 	let isNewNameValid = false;
-	$: isNewNameValid = validateTagName(newName);
+	$: isNewNameValid = validateAttributeName(newName);
 
 	function startEdit() {
-		newName = tag.name;
+		newName = attribute.name;
 		isEditing = !isEditing;
 	}
 
 	function saveEdit() {
 		if (isNewNameValid) {
-			updateTag({
-				id: tag.id,
+			updateAttribute({
+				id: attribute.id,
 				name: newName,
-				userId: tag.userId,
+				userId: attribute.userId,
 			});
 
 			isEditing = !isEditing;
@@ -33,17 +33,17 @@
 		isEditing = !isEditing;
 	}
 
-	function deleteThisTag() {
-		deleteTag(tag.id);
+	function deleteThisAttribute() {
+		deleteAttribute(attribute.id);
 	}
 </script>
 
-<article class="tag">
+<article class="attribute">
 	{#if isEditing}
 		<!-- prettier-ignore -->
 		<input type="text" bind:value={newName}>
 	{:else}
-		<p title="tag name">{tag.name}</p>
+		<p title="attribute name">{attribute.name}</p>
 	{/if}
 
 	<div class="actions">
@@ -63,7 +63,7 @@
 			</button>
 
 			<!-- prettier-ignore -->
-			<button class="hover-only" on:click={deleteThisTag}>
+			<button class="hover-only" on:click={deleteThisAttribute}>
 				<Icon icon={IconType.DELETE} />
 			</button>
 		{/if}
@@ -71,7 +71,7 @@
 </article>
 
 <style lang="scss">
-	.tag {
+	.attribute {
 		padding: 0.5rem 1rem;
 
 		display: flex;
@@ -90,7 +90,7 @@
 		visibility: hidden;
 	}
 
-	.tag:hover .hover-only {
+	.attribute:hover .hover-only {
 		visibility: visible;
 	}
 </style>

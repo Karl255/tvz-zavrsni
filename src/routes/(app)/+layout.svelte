@@ -62,6 +62,14 @@
 
 			<li>
 				<!-- prettier-ignore -->
+				<LinkButton type="tertiary" href="/attributes">
+					<Icon icon={IconType.TAG} />
+					My attributes
+				</LinkButton>
+			</li>
+
+			<li>
+				<!-- prettier-ignore -->
 				<LinkButton type="tertiary" href="/transactions/new">
 					<Icon icon={IconType.PLUS} />
 					Record transaction

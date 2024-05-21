@@ -54,7 +54,7 @@
 </script>
 
 <div class="content">
-	<h1 class="title">My tag</h1>
+	<h1 class="title">My tags</h1>
 
 	<p>Here you can create tags. Tags help you categorise your transactions.</p>
 
@@ -71,7 +71,7 @@
 
 	<ul class="list">
 		{#each searchAndSort(data.tags, searchInput) as tag}
-			<li class="tag">
+			<li>
 				<TagRow
 					{tag}
 					{updateTag}

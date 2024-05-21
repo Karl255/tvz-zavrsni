@@ -22,6 +22,10 @@ export function validateTagName(name: string) {
 	return name.length >= tagMinLength;
 }
 
+export function validateAttributeName(name: string) {
+	return name.length >= tagMinLength;
+}
+
 export function validateAccountName(name: string) {
 	return name.length >= accountNameMinLength;
 }
