@@ -1,3 +1,5 @@
+import type { ZodError } from "zod";
+
 type JsonValue = string | number | boolean | JsonValue[] | object;
 
 export function searchParamsHasAll(searchParams: URLSearchParams, params: string[]) {
@@ -14,6 +16,10 @@ export function createJsonResponse(body: JsonValue | null, initOrStatus: Respons
 export function createRequiredFieldsResponse(requiredParams: string[]): Response {
 	const message = "Required fields: " + requiredParams.join(", ");
 	return createJsonResponse({ message }, 400);
+}
+
+export function createValidationErrorResponse(error: ZodError): Response {
+	return createJsonResponse({ error }, 400);
 }
 
 export function createCreatedResponse(body: JsonValue) {

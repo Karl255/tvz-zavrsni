@@ -27,7 +27,7 @@
 						</div>
 
 						<!-- prettier-ignore -->
-						<p class="account__balance" title="balance">{account.balance.toFixed(2)} €</p>
+						<p class="account__balance" title="balance">{(account.balance ?? 0).toFixed(2)} €</p>
 					</article>
 				</a>
 			</li>

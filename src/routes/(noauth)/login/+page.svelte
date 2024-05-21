@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { HttpClient } from "$lib/api/httpClient";
-	import type { AuthError } from "$lib/model/AuthError.model";
+	import type { AuthError } from "$lib/model/authError.model";
 	import { validateEmail } from "$lib/service/validation.service";
 
 	const httpClient = new HttpClient(fetch);

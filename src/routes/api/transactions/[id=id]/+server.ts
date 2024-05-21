@@ -1,7 +1,6 @@
-import type { Transaction } from "$lib/model/transaction.model";
+import { Transaction } from "$lib/model/transaction.model";
 import { transactionRepo } from "$lib/server/repo/transaction.repo";
-import { createJsonResponse, createNoContentResponse, createNotFoundResponse, getIdParam } from "$lib/util/api.util";
-import type { NoId } from "$lib/util/rest.util";
+import { createJsonResponse, createNoContentResponse, createNotFoundResponse, createValidationErrorResponse, getIdParam } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ locals, params }) => {
@@ -10,10 +9,12 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 };
 
 export const PATCH: RequestHandler = async ({ request, locals, params }) => {
-	type Payload = Partial<NoId<Transaction>>;
+	const parsing = Transaction.partial().safeParse(await request.json());
 
-	const payload: Payload = await request.json();
-	await transactionRepo.update(locals.userId, getIdParam(params), payload.amount ?? null, payload.description ?? null, payload.date ?? null);
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
+	}
+	await transactionRepo.update(locals.userId, getIdParam(params), parsing.data.amount ?? null, parsing.data.description ?? null, parsing.data.date ?? null);
 
 	return createJsonResponse({});
 };

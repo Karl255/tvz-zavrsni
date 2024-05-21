@@ -1,5 +1,5 @@
 import { AUTH_TOKEN_COOKIE_NAME } from "$lib/constants";
-import type { AuthError } from "$lib/model/AuthError.model";
+import type { AuthError } from "$lib/model/authError.model";
 import type { User } from "$lib/model/user.model";
 import { userRepo } from "$lib/server/repo/user.repo";
 import { getSecondsSinceEpoch } from "$lib/util/time.util";

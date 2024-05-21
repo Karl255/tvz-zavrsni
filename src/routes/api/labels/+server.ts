@@ -1,8 +1,6 @@
-import type { Label } from "$lib/model/label.model";
+import { Label } from "$lib/model/label.model";
 import { labelRepo } from "$lib/server/repo/label.repo";
-import { createJsonResponse, createRequiredFieldsResponse } from "$lib/util/api.util";
-import type { Field, NoId } from "$lib/util/rest.util";
-import { parsePartial as parseFromPartial } from "$lib/util/util";
+import { createJsonResponse, createValidationErrorResponse } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ locals }) => {
@@ -10,16 +8,15 @@ export const GET: RequestHandler = async ({ locals }) => {
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-	type Payload = NoId<Label>;
-	const requiredFields: Field<Payload>[] = ["name"];
+	const Payload = Label.omit({ id: true, userId: true });
 
-	const payload = parseFromPartial<Payload>(await request.json(), requiredFields);
+	const parsing = Payload.safeParse(await request.json());
 
-	if (!payload) {
-		return createRequiredFieldsResponse(requiredFields);
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
 	}
 
-	const account = await labelRepo.create(locals.userId, payload.name);
+	const account = await labelRepo.create(locals.userId, parsing.data.name);
 
 	return createJsonResponse(account);
 };

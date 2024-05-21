@@ -1,8 +1,6 @@
-import type { Transaction } from "$lib/model/transaction.model";
+import { Transaction } from "$lib/model/transaction.model";
 import { transactionRepo } from "$lib/server/repo/transaction.repo";
-import { createJsonResponse, createRequiredFieldsResponse, createUnauthorizedResponse } from "$lib/util/api.util";
-import type { Field, NoId } from "$lib/util/rest.util";
-import { parsePartial as parseFromPartial } from "$lib/util/util";
+import { createJsonResponse, createUnauthorizedResponse, createValidationErrorResponse } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ url, locals }) => {
@@ -12,16 +10,15 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-	type Payload = NoId<Transaction>;
-	const requiredFields: Field<Payload>[] = ["accountId", "amount", "description", "date"];
+	const Payload = Transaction.omit({ id: true });
 
-	const payload = parseFromPartial<Payload>(await request.json(), requiredFields);
+	const parsing = Payload.safeParse(await request.json());
 
-	if (!payload) {
-		return createRequiredFieldsResponse(requiredFields);
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
 	}
 
-	const account = await transactionRepo.create(locals.userId, payload.accountId, payload.amount, payload.description, payload.date);
+	const account = await transactionRepo.create(locals.userId, parsing.data.accountId, parsing.data.amount, parsing.data.description, parsing.data.date);
 
 	return account ? createJsonResponse(account) : createUnauthorizedResponse();
 };

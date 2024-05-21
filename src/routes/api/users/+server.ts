@@ -1,30 +1,33 @@
-import type { AuthError } from "$lib/model/AuthError.model";
+import type { AuthError } from "$lib/model/authError.model";
 import type { User } from "$lib/model/user.model";
 import { attemptLogin, createAuthHeaders, createToken, registerUser } from "$lib/server/service/auth.service";
 import { validateEmail, validatePassword } from "$lib/service/validation.service";
-import { createJsonResponse, createRequiredFieldsResponse, searchParamsToObject } from "$lib/util/api.util";
-import { parsePartial as parseFromPartial } from "$lib/util/util";
+import { createJsonResponse, createValidationErrorResponse, searchParamsToObject } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
+import { z } from "zod";
 
-interface LoginQueryParams {
-	email: string;
-	password: string;
-}
+const LoginQueryParams = z.object({
+	email: z.string(),
+	password: z.string(),
+});
 
-interface RegisterRequest {
-	email: string;
-	password: string;
-}
+type LoginQueryParams = z.infer<typeof LoginQueryParams>
+
+const RegisterRequest = z.object({
+	email: z.string(),
+	password: z.string(),
+});
+
+type RegisterRequest = z.infer<typeof RegisterRequest>;
 
 export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) => {
-	const requiredParams: (keyof LoginQueryParams)[] = ["email", "password"];
-	const params = parseFromPartial(searchParamsToObject<LoginQueryParams>(url.searchParams), requiredParams);
+	const parsing = LoginQueryParams.safeParse(searchParamsToObject<LoginQueryParams>(url.searchParams));
 
-	if (!params) {
-		return createRequiredFieldsResponse(requiredParams);
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
 	}
 
-	const userOrError = await attemptLogin(params.email, params.password);
+	const userOrError = await attemptLogin(parsing.data.email, parsing.data.password);
 
 	if ((userOrError as User).email) {
 		const user = userOrError as User;
@@ -39,18 +42,17 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const requiredFields: (keyof RegisterRequest)[] = ["email", "password"];
-	const payload = parseFromPartial<RegisterRequest>(await request.json(), requiredFields);
+	const parsing = RegisterRequest.safeParse(await request.json());
 
-	if (!payload) {
-		return createRequiredFieldsResponse(requiredFields);
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
 	}
 
-	if (!validateEmail(payload.email) || !validatePassword(payload.password)) {
+	if (!validateEmail(parsing.data.email) || !validatePassword(parsing.data.password)) {
 		return createJsonResponse({ message: "Invalid email or password" }, 400);
 	}
 
-	const createdUser = await registerUser(payload.email, payload.password);
+	const createdUser = await registerUser(parsing.data.email, parsing.data.password);
 
 	if (createdUser) {
 		const token = await createToken(createdUser.id, createdUser.isAdmin);

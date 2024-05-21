@@ -3,7 +3,7 @@
 
 	export let data: PageData;
 
-	let totalBalance = data.accounts.reduce((total, account) => total + account.balance, 0);
+	let totalBalance = data.accounts.reduce((total, account) => total + (account.balance ?? 0), 0);
 </script>
 
 <div class="content">

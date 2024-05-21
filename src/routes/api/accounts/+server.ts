@@ -1,8 +1,6 @@
-import type { Account } from "$lib/model/account.model";
+import { Account } from "$lib/model/account.model";
 import { accountRepo } from "$lib/server/repo/account.repo";
-import { createJsonResponse, createRequiredFieldsResponse } from "$lib/util/api.util";
-import type { Field, NoId } from "$lib/util/rest.util";
-import { parsePartial as parseFromPartial } from "$lib/util/util";
+import { createJsonResponse, createValidationErrorResponse } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ locals }) => {
@@ -10,16 +8,15 @@ export const GET: RequestHandler = async ({ locals }) => {
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-	type Payload = NoId<Account>;
-	const requiredFields: Field<Payload>[] = ["name", "type"];
+	const Payload = Account.omit({ id: true, userId: true });
 
-	const payload = parseFromPartial<Payload>(await request.json(), requiredFields);
+	const parsing = Payload.safeParse(await request.json());
 
-	if (!payload) {
-		return createRequiredFieldsResponse(requiredFields);
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
 	}
 
-	const account = await accountRepo.create(locals.userId, payload.name, payload.type);
+	const account = await accountRepo.create(locals.userId, parsing.data.name, parsing.data.type);
 
 	return createJsonResponse(account);
 };

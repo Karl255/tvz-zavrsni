@@ -1,7 +1,6 @@
-import type { Account } from "$lib/model/account.model";
+import { Account } from "$lib/model/account.model";
 import { accountRepo } from "$lib/server/repo/account.repo";
-import { createJsonResponse, createNoContentResponse, createNotFoundResponse, getIdParam } from "$lib/util/api.util";
-import type { NoId } from "$lib/util/rest.util";
+import { createJsonResponse, createNoContentResponse, createNotFoundResponse, createValidationErrorResponse, getIdParam } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ locals, params }) => {
@@ -10,10 +9,15 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 };
 
 export const PATCH: RequestHandler = async ({ request, locals, params }) => {
-	type Payload = Partial<NoId<Account>>;
+	const Payload = Account.omit({ id: true, userId: true }).partial();
 
-	const payload: Payload = await request.json();
-	await accountRepo.update(locals.userId, getIdParam(params), payload.name ?? null, payload.type ?? null);
+	const parsing = Payload.safeParse(await request.json());
+
+	if (!parsing.success) {
+		return createValidationErrorResponse(parsing.error);
+	}
+
+	await accountRepo.update(locals.userId, getIdParam(params), parsing.data.name ?? null, parsing.data.type ?? null);
 
 	return createJsonResponse({});
 };
