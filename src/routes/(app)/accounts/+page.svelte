@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import LinkButton from "$lib/component/LinkButton.svelte";
-import { AccountType } from "$lib/model/account.model";
+	import { AccountType } from "$lib/model/account.model";
 	import type { PageData } from "./$types";
 
 	export let data: PageData;

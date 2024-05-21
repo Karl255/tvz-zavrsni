@@ -11,7 +11,7 @@ const LoginQueryParams = z.object({
 	password: z.string(),
 });
 
-type LoginQueryParams = z.infer<typeof LoginQueryParams>
+type LoginQueryParams = z.infer<typeof LoginQueryParams>;
 
 const RegisterRequest = z.object({
 	email: z.string(),

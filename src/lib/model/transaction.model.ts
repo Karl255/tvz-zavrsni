@@ -18,7 +18,7 @@ export const Transaction = z.object({
 	description: z.string(),
 	date: z.string(),
 	accountId: z.number(),
-})
+});
 
 export interface TransactionWithTags extends Transaction {
 	tags: Tag[];
