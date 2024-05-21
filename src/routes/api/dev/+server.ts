@@ -41,7 +41,8 @@ async function initDb() {
 		CREATE TABLE IF NOT EXISTS tag (
 			id SERIAL PRIMARY KEY,
 			name VARCHAR(32),
-			user_id SERIAL NOT NULL REFERENCES "user"(id)
+			user_id SERIAL NOT NULL REFERENCES "user"(id),
+			CONSTRAINT unique_name_per_user UNIQUE (name, user_id)
 		);
 	`;
 
