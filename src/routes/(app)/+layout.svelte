@@ -14,7 +14,7 @@
 
 <div class="page">
 	<header>
-		<h1 class="title">Finance tracker</h1>
+		<h1 class="title">Finances</h1>
 
 		<!-- prettier-ignore -->
 		<button class="btn--tertiary logout-button" on:click={logout}>
