@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
 	import type { Account } from "$lib/model/account.model";
-	import type { TransactionWithLabels } from "$lib/model/transaction.model";
+	import type { TransactionWithTags } from "$lib/model/transaction.model";
 	import TransactionRow from "./TransactionRow.svelte";
 
 	const transactionApi = new TransactionApi();
 
 	export let accounts: Account[];
-	export let transactions: TransactionWithLabels[];
+	export let transactions: TransactionWithTags[];
 
 	let accountMap: Record<number, Account> = {};
 	$: accountMap = accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {});
@@ -16,7 +16,7 @@
 		return accountMap[accountId];
 	}
 
-	async function updateTransaction(newTransaction: TransactionWithLabels) {
+	async function updateTransaction(newTransaction: TransactionWithTags) {
 		const response = await transactionApi.update(newTransaction.id, newTransaction.amount, newTransaction.description, newTransaction.date);
 
 		if (response.ok) {
@@ -32,7 +32,7 @@
 		}
 	}
 
-	function sortTransactions(transactions: TransactionWithLabels[]) {
+	function sortTransactions(transactions: TransactionWithTags[]) {
 		return transactions.toSorted((a, b) => (a.date < b.date ? 1 : 0));
 	}
 </script>
@@ -47,7 +47,7 @@
 			<th>Account</th>
 		{/if}
 
-		<th>Labels</th>
+		<th>Tags</th>
 		<th>Actions</th>
 	</tr>
 

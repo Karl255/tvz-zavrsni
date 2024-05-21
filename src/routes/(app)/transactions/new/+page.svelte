@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
-	import { TransactionLabelApi } from "$lib/api/transactionLabel.api";
-	import LabelSelect from "$lib/component/LabelSelect.svelte";
-	import type { Label } from "$lib/model/label.model";
+	import { TransactionTagApi } from "$lib/api/transactionTag.api";
+	import TagSelect from "$lib/component/TagSelect.svelte";
+	import type { Tag } from "$lib/model/tag.model";
 	import type { Transaction } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
@@ -10,13 +10,13 @@
 	export let data: PageData;
 
 	const transactionApi = new TransactionApi();
-	const transactionLabelApi = new TransactionLabelApi();
+	const transactionTagApi = new TransactionTagApi();
 
 	let accountId: number | null = null;
 	let amount = 0;
 	let description = "";
 	let date = "";
-	let selectedLabels: Label[] = [];
+	let selectedTags: Tag[] = [];
 
 	let isValid = false;
 	$: isValid = validate(accountId, amount, description, date);
@@ -35,8 +35,8 @@
 
 				const transaction = (await response.json()) as Transaction;
 
-				selectedLabels.forEach((label) => {
-					transactionLabelApi.create(transaction.id, label.id);
+				selectedTags.forEach((tag) => {
+					transactionTagApi.create(transaction.id, tag.id);
 				});
 			}
 		}
@@ -73,10 +73,10 @@
 	<!-- prettier-ignore -->
 	<input type="date" id="date" bind:value={date}>
 
-	<label for="labels">Labels</label>
+	<label for="tags">Tags</label>
 	<!-- prettier-ignore -->
 	<div>
-		<LabelSelect labels={data.labels} bind:selectedLabels={selectedLabels} />
+		<TagSelect id="tags" tags={data.tags} bind:selectedTags={selectedTags} />
 	</div>
 
 	<!-- prettier-ignore -->

@@ -1,27 +1,27 @@
 <script lang="ts">
-	import type { Label } from "$lib/model/label.model";
-	import { validateLabelName } from "$lib/service/validation.service";
+	import type { Tag } from "$lib/model/tag.model";
+	import { validateTagName } from "$lib/service/validation.service";
 
-	export let label: Label;
-	export let updateLabel: (newLabel: Label) => void;
-	export let deleteLabel: (labelId: number) => void;
+	export let tag: Tag;
+	export let updateTag: (newTag: Tag) => void;
+	export let deleteTag: (tagid: number) => void;
 
-	let newName = label.name;
+	let newName = tag.name;
 	let isEditing = false;
 	let isNewNameValid = false;
-	$: isNewNameValid = validateLabelName(newName);
+	$: isNewNameValid = validateTagName(newName);
 
 	function startEdit() {
-		newName = label.name;
+		newName = tag.name;
 		isEditing = !isEditing;
 	}
 
 	function saveEdit() {
 		if (isNewNameValid) {
-			updateLabel({
-				id: label.id,
+			updateTag({
+				id: tag.id,
 				name: newName,
-				userId: label.userId,
+				userId: tag.userId,
 			});
 
 			isEditing = !isEditing;
@@ -32,17 +32,17 @@
 		isEditing = !isEditing;
 	}
 
-	function deleteThisLabel() {
-		deleteLabel(label.id);
+	function deleteThisTag() {
+		deleteTag(tag.id);
 	}
 </script>
 
-<article class="label">
+<article class="tag">
 	{#if isEditing}
 		<!-- prettier-ignore -->
 		<input type="text" bind:value={newName}>
 	{:else}
-		<p title="label name">{label.name}</p>
+		<p title="tag name">{tag.name}</p>
 	{/if}
 
 	<div class="actions">
@@ -64,7 +64,7 @@
 			</button>
 
 			<!-- prettier-ignore -->
-			<button class="hover-only" on:click={deleteThisLabel}>
+			<button class="hover-only" on:click={deleteThisTag}>
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
 			</button>
 		{/if}
@@ -72,7 +72,7 @@
 </article>
 
 <style lang="scss">
-	.label {
+	.tag {
 		padding: 0.5rem 1rem;
 
 		display: flex;
@@ -91,7 +91,7 @@
 		visibility: hidden;
 	}
 
-	.label:hover .hover-only {
+	.tag:hover .hover-only {
 		visibility: visible;
 	}
 

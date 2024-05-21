@@ -1,5 +1,5 @@
 import type { Account, AccountType } from "$lib/model/account.model";
-import { sql } from "$lib/server/query";
+import { sql } from "$lib/server/sql";
 
 export const accountRepo = {
 	create: async (userId: number, name: string, type: AccountType): Promise<Account> => {

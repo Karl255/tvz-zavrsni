@@ -1,5 +1,5 @@
 import type { User, UserEntity } from "$lib/model/user.model";
-import { sql } from "$lib/server/query";
+import { sql } from "$lib/server/sql";
 
 export const userRepo = {
 	getAll: async (): Promise<User[]> => {
@@ -49,16 +49,16 @@ export const userRepo = {
 		const toNumberArray = (ids: Id[]) => ids.map(({ id }) => id);
 
 		const accountIds = toNumberArray(await sql<Id[]>`SELECT id FROM account WHERE user_id = ${userId}`);
-		const labelIds = toNumberArray(await sql<Id[]>`SELECT id FROM label WHERE user_id = ${userId}`);
+		const tagIds = toNumberArray(await sql<Id[]>`SELECT id FROM tag WHERE user_id = ${userId}`);
 
 		await sql`
-			DELETE FROM transaction_label
-			WHERE label_id IN ${sql(labelIds)}
+			DELETE FROM transaction_tag
+			WHERE tag_id IN ${sql(tagIds)}
 		`;
 
 		await sql`
-			DELETE FROM label
-			WHERE id IN ${sql(labelIds)}
+			DELETE FROM tag
+			WHERE id IN ${sql(tagIds)}
 		`;
 
 		await sql`

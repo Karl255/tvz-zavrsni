@@ -1,16 +1,16 @@
-import type { IsoDate, Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
-import { sql } from "$lib/server/query";
+import type { IsoDate, Transaction, TransactionWithTags } from "$lib/model/transaction.model";
+import { sql } from "$lib/server/sql";
 import { accountRepo } from "./account.repo";
 
 interface JoinedTransaction extends Transaction {
-	labelId: number | null;
-	labelName: string | null;
+	tagId: number | null;
+	tagName: string | null;
 }
 
-function transformWithJoinedLabels(records: JoinedTransaction[], userId: number): TransactionWithLabels[] {
+function transformWithJoinedTags(records: JoinedTransaction[], userId: number): TransactionWithTags[] {
 	const transactionIds = [...new Set(records.map((jt) => jt.id))];
 
-	const transactions = transactionIds.map<TransactionWithLabels>((transactionId) => {
+	const transactions = transactionIds.map<TransactionWithTags>((transactionId) => {
 		const transactionRecords = records.filter((jt) => jt.id === transactionId);
 
 		return {
@@ -19,11 +19,11 @@ function transformWithJoinedLabels(records: JoinedTransaction[], userId: number)
 			description: transactionRecords[0].description,
 			date: transactionRecords[0].date,
 			accountId: transactionRecords[0].accountId,
-			labels: transactionRecords
-				.filter((record) => record.labelId)
+			tags: transactionRecords
+				.filter((record) => record.tagId)
 				.map((record) => ({
-					id: record.labelId as number,
-					name: record.labelName as string,
+					id: record.tagId as number,
+					name: record.tagName as string,
 					userId,
 				})),
 		};
@@ -51,32 +51,32 @@ export const transactionRepo = {
 		return transactions[0];
 	},
 
-	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithLabels[]> => {
+	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithTags[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS label_id, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS tag_id, l.name AS tag_name, a.id AS account_id
 			FROM transaction t
-			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
-			LEFT JOIN label l ON tl.label_id = l.id
+			LEFT JOIN transaction_tag tl ON t.id = tl.transaction_id
+			LEFT JOIN tag l ON tl.tag_id = l.id
 			JOIN account a ON t.account_id = a.id
 			WHERE a.user_id = ${userId}
 				AND (l.user_id = ${userId} OR l.user_id IS NULL)
 				${accountId ? sql`AND t.account_id = ${accountId}` : sql``}
 		`;
 
-		return transformWithJoinedLabels(records, userId);
+		return transformWithJoinedTags(records, userId);
 	},
 
-	getOne: async (userId: number, transactionId: number): Promise<TransactionWithLabels | null> => {
+	getOne: async (userId: number, transactionId: number): Promise<TransactionWithTags | null> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS labelId, l.name AS label_name, a.id AS account_id
+			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS tag_id, l.name AS tag_name, a.id AS account_id
 			FROM transaction t
-			LEFT JOIN transaction_label tl ON t.id = tl.transaction_id
-			LEFT JOIN label l ON tl.label_id = l.id
+			LEFT JOIN transaction_tag tl ON t.id = tl.transaction_id
+			LEFT JOIN tag l ON tl.tag_id = l.id
 			JOIN account a ON t.account_id = a.id
 			WHERE a.user_id = ${userId} AND t.id = ${transactionId}
 		`;
 
-		return transformWithJoinedLabels(records, userId)[0] ?? null;
+		return transformWithJoinedTags(records, userId)[0] ?? null;
 	},
 
 	update: async (userId: number, transactionId: number, amount: number | null, description: string | null, date: IsoDate | null): Promise<void> => {
@@ -99,7 +99,7 @@ export const transactionRepo = {
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
 		await sql`
-			DELETE FROM transaction_label
+			DELETE FROM transaction_tag
 			WHERE transaction_id = ${transactionId}
 		`;
 

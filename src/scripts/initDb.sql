@@ -20,16 +20,16 @@ CREATE TABLE IF NOT EXISTS transaction (
 	account_id SERIAL NOT NULL REFERENCES account(id)
 );
 
-CREATE TABLE IF NOT EXISTS label (
+CREATE TABLE IF NOT EXISTS tag (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(32),
 	user_id SERIAL NOT NULL REFERENCES "user"(id)
 );
 
-CREATE TABLE IF NOT EXISTS transaction_label (
+CREATE TABLE IF NOT EXISTS transaction_tag (
     transaction_id SERIAL REFERENCES transaction(id),
-    label_id SERIAL REFERENCES label(id),
-    PRIMARY KEY(transaction_id, label_id)
+    tag_id SERIAL REFERENCES tag(id),
+    PRIMARY KEY(transaction_id, tag_id)
 );
 
 INSERT INTO "user" (email, password_hash, is_admin)

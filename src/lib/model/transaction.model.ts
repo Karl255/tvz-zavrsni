@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Label } from "./label.model";
+import { Tag } from "./tag.model";
 import { assertNever, type TypeDiff } from "$lib/util/type.util";
 
 export type IsoDate = string;
@@ -20,13 +20,13 @@ export const Transaction = z.object({
 	accountId: z.number(),
 })
 
-export interface TransactionWithLabels extends Transaction {
-	labels: Label[];
+export interface TransactionWithTags extends Transaction {
+	tags: Tag[];
 }
 
-export const TransactionWithLabels = Transaction.extend({
-	labels: z.array(Label),
+export const TransactionWithTags = Transaction.extend({
+	tags: z.array(Tag),
 });
 
 assertNever<TypeDiff<Transaction, z.infer<typeof Transaction>>>();
-assertNever<TypeDiff<TransactionWithLabels, z.infer<typeof TransactionWithLabels>>>();
+assertNever<TypeDiff<TransactionWithTags, z.infer<typeof TransactionWithTags>>>();

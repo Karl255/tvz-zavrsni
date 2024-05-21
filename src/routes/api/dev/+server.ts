@@ -1,4 +1,4 @@
-import { sql } from "$lib/server/query";
+import { sql } from "$lib/server/sql";
 import { createJsonResponse } from "$lib/util/api.util";
 import { parsePartial } from "$lib/util/util";
 import type { RequestHandler } from "@sveltejs/kit";
@@ -38,7 +38,7 @@ async function initDb() {
 	`;
 
 	r[3] = await sql`
-		CREATE TABLE IF NOT EXISTS label (
+		CREATE TABLE IF NOT EXISTS tag (
 			id SERIAL PRIMARY KEY,
 			name VARCHAR(32),
 			user_id SERIAL NOT NULL REFERENCES "user"(id)
@@ -46,10 +46,10 @@ async function initDb() {
 	`;
 
 	r[4] = await sql`
-		CREATE TABLE IF NOT EXISTS transaction_label (
+		CREATE TABLE IF NOT EXISTS transaction_tag (
 		    transaction_id SERIAL REFERENCES transaction(id),
-		    label_id SERIAL REFERENCES label(id),
-		    PRIMARY KEY(transaction_id, label_id)
+		    tag_id SERIAL REFERENCES tag(id),
+		    PRIMARY KEY(transaction_id, tag_id)
 		);
 	`;
 
@@ -64,9 +64,9 @@ async function seedDb() {
 async function dropTables() {
 	const r = [];
 
-	r[0] = await sql`DROP TABLE IF EXISTS transaction_label CASCADE`;
+	r[0] = await sql`DROP TABLE IF EXISTS transaction_tag CASCADE`;
 	r[1] = await sql`DROP TABLE IF EXISTS transaction CASCADE`;
-	r[2] = await sql`DROP TABLE IF EXISTS label CASCADE`;
+	r[2] = await sql`DROP TABLE IF EXISTS tag CASCADE`;
 	r[3] = await sql`DROP TABLE IF EXISTS account CASCADE`;
 	r[4] = await sql`DROP TABLE IF EXISTS "user" CASCADE`;
 

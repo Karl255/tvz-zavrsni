@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Account } from "$lib/model/account.model";
-	import type { TransactionWithLabels } from "$lib/model/transaction.model";
+	import type { TransactionWithTags } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
 
-	export let transaction: TransactionWithLabels;
+	export let transaction: TransactionWithTags;
 	export let accountResolver: ((accountId: number) => Account) | undefined;
-	export let updateTransaction: (newTransaction: TransactionWithLabels) => void;
+	export let updateTransaction: (newTransaction: TransactionWithTags) => void;
 	export let deleteTransaction: (transactionId: number) => void;
 
 	let isEditing = false;
@@ -27,7 +27,7 @@
 				description: newDescription,
 				date: newDate,
 				accountId: transaction.accountId,
-				labels: transaction.labels,
+				tags: transaction.tags,
 			});
 		} else {
 			newAmount = transaction.amount;
@@ -98,7 +98,7 @@
 	</td>
 {/if}
 
-<td>{transaction.labels.map((l) => l.name).join(", ")}</td>
+<td>{transaction.tags.map((tag) => tag.name).join(", ")}</td>
 
 <td class="actions">
 	<!-- prettier-ignore -->

@@ -1,60 +1,60 @@
 <script lang="ts">
-	import { LabelApi } from "$lib/api/label.api";
-	import type { Label } from "$lib/model/label.model";
-	import { validateLabelName } from "$lib/service/validation.service";
+	import { TagApi } from "$lib/api/tag.api";
+	import type { Tag } from "$lib/model/tag.model";
+	import { validateTagName } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
-	import LabelRow from "./LabelRow.svelte";
+	import TagRow from "./TagRow.svelte";
 
 	export let data: PageData;
 
-	const labelApi = new LabelApi();
+	const tagApi = new TagApi();
 
 	let searchInput = "";
-	let isValidLabelName = false;
-	$: isValidLabelName = validateLabelName(searchInput);
+	let isValidTagName = false;
+	$: isValidTagName = validateTagName(searchInput);
 
-	async function createLabel() {
-		if (isValidLabelName) {
-			const response = await labelApi.create(searchInput);
+	async function createTag() {
+		if (isValidTagName) {
+			const response = await tagApi.create(searchInput);
 
 			if (response.ok) {
-				data.labels.push((await response.json()) as Label);
-				data.labels = data.labels;
+				data.tags.push((await response.json()) as Tag);
+				data.tags = data.tags;
 				searchInput = "";
 			}
 		}
 	}
 
-	async function updateLabel(newLabel: Label) {
-		const response = await labelApi.update(newLabel.id, newLabel.name);
+	async function updateTag(newTag: Tag) {
+		const response = await tagApi.update(newTag.id, newTag.name);
 
 		if (response.ok) {
-			data.labels = data.labels.map((label) => (label.id === newLabel.id ? newLabel : label));
+			data.tags = data.tags.map((tag) => (tag.id === newTag.id ? newTag : tag));
 		}
 	}
 
-	async function deleteLabel(labelId: number) {
-		const resposne = await labelApi.delete(labelId);
+	async function deleteTag(tagId: number) {
+		const resposne = await tagApi.delete(tagId);
 
 		if (resposne.ok) {
-			data.labels = data.labels.filter((label) => label.id !== labelId);
+			data.tags = data.tags.filter((tag) => tag.id !== tagId);
 		}
 	}
 
-	function searchAndSort(labels: Label[], search: string) {
+	function searchAndSort(tags: Tag[], search: string) {
 		const searches = search.split(/\s+/);
 
 		// prettier-ignore
-		return labels
-			.filter((label) => searches.every((s) => label.name.includes(s)))
+		return tags
+			.filter((tag) => searches.every((s) => tag.name.includes(s)))
 			.toSorted((a, b) => (a.name > b.name ? 1 : 0));
 	}
 </script>
 
 <div class="content">
-	<h1 class="title">My labels</h1>
+	<h1 class="title">My tag</h1>
 
-	<p>Here you can create labels. Labels help you categorise your transactions.</p>
+	<p>Here you can create tags. Tags help you categorise your transactions.</p>
 
 	<div class="search">
 		<!-- prettier-ignore -->
@@ -62,8 +62,8 @@
 
 		<button
 			class="btn--tertiary"
-			on:click={createLabel}
-			disabled={!isValidLabelName}
+			on:click={createTag}
+			disabled={!isValidTagName}
 		>
 			<!-- prettier-ignore -->
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M6.5 5A1.5 1.5 0 1 0 8 6.5A1.5 1.5 0 0 0 6.5 5m0 0A1.5 1.5 0 1 0 8 6.5A1.5 1.5 0 0 0 6.5 5m14.91 6.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l.41.4a5.62 5.62 0 0 1 2.08-.74L4 11V4h7l9 9l-7 7l-1.08-1.08a5.57 5.57 0 0 1-.74 2.08l.41.41A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M6.5 5A1.5 1.5 0 1 0 8 6.5A1.5 1.5 0 0 0 6.5 5M10 19H7v3H5v-3H2v-2h3v-3h2v3h3Z"/></svg>
@@ -72,12 +72,12 @@
 	</div>
 
 	<ul class="list">
-		{#each searchAndSort(data.labels, searchInput) as label}
-			<li class="label">
-				<LabelRow
-					{label}
-					{updateLabel}
-					{deleteLabel}
+		{#each searchAndSort(data.tags, searchInput) as tag}
+			<li class="tag">
+				<TagRow
+					{tag}
+					{updateTag}
+					{deleteTag}
 				/>
 			</li>
 		{/each}

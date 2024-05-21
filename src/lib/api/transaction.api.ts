@@ -1,4 +1,4 @@
-import type { IsoDate, Transaction, TransactionWithLabels } from "$lib/model/transaction.model";
+import type { IsoDate, Transaction, TransactionWithTags } from "$lib/model/transaction.model";
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
 const endpoint = resolveEndpoint("/api/transactions");
@@ -12,7 +12,7 @@ export class TransactionApi {
 	}
 
 	async getAll(accountId?: number) {
-		return (await (await this.httpClient.get(endpoint, { accountId })).json()) as TransactionWithLabels[];
+		return (await (await this.httpClient.get(endpoint, { accountId })).json()) as TransactionWithTags[];
 	}
 
 	async create(accountId: number, amount: number, description: string, date: IsoDate) {
