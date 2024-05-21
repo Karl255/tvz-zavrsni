@@ -2,7 +2,7 @@ import { sql } from "$lib/server/sql";
 import { tagRepo } from "./tag.repo";
 import { transactionRepo } from "./transaction.repo";
 
-export const transactionTagRepo = {
+export const taggedRepo = {
 	create: async (userId: number, transactionId: number, tagId: number): Promise<boolean> => {
 		const transaction = await transactionRepo.getOne(userId, transactionId);
 		const tag = await tagRepo.getOne(userId, tagId);

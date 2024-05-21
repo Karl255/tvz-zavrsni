@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
-	import { TransactionTagApi } from "$lib/api/transactionTag.api";
+	import { TaggedApi } from "$lib/api/tagged.api";
 	import Button from "$lib/component/Button.svelte";
 	import TagSelect from "$lib/component/TagSelect.svelte";
 	import type { Tag } from "$lib/model/tag.model";
@@ -11,7 +11,7 @@
 	export let data: PageData;
 
 	const transactionApi = new TransactionApi();
-	const transactionTagApi = new TransactionTagApi();
+	const taggedApi = new TaggedApi();
 
 	let accountId: number | null = null;
 	let amount = 0;
@@ -37,7 +37,7 @@
 				const transaction = (await response.json()) as Transaction;
 
 				selectedTags.forEach((tag) => {
-					transactionTagApi.create(transaction.id, tag.id);
+					taggedApi.create(transaction.id, tag.id);
 				});
 			}
 		}

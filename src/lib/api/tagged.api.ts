@@ -1,8 +1,8 @@
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = resolveEndpoint("/api/transaction-tags");
+const endpoint = resolveEndpoint("/api/tagged");
 
-export class TransactionTagApi {
+export class TaggedApi {
 	httpClient: HttpClient;
 
 	constructor(fetchFunction: typeof fetch = fetch) {
