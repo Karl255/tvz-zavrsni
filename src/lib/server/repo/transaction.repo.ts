@@ -55,7 +55,7 @@ export const transactionRepo = {
 		const records = await sql<JoinedTransaction[]>`
 			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS tag_id, l.name AS tag_name, a.id AS account_id
 			FROM transaction t
-			LEFT JOIN transaction_tag tl ON t.id = tl.transaction_id
+			LEFT JOIN tagged tl ON t.id = tl.transaction_id
 			LEFT JOIN tag l ON tl.tag_id = l.id
 			JOIN account a ON t.account_id = a.id
 			WHERE a.user_id = ${userId}
@@ -70,7 +70,7 @@ export const transactionRepo = {
 		const records = await sql<JoinedTransaction[]>`
 			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS tag_id, l.name AS tag_name, a.id AS account_id
 			FROM transaction t
-			LEFT JOIN transaction_tag tl ON t.id = tl.transaction_id
+			LEFT JOIN tagged tl ON t.id = tl.transaction_id
 			LEFT JOIN tag l ON tl.tag_id = l.id
 			JOIN account a ON t.account_id = a.id
 			WHERE a.user_id = ${userId} AND t.id = ${transactionId}
@@ -99,7 +99,7 @@ export const transactionRepo = {
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
 		await sql`
-			DELETE FROM transaction_tag
+			DELETE FROM tagged
 			WHERE transaction_id = ${transactionId}
 		`;
 

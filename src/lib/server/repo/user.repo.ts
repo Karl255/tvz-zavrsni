@@ -52,7 +52,7 @@ export const userRepo = {
 		const tagIds = toNumberArray(await sql<Id[]>`SELECT id FROM tag WHERE user_id = ${userId}`);
 
 		await sql`
-			DELETE FROM transaction_tag
+			DELETE FROM tagged
 			WHERE tag_id IN ${sql(tagIds)}
 		`;
 

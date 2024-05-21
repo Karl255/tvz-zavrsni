@@ -24,13 +24,27 @@ CREATE TABLE IF NOT EXISTS tag (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(32),
 	user_id SERIAL NOT NULL REFERENCES "user"(id),
-	CONSTRAINT unique_name_per_user UNIQUE (name, user_id)
+	CONSTRAINT unique_tag_name_per_user UNIQUE (name, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS transaction_tag (
+CREATE TABLE IF NOT EXISTS tagged (
     transaction_id SERIAL REFERENCES transaction(id),
     tag_id SERIAL REFERENCES tag(id),
-    PRIMARY KEY(transaction_id, tag_id)
+    PRIMARY KEY (transaction_id, tag_id)
+);
+
+CREATE TABLE attribute (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(32),
+    user_id SERIAL NOT NULL REFERENCES "user"(id),
+    CONSTRAINT unique_attribute_name_per_user UNIQUE (name, user_id)
+);
+
+CREATE TABLE attribute_value (
+    transaction_id SERIAL REFERENCES transaction(id),
+    attribute_id SERIAL REFERENCES attribute(id),
+    value VARCHAR(50),
+    PRIMARY KEY (transaction_id, attribute_id)
 );
 
 INSERT INTO "user" (email, password_hash, is_admin)

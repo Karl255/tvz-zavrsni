@@ -12,7 +12,7 @@ export const transactionTagRepo = {
 		}
 
 		await sql`
-			INSERT INTO transaction_tag (transaction_id, tag_id)
+			INSERT INTO tagged (transaction_id, tag_id)
 			VALUES (${transactionId}, ${tagId})
 		`;
 
@@ -30,7 +30,7 @@ export const transactionTagRepo = {
 		}
 
 		await sql`
-			DELETE FROM transaction_tag
+			DELETE FROM tagged
 			WHERE transaction_id = ${transactionId} AND tag_id = ${tagId})
 		`;
 

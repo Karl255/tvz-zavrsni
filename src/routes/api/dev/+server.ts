@@ -42,15 +42,33 @@ async function initDb() {
 			id SERIAL PRIMARY KEY,
 			name VARCHAR(32),
 			user_id SERIAL NOT NULL REFERENCES "user"(id),
-			CONSTRAINT unique_name_per_user UNIQUE (name, user_id)
+			CONSTRAINT unique_tag_name_per_user UNIQUE (name, user_id)
 		);
 	`;
 
 	r[4] = await sql`
-		CREATE TABLE IF NOT EXISTS transaction_tag (
+		CREATE TABLE IF NOT EXISTS tagged (
 		    transaction_id SERIAL REFERENCES transaction(id),
 		    tag_id SERIAL REFERENCES tag(id),
 		    PRIMARY KEY(transaction_id, tag_id)
+		);
+	`;
+
+	r[5] = await sql`
+		CREATE TABLE attribute (
+			id SERIAL PRIMARY KEY,
+			name VARCHAR(32),
+			user_id SERIAL NOT NULL REFERENCES "user"(id),
+			CONSTRAINT unique_attribute_name_per_user UNIQUE (name, user_id)
+		);
+	`;
+
+	r[6] = await sql`
+		CREATE TABLE attribute_value (
+			transaction_id SERIAL REFERENCES transaction(id),
+			attribute_id SERIAL REFERENCES attribute(id),
+			value VARCHAR(50),
+			PRIMARY KEY (transaction_id, attribute_id)
 		);
 	`;
 
@@ -65,8 +83,10 @@ async function seedDb() {
 async function dropTables() {
 	const r = [];
 
-	r[0] = await sql`DROP TABLE IF EXISTS transaction_tag CASCADE`;
+	r[0] = await sql`DROP TABLE IF EXISTS attribute_value CASCADE`;
+	r[0] = await sql`DROP TABLE IF EXISTS tagged CASCADE`;
 	r[1] = await sql`DROP TABLE IF EXISTS transaction CASCADE`;
+	r[0] = await sql`DROP TABLE IF EXISTS attribute CASCADE`;
 	r[2] = await sql`DROP TABLE IF EXISTS tag CASCADE`;
 	r[3] = await sql`DROP TABLE IF EXISTS account CASCADE`;
 	r[4] = await sql`DROP TABLE IF EXISTS "user" CASCADE`;
