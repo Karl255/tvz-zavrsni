@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return createValidationErrorResponse(parsing.error);
 	}
 
-	const account = await tagRepo.create(locals.userId, parsing.data.name);
+	const tag = await tagRepo.create(locals.userId, parsing.data.name);
 
-	return createJsonResponse(account);
+	return tag ? createJsonResponse(tag) : createJsonResponse({ error: "Tag with given name already exists" }, 400);
 };
