@@ -50,7 +50,7 @@
 			display: block;
 		}
 
-		> * + * {
+		> :global(*) + :global(*) {
 			margin-top: 1rem;
 		}
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { HttpClient } from "$lib/api/httpClient";
+	import Icon, { IconType } from "$lib/component/Icon.svelte";
 
 	const httpClient = new HttpClient(fetch);
 
@@ -39,6 +40,17 @@
 		<!-- prettier-ignore -->
 		<textarea readonly bind:value={output}></textarea>
 	</section>
+
+	<hr />
+
+	<div class="icons">
+		{#each Object.values(IconType) as icon}
+			<div class="row">
+				{icon}
+				<Icon {icon} />
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style lang="scss">
@@ -58,5 +70,15 @@
 	ul {
 		padding-left: 1rem;
 		list-style-type: disc;
+	}
+
+	.icons {
+		width: fit-content;
+	}
+
+	.row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 </style>
