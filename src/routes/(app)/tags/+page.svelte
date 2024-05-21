@@ -13,7 +13,7 @@
 
 	let searchInput = "";
 	let isValidTagName = false;
-	$: isValidTagName = validateTagName(searchInput);
+	$: isValidTagName = validateTagName(searchInput) && data.tags.every((tag) => tag.name !== searchInput);
 
 	async function createTag() {
 		if (isValidTagName) {
@@ -60,7 +60,7 @@
 
 	<div class="search">
 		<!-- prettier-ignore -->
-		<input type="search" placeholder="Search" bind:value={searchInput}>
+		<input type="search" placeholder="Search or create new tag" bind:value={searchInput}>
 
 		<!-- prettier-ignore -->
 		<Button type="tertiary" disabled={!isValidTagName} on:click={createTag}>
