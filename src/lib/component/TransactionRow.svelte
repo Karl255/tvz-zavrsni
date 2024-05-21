@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { Account } from "$lib/model/account.model";
-	import type { TransactionWithTags } from "$lib/model/transaction.model";
+	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
 	import Icon, { IconType } from "./Icon.svelte";
 
-	export let transaction: TransactionWithTags;
+	export let transaction: DetailedTransaction;
 	export let accountResolver: ((accountId: number) => Account) | undefined;
-	export let updateTransaction: (newTransaction: TransactionWithTags) => void;
+	export let updateTransaction: (newTransaction: DetailedTransaction) => void;
 	export let deleteTransaction: (transactionId: number) => void;
 
 	let isEditing = false;

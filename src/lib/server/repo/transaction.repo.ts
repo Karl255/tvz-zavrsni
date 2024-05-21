@@ -1,35 +1,52 @@
-import type { IsoDate, Transaction, TransactionWithTags } from "$lib/model/transaction.model";
+import type { Tag } from "$lib/model/tag.model";
+import type { IsoDate, Transaction, DetailedTransaction } from "$lib/model/transaction.model";
 import { sql } from "$lib/server/sql";
 import { accountRepo } from "./account.repo";
 
 interface JoinedTransaction extends Transaction {
 	tagId: number | null;
 	tagName: string | null;
+	attributeId: number | null;
+	attributeName: string | null;
+	attributeValue: string | null;
 }
 
-function transformWithJoinedTags(records: JoinedTransaction[], userId: number): TransactionWithTags[] {
-	const transactionIds = [...new Set(records.map((jt) => jt.id))];
+function transformWithJoinedTags(rows: JoinedTransaction[], userId: number): DetailedTransaction[] {
+	const transactionIds = [...new Set(rows.map((jt) => jt.id))];
 
-	const transactions = transactionIds.map<TransactionWithTags>((transactionId) => {
-		const transactionRecords = records.filter((jt) => jt.id === transactionId);
+	const transactions = transactionIds.map<DetailedTransaction>((transactionId) => {
+		const transactionRows = rows.filter((jt) => jt.id === transactionId);
 
 		return {
 			id: transactionId,
-			amount: transactionRecords[0].amount,
-			description: transactionRecords[0].description,
-			date: transactionRecords[0].date,
-			accountId: transactionRecords[0].accountId,
-			tags: transactionRecords
-				.filter((record) => record.tagId)
-				.map((record) => ({
-					id: record.tagId as number,
-					name: record.tagName as string,
-					userId,
-				})),
+			amount: transactionRows[0].amount,
+			description: transactionRows[0].description,
+			date: transactionRows[0].date,
+			accountId: transactionRows[0].accountId,
+			tags: extractTags(transactionRows),
+			attributes: extractAttributes(transactionRows),
 		};
 	});
 
 	return transactions;
+
+	function extractTags(transactionRows: JoinedTransaction[]): Tag[] {
+		return transactionRows
+			.filter((row) => row.tagId && row.tagName)
+			.map((row) => ({
+				id: row.tagId as number,
+				name: row.tagName as string,
+				userId,
+			}));
+	}
+
+	function extractAttributes(transactionRows: JoinedTransaction[]): Record<string, string> {
+		const attributePairs = transactionRows
+			.filter((row) => row.attributeName && row.attributeValue)
+			.map((row) => <const>[row.attributeName as string, row.attributeValue as string]);
+
+		return Object.fromEntries(attributePairs);
+	}
 }
 
 export const transactionRepo = {
@@ -51,29 +68,42 @@ export const transactionRepo = {
 		return transactions[0];
 	},
 
-	getAll: async (userId: number, accountId: number | null): Promise<TransactionWithTags[]> => {
+	getAll: async (userId: number, accountId: number | null): Promise<DetailedTransaction[]> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS tag_id, l.name AS tag_name, a.id AS account_id
-			FROM transaction t
-			LEFT JOIN tagged tl ON t.id = tl.transaction_id
-			LEFT JOIN tag l ON tl.tag_id = l.id
-			JOIN account a ON t.account_id = a.id
-			WHERE a.user_id = ${userId}
-				AND (l.user_id = ${userId} OR l.user_id IS NULL)
-				${accountId ? sql`AND t.account_id = ${accountId}` : sql``}
+			SELECT
+				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date,
+				tag.id AS tag_id, tag.name AS tag_name,
+				attr.id AS attribute_id, attr.name AS attribute_name, attrv.value AS attribute_value,
+				account.id AS account_id
+			FROM transaction
+			LEFT JOIN tagged ON transaction.id = tagged.transaction_id
+			LEFT JOIN tag ON tagged.tag_id = tag.id
+			LEFT JOIN attribute_value attrv ON transaction.id = attrv.transaction_id
+			LEFT JOIN attribute attr ON attrv.attribute_id = attr.id
+			JOIN account ON transaction.account_id = account.id
+			WHERE account.user_id = ${userId}
+				AND (tag.user_id = ${userId} OR tag.user_id IS NULL)
+				AND (attr.user_id = ${userId} OR attr.user_id IS NULL)
+				${accountId ? sql`AND transaction.account_id = ${accountId}` : sql``}
 		`;
 
 		return transformWithJoinedTags(records, userId);
 	},
 
-	getOne: async (userId: number, transactionId: number): Promise<TransactionWithTags | null> => {
+	getOne: async (userId: number, transactionId: number): Promise<DetailedTransaction | null> => {
 		const records = await sql<JoinedTransaction[]>`
-			SELECT t.id, t.amount, t.description, to_char(t.date, 'YYYY-MM-DD') as date, l.id AS tag_id, l.name AS tag_name, a.id AS account_id
-			FROM transaction t
-			LEFT JOIN tagged tl ON t.id = tl.transaction_id
-			LEFT JOIN tag l ON tl.tag_id = l.id
-			JOIN account a ON t.account_id = a.id
-			WHERE a.user_id = ${userId} AND t.id = ${transactionId}
+			SELECT
+				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date,
+				tag.id AS tag_id, tag.name AS tag_name,
+				attr.id AS attribute_id, attr.name AS attribute_name, attrv.value AS attribute_value,
+				account.id AS account_id
+			FROM transaction
+			LEFT JOIN tagged ON transaction.id = tagged.transaction_id
+			LEFT JOIN tag ON tagged.tag_id = tag.id
+			LEFT JOIN attribute_value attrv ON transaction.id = attrv.transaction_id
+			LEFT JOIN attribute attr ON attrv.attribute_id = attr.id
+			JOIN account ON transaction.account_id = account.id
+			WHERE account.user_id = ${userId} AND transaction.id = ${transactionId}
 		`;
 
 		return transformWithJoinedTags(records, userId)[0] ?? null;

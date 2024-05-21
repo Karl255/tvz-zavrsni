@@ -20,13 +20,15 @@ export const Transaction = z.object({
 	accountId: z.number(),
 });
 
-export interface TransactionWithTags extends Transaction {
+export interface DetailedTransaction extends Transaction {
 	tags: Tag[];
+	attributes: Record<string, string>;
 }
 
-export const TransactionWithTags = Transaction.extend({
+export const DetailedTransaction = Transaction.extend({
 	tags: z.array(Tag),
+	attributes: z.record(z.string(), z.string()),
 });
 
 assertNever<TypeDiff<Transaction, z.infer<typeof Transaction>>>();
-assertNever<TypeDiff<TransactionWithTags, z.infer<typeof TransactionWithTags>>>();
+assertNever<TypeDiff<DetailedTransaction, z.infer<typeof DetailedTransaction>>>();
