@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { HttpClient } from "$lib/api/httpClient";
+	import Button from "$lib/component/Button.svelte";
+	import LinkButton from "$lib/component/LinkButton.svelte";
 	import { validateEmail, validateEqual, validatePassword } from "$lib/service/validation.service";
 
 	const httpClient = new HttpClient(fetch);
@@ -42,7 +44,7 @@
 	}
 </script>
 
-<div class="register">
+<form class="register">
 	<h1 class="title">Register</h1>
 
 	<label for="email">Email</label>
@@ -60,17 +62,12 @@
 	<input type="password" id="password-repeat" bind:value={passwordRepeat}>
 	<p class="error">{isPasswordRepeatValid || passwordRepeat === "" ? "" : "The passwords don't match"}</p>
 
-	<button
-		class="btn--primary"
-		on:click={register}
-		disabled={!isValid}
-	>
-		Register
-	</button>
+	<!-- prettier-ignore -->
+	<Button type="primary" disabled={!isValid} center on:click={register}>Register</Button>
 
 	<!-- prettier-ignore -->
-	<a href="/login" class="btn--tertiary">Login instead</a>
-</div>
+	<LinkButton type="tertiary" href="/login" center>Login instead</LinkButton>
+</form>
 
 <style lang="scss">
 	.register {
@@ -83,7 +80,7 @@
 		flex-direction: column;
 	}
 
-	* + * {
+	.register > :global(*) + :global(*) {
 		margin-top: 0.25rem;
 	}
 
@@ -96,11 +93,6 @@
 	input {
 		font: inherit;
 		padding: 0.25rem;
-	}
-
-	.btn--primary,
-	.btn--tertiary {
-		justify-content: center;
 	}
 
 	.error {

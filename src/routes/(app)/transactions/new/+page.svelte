@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
 	import { TransactionTagApi } from "$lib/api/transactionTag.api";
+	import Button from "$lib/component/Button.svelte";
 	import TagSelect from "$lib/component/TagSelect.svelte";
 	import type { Tag } from "$lib/model/tag.model";
 	import type { Transaction } from "$lib/model/transaction.model";
@@ -80,7 +81,7 @@
 	</div>
 
 	<!-- prettier-ignore -->
-	<button class="btn--primary" disabled={!isValid}>Record</button>
+	<Button type="primary" disabled={!isValid}>Record</Button>
 </form>
 
 <style lang="scss">

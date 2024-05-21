@@ -150,6 +150,11 @@
 		display: flex;
 		flex-direction: row;
 		gap: 1rem;
+		visibility: hidden;
+
+		:global(tr):hover > & {
+			visibility: visible;
+		}
 	}
 
 	svg {

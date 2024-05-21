@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { AccountApi } from "$lib/api/account.api";
+	import Button from "$lib/component/Button.svelte";
 	import { AccountType } from "$lib/model/account.model";
 	import { validateAccountName, validateAccountType } from "$lib/service/validation.service";
 
@@ -37,7 +38,7 @@
 	</select>
 
 	<!-- prettier-ignore -->
-	<button class="btn--primary" disabled={!isValid}>Create</button>
+	<Button type="primary" disabled={!isValid}>Create</Button>
 </form>
 
 <style lang="scss">

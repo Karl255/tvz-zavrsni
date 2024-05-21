@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { HttpClient } from "$lib/api/httpClient";
+	import Button from "$lib/component/Button.svelte";
+	import LinkButton from "$lib/component/LinkButton.svelte";
 	import type { AuthError } from "$lib/model/authError.model";
 	import { validateEmail } from "$lib/service/validation.service";
 
@@ -26,7 +28,7 @@
 	}
 </script>
 
-<div class="login">
+<form class="login">
 	<h1 class="title">Login</h1>
 
 	<label for="email">Email</label>
@@ -39,17 +41,12 @@
 	<input type="password" id="password" bind:value={password}>
 	<p class="error">{error?.field === "password" ? error.message : ""}</p>
 
-	<button
-		class="btn--primary"
-		on:click={login}
-		disabled={!isValid}
-	>
-		Login
-	</button>
+	<!-- prettier-ignore -->
+	<Button type="primary" disabled={!isValid} center on:click={login}>Login</Button>
 
 	<!-- prettier-ignore -->
-	<a href="/register" class="btn--tertiary">Register instead</a>
-</div>
+	<LinkButton type="tertiary" href="/register" center>Register instead</LinkButton>
+</form>
 
 <style lang="scss">
 	.login {
@@ -62,7 +59,7 @@
 		flex-direction: column;
 	}
 
-	* + * {
+	.login > :global(*) + :global(*) {
 		margin-top: 0.25rem;
 	}
 
@@ -75,11 +72,6 @@
 	input {
 		font: inherit;
 		padding: 0.25rem;
-	}
-
-	.btn--primary,
-	.btn--tertiary {
-		justify-content: center;
 	}
 
 	.error {

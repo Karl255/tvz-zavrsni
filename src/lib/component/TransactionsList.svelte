@@ -52,7 +52,7 @@
 		{/if}
 
 		<th>Tags</th>
-		<th>Actions</th>
+		<th></th>
 	</tr>
 
 	{#each sortedTransactions(transactions) as transaction}
