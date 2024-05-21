@@ -32,8 +32,12 @@
 		}
 	}
 
-	function sortTransactions(transactions: TransactionWithTags[]) {
-		return transactions.toSorted((a, b) => (a.date < b.date ? 1 : 0));
+	function sortedTransactions(transactions: TransactionWithTags[]) {
+		return transactions.toSorted(compare);
+
+		function compare(a: TransactionWithTags, b: TransactionWithTags): number {
+			return new Date(b.date).valueOf() - new Date(a.date).valueOf() || b.id - a.id;
+		}
 	}
 </script>
 
@@ -51,7 +55,7 @@
 		<th>Actions</th>
 	</tr>
 
-	{#each sortTransactions(transactions) as transaction}
+	{#each sortedTransactions(transactions) as transaction}
 		<tr>
 			<TransactionRow
 				{transaction}
