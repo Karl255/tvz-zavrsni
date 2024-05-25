@@ -2,6 +2,7 @@
 	import { TransactionApi } from "$lib/api/transaction.api";
 	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
+	import { onMount } from "svelte";
 	import TransactionRow from "./TransactionRow.svelte";
 
 	const transactionApi = new TransactionApi();
@@ -11,6 +12,15 @@
 
 	let accountMap: Record<number, Account> = {};
 	$: accountMap = accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {});
+
+	let scrollWrapper: HTMLDivElement;
+	let allowScrolling = false;
+
+	onMount(() => {
+		const width = scrollWrapper.clientWidth;
+		scrollWrapper.style.maxWidth = `${width}px`;
+		allowScrolling = true;
+	});
 
 	function getAccountById(accountId: number) {
 		return accountMap[accountId];
@@ -41,37 +51,54 @@
 	}
 </script>
 
-<table>
-	<tr>
-		<th>Amount</th>
-		<th>Description</th>
-		<th>Date</th>
-
-		{#if accounts.length > 1}
-			<th>Account</th>
-		{/if}
-
-		<th>Tags</th>
-		<th></th>
-	</tr>
-
-	{#each sortedTransactions(transactions) as transaction}
+<div
+	class="container"
+	bind:this={scrollWrapper}
+	class:scroll={allowScrolling}
+>
+	<table>
 		<tr>
-			<TransactionRow
-				{transaction}
-				accountResolver={accounts.length > 1 ? getAccountById : undefined}
-				{updateTransaction}
-				{deleteTransaction}
-			/>
+			<th>Amount</th>
+			<th>Description</th>
+			<th>Date</th>
+
+			{#if accounts.length > 1}
+				<th>Account</th>
+			{/if}
+
+			<th>Tags</th>
+			<th></th>
 		</tr>
-	{/each}
-</table>
+
+		{#each sortedTransactions(transactions) as transaction}
+			<tr>
+				<TransactionRow
+					{transaction}
+					accountResolver={accounts.length > 1 ? getAccountById : undefined}
+					{updateTransaction}
+					{deleteTransaction}
+				/>
+			</tr>
+		{/each}
+	</table>
+</div>
 
 <style lang="scss">
+	.container {
+		overflow-x: hidden;
+	}
+
 	table {
 		border-collapse: collapse;
 		table-layout: auto;
-		max-width: 100%;
+	}
+
+	.scroll {
+		overflow-x: auto;
+
+		table {
+			width: max-content;
+		}
 	}
 
 	tr:nth-child(even) {

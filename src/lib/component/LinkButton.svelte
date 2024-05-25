@@ -57,4 +57,8 @@
 	.center {
 		justify-content: center;
 	}
+
+	a > :global(*) {
+		flex-shrink: 0;
+	}
 </style>

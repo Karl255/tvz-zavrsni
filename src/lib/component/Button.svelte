@@ -78,4 +78,8 @@
 	.small {
 		padding: 0.25rem;
 	}
+
+	button > :global(*) {
+		flex-shrink: 0;
+	}
 </style>
