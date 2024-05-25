@@ -48,6 +48,16 @@ export const attributeRepo = {
 		return attributes[0] ?? null;
 	},
 
+	getManyByNames: async (userId: number, names: string[]): Promise<Attribute[]> => {
+		const attributes = await sql<Attribute[]>`
+			SELECT id, name, user_id
+			FROM attribute
+			WHERE user_id = ${userId} AND name IN ${sql(names)}
+		`;
+
+		return attributes;
+	},
+
 	update: async (userId: number, attributeId: number, name: string | null): Promise<void> => {
 		await sql`
 			UPDATE attribute

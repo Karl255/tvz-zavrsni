@@ -1,7 +1,10 @@
 import type { Tag } from "$lib/model/tag.model";
 import type { IsoDate, Transaction, DetailedTransaction } from "$lib/model/transaction.model";
 import { sql } from "$lib/server/sql";
+import { distinctBy } from "$lib/util/array.util";
 import { accountRepo } from "./account.repo";
+import { attributeValueRepo } from "./attribute-value.repo";
+import { taggedRepo } from "./tagged.repo";
 
 interface JoinedTransaction extends Transaction {
 	tagId: number | null;
@@ -37,7 +40,8 @@ function transformWithJoinedTags(rows: JoinedTransaction[], userId: number): Det
 				id: row.tagId as number,
 				name: row.tagName as string,
 				userId,
-			}));
+			}))
+			.filter(distinctBy((tag) => tag.id));
 	}
 
 	function extractAttributes(transactionRows: JoinedTransaction[]): Record<string, string> {
@@ -128,10 +132,8 @@ export const transactionRepo = {
 	},
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
-		await sql`
-			DELETE FROM tagged
-			WHERE transaction_id = ${transactionId}
-		`;
+		taggedRepo.deleteForTransaction(transactionId);
+		attributeValueRepo.deleteForTransaction(transactionId);
 
 		await sql`
 			DELETE FROM transaction
@@ -140,7 +142,7 @@ export const transactionRepo = {
 				FROM transaction t
 				JOIN account a ON t.account_id = a.id
 				WHERE t.id = ${transactionId} AND a.user_id = ${userId}
-			);
+			)
 		`;
 
 		console.info(`Deleted transaction ${transactionId}`);

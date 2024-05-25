@@ -45,22 +45,12 @@
 
 		const transaction = (await transactionResponse.json()) as Transaction;
 
-		selectedTags.forEach((tag) => {
-			console.log(`adding tag ${tag}`);
-			taggedApi.create(transaction.id, tag.id);
-		});
+		selectedTags.forEach((tag) => taggedApi.create(transaction.id, tag.id));
 
-		Object.entries(attributes)
-			.filter(([_, value]) => value !== "")
-			.forEach(([name, value]) => {
-				console.log(`adding attribute ${name} = ${value}`);
-				attributeValueApi.set(transaction.id, name, value);
-			});
+		attributeValueApi.set(transaction.id, attributes);
 
 		amount = 0;
 		description = "";
-		selectedTags = [];
-		attributes = {};
 	}
 
 	function formatCurrency(e: { currentTarget: HTMLInputElement }) {

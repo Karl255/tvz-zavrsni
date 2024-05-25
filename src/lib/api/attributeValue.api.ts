@@ -1,7 +1,6 @@
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = resolveEndpoint("/api/attributes/value");
-const idEndpoint = (id: number) => `${endpoint}/${id}`;
+const endpoint = resolveEndpoint("/api/attributes/values");
 
 export class AttributeValueApi {
 	httpClient: HttpClient;
@@ -10,11 +9,7 @@ export class AttributeValueApi {
 		this.httpClient = new HttpClient(fetchFunction);
 	}
 
-	async set(transactionId: number, attributeName: string, value: string) {
-		return await this.httpClient.post(endpoint, { transactionId, attributeName, value });
-	}
-
-	async clear(transactionId: number, attributeName: string) {
-		return await this.httpClient.delete(idEndpoint(transactionId), { attributeName });
+	async set(transactionId: number, attributes: Record<string, string>) {
+		return await this.httpClient.put(endpoint, { transactionId, attributes });
 	}
 }

@@ -16,7 +16,7 @@ export const taggedRepo = {
 			VALUES (${transactionId}, ${tagId})
 		`;
 
-		console.info(`Tagged transaction "${transactionId}" with tag ${tagId} user ${userId}`);
+		console.info(`Tagged transaction "${transactionId}" with tag ${tagId} for user ${userId}`);
 
 		return true;
 	},
@@ -34,8 +34,15 @@ export const taggedRepo = {
 			WHERE transaction_id = ${transactionId} AND tag_id = ${tagId})
 		`;
 
-		console.info(`Untagged transaction "${transactionId}" with tag ${tagId} user ${userId}`);
+		console.info(`Untagged transaction "${transactionId}" with tag ${tagId} for user ${userId}`);
 
 		return true;
+	},
+
+	deleteForTransaction: async (transactionId: number): Promise<void> => {
+		await sql`
+			DELETE FROM tagged
+			WHERE transaction_id = ${transactionId}
+		`;
 	},
 };

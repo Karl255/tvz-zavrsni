@@ -8,7 +8,7 @@ export function searchParamsHasAll(searchParams: URLSearchParams, params: string
 
 export function createJsonResponse(body: JsonValue | null, initOrStatus: ResponseInit | number = 200) {
 	initOrStatus = typeof initOrStatus === "number" ? { status: initOrStatus } : initOrStatus;
-	initOrStatus = initOrStatus.status ? initOrStatus : { ...initOrStatus, status: 200 }; // TODO: use that new assignment feature
+	initOrStatus = initOrStatus.status ? initOrStatus : { ...initOrStatus, status: 200 };
 
 	return new Response(body === null ? null : JSON.stringify(body), initOrStatus);
 }
@@ -51,13 +51,5 @@ export function getIdParam(params: Partial<Record<string, string>>): number {
 		return parseInt(params.id, 10);
 	} else {
 		throw new Error();
-	}
-}
-
-export function getRequiredParam(params: Partial<Record<string, string>>, name: string): string {
-	return params[name] ?? _throw(new Error("Missing parameter"));
-
-	function _throw(error: Error): never {
-		throw error;
 	}
 }

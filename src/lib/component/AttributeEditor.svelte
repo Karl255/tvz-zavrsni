@@ -10,7 +10,6 @@
 	$: unsetAttributes = avaialbleAttributes.filter((attributeName) => !Object.hasOwn(attributes, attributeName));
 
 	let selectedUnsetAttribute: string | null = avaialbleAttributes[0] ?? null;
-	$: console.log("attributes", attributes);
 
 	function addAttribute() {
 		if (selectedUnsetAttribute) {
