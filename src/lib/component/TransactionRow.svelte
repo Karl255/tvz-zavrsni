@@ -23,12 +23,10 @@
 	async function startOrSaveEdit() {
 		if (isEditing) {
 			updateTransaction({
-				id: transaction.id,
+				...transaction,
 				amount: newAmount,
 				description: newDescription,
 				date: newDate,
-				accountId: transaction.accountId,
-				tags: transaction.tags,
 			});
 		} else {
 			newAmount = transaction.amount;
@@ -99,7 +97,7 @@
 	</td>
 {/if}
 
-<td>{transaction.tags.map((tag) => tag.name).join(", ")}</td>
+<td>{transaction.tags.join(", ")}</td>
 
 <td class="actions">
 	<!-- prettier-ignore -->

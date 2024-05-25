@@ -1,20 +1,17 @@
-import type { Tag } from "$lib/model/tag.model";
 import type { IsoDate, Transaction, DetailedTransaction } from "$lib/model/transaction.model";
 import { sql } from "$lib/server/sql";
-import { distinctBy } from "$lib/util/array.util";
 import { accountRepo } from "./account.repo";
 import { attributeValueRepo } from "./attribute-value.repo";
 import { taggedRepo } from "./tagged.repo";
 
 interface JoinedTransaction extends Transaction {
-	tagId: number | null;
 	tagName: string | null;
 	attributeId: number | null;
 	attributeName: string | null;
 	attributeValue: string | null;
 }
 
-function transformWithJoinedTags(rows: JoinedTransaction[], userId: number): DetailedTransaction[] {
+function transformWithJoinedTags(rows: JoinedTransaction[]): DetailedTransaction[] {
 	const transactionIds = [...new Set(rows.map((jt) => jt.id))];
 
 	const transactions = transactionIds.map<DetailedTransaction>((transactionId) => {
@@ -33,15 +30,10 @@ function transformWithJoinedTags(rows: JoinedTransaction[], userId: number): Det
 
 	return transactions;
 
-	function extractTags(transactionRows: JoinedTransaction[]): Tag[] {
-		return transactionRows
-			.filter((row) => row.tagId && row.tagName)
-			.map((row) => ({
-				id: row.tagId as number,
-				name: row.tagName as string,
-				userId,
-			}))
-			.filter(distinctBy((tag) => tag.id));
+	function extractTags(transactionRows: JoinedTransaction[]): string[] {
+		const tags = transactionRows.map((row) => row.tagName).filter((name): name is string => !!name);
+
+		return [...new Set(tags)];
 	}
 
 	function extractAttributes(transactionRows: JoinedTransaction[]): Record<string, string> {
@@ -76,7 +68,7 @@ export const transactionRepo = {
 		const records = await sql<JoinedTransaction[]>`
 			SELECT
 				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date,
-				tag.id AS tag_id, tag.name AS tag_name,
+				tag.name AS tag_name,
 				attr.id AS attribute_id, attr.name AS attribute_name, attrv.value AS attribute_value,
 				account.id AS account_id
 			FROM transaction
@@ -91,14 +83,14 @@ export const transactionRepo = {
 				${accountId ? sql`AND transaction.account_id = ${accountId}` : sql``}
 		`;
 
-		return transformWithJoinedTags(records, userId);
+		return transformWithJoinedTags(records);
 	},
 
 	getOne: async (userId: number, transactionId: number): Promise<DetailedTransaction | null> => {
 		const records = await sql<JoinedTransaction[]>`
 			SELECT
 				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date,
-				tag.id AS tag_id, tag.name AS tag_name,
+				tag.name AS tag_name,
 				attr.id AS attribute_id, attr.name AS attribute_name, attrv.value AS attribute_value,
 				account.id AS account_id
 			FROM transaction
@@ -110,7 +102,7 @@ export const transactionRepo = {
 			WHERE account.user_id = ${userId} AND transaction.id = ${transactionId}
 		`;
 
-		return transformWithJoinedTags(records, userId)[0] ?? null;
+		return transformWithJoinedTags(records)[0] ?? null;
 	},
 
 	update: async (userId: number, transactionId: number, amount: number | null, description: string | null, date: IsoDate | null): Promise<void> => {

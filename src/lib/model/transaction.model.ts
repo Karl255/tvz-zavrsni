@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Tag } from "./tag.model";
 import { assertNever, type TypeDiff } from "$lib/util/type.util";
 
 export type IsoDate = string;
@@ -21,12 +20,12 @@ export const Transaction = z.object({
 });
 
 export interface DetailedTransaction extends Transaction {
-	tags: Tag[];
+	tags: string[];
 	attributes: Record<string, string>;
 }
 
 export const DetailedTransaction = Transaction.extend({
-	tags: z.array(Tag),
+	tags: z.array(z.string()),
 	attributes: z.record(z.string(), z.string()),
 });
 
