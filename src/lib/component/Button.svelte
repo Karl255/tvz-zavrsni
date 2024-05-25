@@ -7,14 +7,21 @@
 
 <script lang="ts">
 	export let type: ButtonType | null = null;
+	export let submit = false;
 	export let disabled = false;
 	export let center = false;
+	export let small = false;
+
+	let _class = "";
+	export { _class as class };
 </script>
 
 <button
+	type={submit ? "submit" : "button"}
 	{disabled}
-	class={type ?? ""}
+	class={type ? `${type} ${_class}` : _class}
 	class:center
+	class:small
 	on:click
 >
 	<slot />
@@ -66,5 +73,9 @@
 
 	.center {
 		justify-content: center;
+	}
+
+	.small {
+		padding: 0.25rem;
 	}
 </style>

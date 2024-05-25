@@ -7,17 +7,22 @@
 	import type { Transaction } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
+	import AttributeEditor from "$lib/component/AttributeEditor.svelte";
+	import Icon, { IconType } from "$lib/component/Icon.svelte";
+	import { AttributeValueApi } from "$lib/api/attributeValue.api";
 
 	export let data: PageData;
 
 	const transactionApi = new TransactionApi();
 	const taggedApi = new TaggedApi();
+	const attributeValueApi = new AttributeValueApi();
 
 	let accountId: number | null = null;
 	let amount = 0;
 	let description = "";
 	let date = "";
 	let selectedTags: Tag[] = [];
+	let attributes: Record<string, string> = {};
 
 	let isValid = false;
 	$: isValid = validate(accountId, amount, description, date);
@@ -27,20 +32,35 @@
 	}
 
 	async function create() {
-		if (accountId) {
-			const response = await transactionApi.create(accountId, amount, description, date);
-
-			if (response.ok) {
-				amount = 0;
-				description = "";
-
-				const transaction = (await response.json()) as Transaction;
-
-				selectedTags.forEach((tag) => {
-					taggedApi.create(transaction.id, tag.id);
-				});
-			}
+		if (!accountId) {
+			return;
 		}
+
+		const transactionResponse = await transactionApi.create(accountId, amount, description, date);
+
+		if (!transactionResponse.ok) {
+			console.error(transactionResponse);
+			return;
+		}
+
+		const transaction = (await transactionResponse.json()) as Transaction;
+
+		selectedTags.forEach((tag) => {
+			console.log(`adding tag ${tag}`);
+			taggedApi.create(transaction.id, tag.id);
+		});
+
+		Object.entries(attributes)
+			.filter(([_, value]) => value !== "")
+			.forEach(([name, value]) => {
+				console.log(`adding attribute ${name} = ${value}`);
+				attributeValueApi.set(transaction.id, name, value);
+			});
+
+		amount = 0;
+		description = "";
+		selectedTags = [];
+		attributes = {};
 	}
 
 	function formatCurrency(e: { currentTarget: HTMLInputElement }) {
@@ -60,34 +80,43 @@
 	</select>
 
 	<label for="amount">Amount</label>
-	<div>
+	<div class="amount">
 		<!-- prettier-ignore -->
 		<input type="number" id="amount" step="0.01" bind:value={amount} on:blur={formatCurrency}>
-		€
-	</div>
 
-	<label for="description">Description</label>
-	<!-- prettier-ignore -->
-	<input type="text" id="description" bind:value={description}>
+		<Icon icon={IconType.EURO} />
+	</div>
 
 	<label for="date">Date</label>
 	<!-- prettier-ignore -->
 	<input type="date" id="date" bind:value={date}>
 
-	<label for="tags">Tags</label>
+	<label for="description">Description</label>
 	<!-- prettier-ignore -->
+	<input type="text" id="description" bind:value={description}>
+
+	<label for="attributes">Attributes</label>
 	<div>
+		<!-- prettier-ignore -->
+		<AttributeEditor id="attributes" bind:attributes avaialbleAttributes={data.availableAttributes} />
+	</div>
+
+	<label for="tags">Tags</label>
+	<div>
+		<!-- prettier-ignore -->
 		<TagSelect id="tags" tags={data.tags} bind:selectedTags={selectedTags} />
 	</div>
 
 	<!-- prettier-ignore -->
-	<Button type="primary" disabled={!isValid}>Record</Button>
+	<Button type="primary" class="submit" submit disabled={!isValid}>Record</Button>
 </form>
 
 <style lang="scss">
 	form {
 		margin-top: 1rem;
 		max-width: 24rem;
+		display: flex;
+		flex-direction: column;
 
 		> * {
 			display: block;
@@ -100,5 +129,20 @@
 		> label + * {
 			margin-top: 0.25rem;
 		}
+	}
+
+	.amount {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: 0.5rem;
+
+		:global(svg) {
+			color: $clr-bold-text;
+		}
+	}
+
+	:global(.submit) {
+		align-self: start;
 	}
 </style>
