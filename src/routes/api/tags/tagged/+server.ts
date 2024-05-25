@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const TaggedRequest = z.object({
 	transactionId: z.number(),
-	tagId: z.number(),
+	tagName: z.string(),
 });
 
 export const POST: RequestHandler = async ({ request, locals }) => {
@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return createValidationErrorResponse(parsing.error);
 	}
 
-	const success = await taggedRepo.create(locals.userId, parsing.data.transactionId, parsing.data.tagId);
+	const success = await taggedRepo.create(locals.userId, parsing.data.transactionId, parsing.data.tagName);
 
 	return createJsonResponse(success);
 };
@@ -27,7 +27,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) => {
 		return createValidationErrorResponse(parsing.error);
 	}
 
-	const success = await taggedRepo.delete(locals.userId, parsing.data.transactionId, parsing.data.tagId);
+	const success = await taggedRepo.delete(locals.userId, parsing.data.transactionId, parsing.data.tagName);
 
 	return success ? createNoContentResponse() : createNotFoundResponse();
 };

@@ -7,10 +7,10 @@ export class HttpClient {
 		this.fetchFunction = fetchFunction;
 	}
 
-	private async fetchWithBody(method: string, endpoint: string, body: object) {
+	private async fetchWithBody(method: string, endpoint: string, body?: object) {
 		return await this.fetchFunction(endpoint, {
 			method,
-			body: JSON.stringify(body),
+			body: body ? JSON.stringify(body) : undefined,
 		});
 	}
 
@@ -26,19 +26,19 @@ export class HttpClient {
 		return await this.fetchFunction(url, { method: "GET" });
 	}
 
-	async post(endpoint: string, body: object) {
+	async post(endpoint: string, body?: object) {
 		return await this.fetchWithBody("POST", endpoint, body);
 	}
 
-	async put(endpoint: string, body: object) {
+	async put(endpoint: string, body?: object) {
 		return await this.fetchWithBody("PUT", endpoint, body);
 	}
 
-	async patch(endpoint: string, body: object) {
+	async patch(endpoint: string, body?: object) {
 		return await this.fetchWithBody("PATCH", endpoint, body);
 	}
 
-	async delete(endpoint: string, body: object) {
+	async delete(endpoint: string, body?: object) {
 		return await this.fetchWithBody("DELETE", endpoint, body);
 	}
 }

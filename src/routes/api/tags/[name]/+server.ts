@@ -1,6 +1,6 @@
 import { Tag } from "$lib/model/tag.model";
 import { tagRepo } from "$lib/server/repo/tag.repo";
-import { createJsonResponse, createNoContentResponse, createNotFoundResponse, createValidationErrorResponse, getIdParam } from "$lib/util/api.util";
+import { createJsonResponse, createNoContentResponse, createNotFoundResponse, createValidationErrorResponse, getIdParam, getRequiredParam } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ locals, params }) => {
@@ -17,13 +17,13 @@ export const PATCH: RequestHandler = async ({ request, locals, params }) => {
 		return createValidationErrorResponse(parsing.error);
 	}
 
-	await tagRepo.update(locals.userId, getIdParam(params), parsing.data.name ?? null);
+	await tagRepo.update(locals.userId, getRequiredParam(params, "name"), parsing.data.name ?? null);
 
 	return createJsonResponse({});
 };
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	await tagRepo.delete(locals.userId, getIdParam(params));
+	await tagRepo.delete(locals.userId, getRequiredParam(params, "name"));
 
 	return createNoContentResponse();
 };

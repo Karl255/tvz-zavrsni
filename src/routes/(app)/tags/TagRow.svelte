@@ -4,8 +4,8 @@
 	import { validateTagName } from "$lib/service/validation.service";
 
 	export let tag: Tag;
-	export let updateTag: (newTag: Tag) => void;
-	export let deleteTag: (tagId: number) => void;
+	export let updateTag: (tagName: string, newName: string) => void;
+	export let deleteTag: (tagName: string) => void;
 
 	let newName = tag.name;
 	let isEditing = false;
@@ -19,11 +19,7 @@
 
 	function saveEdit() {
 		if (isNewNameValid) {
-			updateTag({
-				id: tag.id,
-				name: newName,
-				userId: tag.userId,
-			});
+			updateTag(tag.name, newName);
 
 			isEditing = !isEditing;
 		}
@@ -34,7 +30,7 @@
 	}
 
 	function deleteThisTag() {
-		deleteTag(tag.id);
+		deleteTag(tag.name);
 	}
 </script>
 

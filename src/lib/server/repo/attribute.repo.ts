@@ -1,5 +1,6 @@
 import type { Attribute } from "$lib/model/attribute.model";
 import { sql } from "$lib/server/sql";
+import { attributeValueRepo } from "./attribute-value.repo";
 
 export const attributeRepo = {
 	create: async (userId: number, name: string): Promise<Attribute | null> => {
@@ -69,7 +70,8 @@ export const attributeRepo = {
 	},
 
 	delete: async (userId: number, attributeId: number): Promise<void> => {
-		// TODO: cascade?
+		attributeValueRepo.deleteByAttributeId(attributeId);
+
 		await sql`
 			DELETE FROM attribute
 			WHERE user_id = ${userId} AND id = ${attributeId}

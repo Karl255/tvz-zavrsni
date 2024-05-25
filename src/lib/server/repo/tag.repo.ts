@@ -1,5 +1,6 @@
 import type { Tag } from "$lib/model/tag.model";
 import { sql } from "$lib/server/sql";
+import { taggedRepo } from "./tagged.repo";
 
 export const tagRepo = {
 	create: async (userId: number, name: string): Promise<Tag | null> => {
@@ -48,23 +49,32 @@ export const tagRepo = {
 		return tags[0] ?? null;
 	},
 
-	update: async (userId: number, tagId: number, name: string | null): Promise<void> => {
+	update: async (userId: number, tagName: string, newName: string | null): Promise<void> => {
 		await sql`
 			UPDATE tag
-			SET name = COALESCE(${name}, name)
-			WHERE user_id = ${userId} AND id = ${tagId}
+			SET name = COALESCE(${newName}, name)
+			WHERE user_id = ${userId} AND name = ${tagName}
 		`;
 
-		console.info(`Updated tag ${tagId}`);
+		console.info(`Updated tag ${tagName} to ${newName}`);
 	},
 
-	delete: async (userId: number, tagId: number): Promise<void> => {
-		// TODO: cascade?
+	delete: async (userId: number, tagName: string): Promise<boolean> => {
+		const tag = await tagRepo.getOneByName(userId, tagName);
+
+		if (!tag) {
+			return false;
+		}
+
+		await taggedRepo.deleteByTagId(tag.id);
+
 		await sql`
 			DELETE FROM tag
-			WHERE user_id = ${userId} AND id = ${tagId}
+			WHERE user_id = ${userId} AND name = ${tagName}
 		`;
 
-		console.info(`Deleted tag ${tagId}`);
+		console.info(`Deleted tag ${tagName}`);
+
+		return true;
 	},
 };

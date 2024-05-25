@@ -45,7 +45,7 @@
 
 		const transaction = (await transactionResponse.json()) as Transaction;
 
-		selectedTags.forEach((tag) => taggedApi.create(transaction.id, tag.id));
+		selectedTags.forEach((tag) => taggedApi.create(transaction.id, tag.name));
 
 		attributeValueApi.set(transaction.id, attributes);
 

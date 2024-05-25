@@ -15,7 +15,7 @@ export const attributeValueRepo = {
 			INSERT INTO attribute_value (transaction_id, attribute_id, value)
 			VALUES (
 				${transactionId},
-				(SELECT id FROM attribute WHERE attribute.name = ${attributeName}),
+				(SELECT id FROM attribute WHERE attribute.user_id = ${userId} AND attribute.name = ${attributeName}),
 				${value}
 			)
 		`;
@@ -80,7 +80,7 @@ export const attributeValueRepo = {
 
 		await sql`
 			DELETE FROM attribute_value
-			WHERE transaction_id = ${transactionId} AND attribute_id = (SELECT id FROM attribute WHERE attribute.name = ${attributeName}))
+			WHERE transaction_id = ${transactionId} AND attribute_id = (SELECT id FROM attribute WHERE attribute.user_id = ${userId} AND attribute.name = ${attributeName}))
 		`;
 
 		console.info(`Removed transaction "${transactionId}" attribute ${attributeName} for user ${userId}`);
@@ -98,7 +98,7 @@ export const attributeValueRepo = {
 
 		await sql`
 			DELETE FROM attribute_value
-			WHERE transaction_id = ${transactionId} AND attribute_id IN (SELECT id FROM attribute WHERE attribute.name IN ${sql(attributeNames)})
+			WHERE transaction_id = ${transactionId} AND attribute_id IN (SELECT id FROM attribute WHERE attribute.user_id = ${userId} AND attribute.name IN ${sql(attributeNames)})
 		`;
 
 		return true;
@@ -108,6 +108,13 @@ export const attributeValueRepo = {
 		await sql`
 			DELETE FROM attribute_value
 			WHERE transaction_id = ${transactionId}
+		`;
+	},
+
+	deleteByAttributeId: async (attributeId: number): Promise<void> => {
+		await sql`
+			DELETE FROM attribute_value
+			WHERE attribute_id = ${attributeId}
 		`;
 	},
 };

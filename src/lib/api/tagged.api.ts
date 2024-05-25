@@ -1,6 +1,6 @@
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
-const endpoint = resolveEndpoint("/api/tagged");
+const endpoint = resolveEndpoint("/api/tags/tagged");
 
 export class TaggedApi {
 	httpClient: HttpClient;
@@ -9,7 +9,7 @@ export class TaggedApi {
 		this.httpClient = new HttpClient(fetchFunction);
 	}
 
-	async create(transactionId: number, tagId: number) {
-		return await this.httpClient.post(endpoint, { transactionId, tagId: tagId });
+	async create(transactionId: number, tagName: string) {
+		return await this.httpClient.post(endpoint, { transactionId, tagName });
 	}
 }

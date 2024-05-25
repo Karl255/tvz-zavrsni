@@ -3,9 +3,9 @@ import { tagRepo } from "./tag.repo";
 import { transactionRepo } from "./transaction.repo";
 
 export const taggedRepo = {
-	create: async (userId: number, transactionId: number, tagId: number): Promise<boolean> => {
+	create: async (userId: number, transactionId: number, tagName: string): Promise<boolean> => {
 		const transaction = await transactionRepo.getOne(userId, transactionId);
-		const tag = await tagRepo.getOne(userId, tagId);
+		const tag = await tagRepo.getOneByName(userId, tagName);
 
 		if (!transaction || !tag) {
 			return false;
@@ -13,17 +13,17 @@ export const taggedRepo = {
 
 		await sql`
 			INSERT INTO tagged (transaction_id, tag_id)
-			VALUES (${transactionId}, ${tagId})
+			VALUES (${transactionId}, ${tag.id})
 		`;
 
-		console.info(`Tagged transaction "${transactionId}" with tag ${tagId} for user ${userId}`);
+		console.info(`Tagged transaction "${transactionId}" with tag ${tagName} for user ${userId}`);
 
 		return true;
 	},
 
-	delete: async (userId: number, transactionId: number, tagId: number): Promise<boolean> => {
+	delete: async (userId: number, transactionId: number, tagName: string): Promise<boolean> => {
 		const transaction = await transactionRepo.getOne(userId, transactionId);
-		const tag = await tagRepo.getOne(userId, tagId);
+		const tag = await tagRepo.getOneByName(userId, tagName);
 
 		if (!transaction || !tag) {
 			return false;
@@ -31,12 +31,19 @@ export const taggedRepo = {
 
 		await sql`
 			DELETE FROM tagged
-			WHERE transaction_id = ${transactionId} AND tag_id = ${tagId})
+			WHERE transaction_id = ${transactionId} AND tag_id = ${tag.id})
 		`;
 
-		console.info(`Untagged transaction "${transactionId}" with tag ${tagId} for user ${userId}`);
+		console.info(`Untagged transaction "${transactionId}" with tag ${tagName} for user ${userId}`);
 
 		return true;
+	},
+
+	deleteByTagId: async (tagId: number): Promise<void> => {
+		await sql`
+			DELETE FROM tagged
+			WHERE tag_id = ${tagId}
+		`;
 	},
 
 	deleteForTransaction: async (transactionId: number): Promise<void> => {

@@ -27,19 +27,19 @@
 		}
 	}
 
-	async function updateTag(newTag: Tag) {
-		const response = await tagApi.update(newTag.id, newTag.name);
+	async function updateTag(tagName: string, newName: string) {
+		const response = await tagApi.update(tagName, newName);
 
 		if (response.ok) {
-			data.tags = data.tags.map((tag) => (tag.id === newTag.id ? newTag : tag));
+			data.tags = data.tags.map((tag) => (tag.name === tagName ? { ...tag, name: newName } : tag));
 		}
 	}
 
-	async function deleteTag(tagId: number) {
-		const resposne = await tagApi.delete(tagId);
+	async function deleteTag(tagName: string) {
+		const resposne = await tagApi.delete(tagName);
 
 		if (resposne.ok) {
-			data.tags = data.tags.filter((tag) => tag.id !== tagId);
+			data.tags = data.tags.filter((tag) => tag.name !== tagName);
 		}
 	}
 
@@ -49,7 +49,7 @@
 		// prettier-ignore
 		return tags
 			.filter((tag) => searches.every((s) => tag.name.includes(s)))
-			.toSorted((a, b) => (a.name > b.name ? 1 : 0));
+			.toSorted((a, b) => (a.name > b.name ? 1 : -1));
 	}
 </script>
 

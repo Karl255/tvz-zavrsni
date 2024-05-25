@@ -21,12 +21,12 @@
 		<div>
 			<input
 				type="checkbox"
-				id={tag.id.toString()}
+				id="tag-{tag.name}"
 				bind:checked={tag.checked}
 				on:change={updateSelected}
 			/>
 
-			<label for={tag.id.toString()}>{tag.name}</label>
+			<label for="tag-{tag.name}">{tag.name}</label>
 		</div>
 	{/each}
 </fieldset>

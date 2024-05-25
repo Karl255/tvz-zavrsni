@@ -2,7 +2,7 @@ import type { Tag } from "$lib/model/tag.model";
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
 const endpoint = resolveEndpoint("/api/tags");
-const idEndpoint = (id: number) => `${endpoint}/${id}`;
+const nameEndpoint = (name: string) => `${endpoint}/${name}`;
 
 export class TagApi {
 	httpClient: HttpClient;
@@ -19,13 +19,13 @@ export class TagApi {
 		return await this.httpClient.post(endpoint, { name });
 	}
 
-	async update(tagId: number, newName: string) {
+	async update(tagName: string, newName: string) {
 		const payload: Partial<Tag> = { name: newName };
 
-		return await this.httpClient.patch(idEndpoint(tagId), payload);
+		return await this.httpClient.patch(nameEndpoint(tagName), payload);
 	}
 
-	async delete(tagId: number) {
-		return await this.httpClient.delete(idEndpoint(tagId), {});
+	async delete(tagName: string) {
+		return await this.httpClient.delete(nameEndpoint(tagName));
 	}
 }

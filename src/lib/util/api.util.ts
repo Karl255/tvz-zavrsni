@@ -53,3 +53,11 @@ export function getIdParam(params: Partial<Record<string, string>>): number {
 		throw new Error();
 	}
 }
+
+export function getRequiredParam(params: Partial<Record<string, string>>, name: string): string {
+	return params[name] ?? _throw(new Error(`Missing required path param '${name}'`));
+
+	function _throw(error: Error): never {
+		throw error;
+	}
+}

@@ -49,7 +49,7 @@
 		// prettier-ignore
 		return attributes
 			.filter((attribute) => searches.every((s) => attribute.name.includes(s)))
-			.toSorted((a, b) => (a.name > b.name ? 1 : 0));
+			.toSorted((a, b) => (a.name > b.name ? 1 : -1));
 	}
 </script>
 
