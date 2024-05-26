@@ -1,49 +1,18 @@
 <script lang="ts">
 	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
-	import { validateIsoDate } from "$lib/service/validation.service";
 	import Icon, { IconType } from "./Icon.svelte";
 
 	export let transaction: DetailedTransaction;
+	export let attributeColumns: string[];
 	export let accountResolver: ((accountId: number) => Account) | undefined;
-	export let updateTransaction: (newTransaction: DetailedTransaction) => void;
-	export let deleteTransaction: (transactionId: number) => void;
+	export let onEdit: (transactionId: number) => void;
+	export let onDelete: (transactionId: number) => void;
 
 	let isEditing = false;
 	let newAmount = transaction.amount;
 	let newDescription = transaction.description;
 	let newDate = transaction.date;
-	let isValid = false;
-	$: isValid = validate(newAmount, newDescription, newDate);
-
-	function validate(amount: number, description: string, date: string) {
-		return amount !== 0 && description.length >= 5 && validateIsoDate(date);
-	}
-
-	async function startOrSaveEdit() {
-		if (isEditing) {
-			updateTransaction({
-				...transaction,
-				amount: newAmount,
-				description: newDescription,
-				date: newDate,
-			});
-		} else {
-			newAmount = transaction.amount;
-			newDescription = transaction.description;
-			newDate = transaction.date;
-		}
-
-		isEditing = !isEditing;
-	}
-
-	function deleteOrCancel() {
-		if (isEditing) {
-			isEditing = !isEditing;
-		} else {
-			deleteTransaction(transaction.id);
-		}
-	}
 
 	function formatCurrency(e: { currentTarget: HTMLInputElement }) {
 		e.currentTarget.value = Number(e.currentTarget.value).toFixed(2);
@@ -68,7 +37,7 @@
 	{/if}
 </td>
 
-<td>
+<td class="description">
 	{#if isEditing}
 		<!-- prettier-ignore -->
 		<input type="text" bind:value={newDescription}>
@@ -97,16 +66,34 @@
 	</td>
 {/if}
 
-<td>{transaction.tags.join(", ")}</td>
+<td>
+	{#if transaction.tags.length > 0}
+		<span title={transaction.tags.join(", ")}>
+			<Icon
+				icon={IconType.TAG}
+				inline
+			/>
+			{transaction.tags.length}
+		</span>
+	{/if}
+</td>
+
+{#each attributeColumns as attribute}
+	<td>
+		{#if transaction.attributes[attribute]}
+			{transaction.attributes[attribute]}
+		{/if}
+	</td>
+{/each}
 
 <td class="actions">
 	<!-- prettier-ignore -->
-	<button on:click={startOrSaveEdit} disabled={isEditing && !isValid}>
-		<Icon icon={isEditing ? IconType.SAVE : IconType.EDIT} />
+	<button on:click={() => onEdit(transaction.id)}>
+		<Icon icon={IconType.EDIT} />
 	</button>
 
-	<button on:click={deleteOrCancel}>
-		<Icon icon={isEditing ? IconType.X : IconType.DELETE} />
+	<button on:click={() => onDelete(transaction.id)}>
+		<Icon icon={IconType.DELETE} />
 	</button>
 </td>
 
@@ -123,6 +110,13 @@
 		input {
 			max-width: 8rem;
 		}
+	}
+
+	.description {
+		max-width: 16rem;
+		white-space: pre;
+		overflow-x: clip;
+		text-overflow: ellipsis;
 	}
 
 	.positive {

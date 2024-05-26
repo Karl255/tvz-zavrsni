@@ -1,25 +1,24 @@
 <script lang="ts">
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { Tag } from "$lib/model/tag.model";
 	import { validateTagName } from "$lib/service/validation.service";
 
-	export let tag: Tag;
+	export let tag: string;
 	export let updateTag: (tagName: string, newName: string) => void;
 	export let deleteTag: (tagName: string) => void;
 
-	let newName = tag.name;
+	let newName = tag;
 	let isEditing = false;
 	let isNewNameValid = false;
 	$: isNewNameValid = validateTagName(newName);
 
 	function startEdit() {
-		newName = tag.name;
+		newName = tag;
 		isEditing = !isEditing;
 	}
 
 	function saveEdit() {
 		if (isNewNameValid) {
-			updateTag(tag.name, newName);
+			updateTag(tag, newName);
 
 			isEditing = !isEditing;
 		}
@@ -30,7 +29,7 @@
 	}
 
 	function deleteThisTag() {
-		deleteTag(tag.name);
+		deleteTag(tag);
 	}
 </script>
 
@@ -39,7 +38,7 @@
 		<!-- prettier-ignore -->
 		<input type="text" bind:value={newName}>
 	{:else}
-		<p title="tag name">{tag.name}</p>
+		<p title="tag name">{tag}</p>
 	{/if}
 
 	<div class="actions">

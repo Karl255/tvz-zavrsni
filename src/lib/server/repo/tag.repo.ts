@@ -3,7 +3,7 @@ import { sql } from "$lib/server/sql";
 import { taggedRepo } from "./tagged.repo";
 
 export const tagRepo = {
-	create: async (userId: number, name: string): Promise<Tag | null> => {
+	create: async (userId: number, name: string): Promise<string | null> => {
 		const existingTags = await tagRepo.getOneByName(userId, name);
 
 		if (existingTags) {
@@ -18,7 +18,7 @@ export const tagRepo = {
 
 		console.info(`Created tag ${tags[0].id} for user ${userId}`);
 
-		return tags[0];
+		return tags[0].name;
 	},
 
 	getAll: async (userId: number): Promise<Tag[]> => {

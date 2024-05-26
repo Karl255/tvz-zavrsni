@@ -16,25 +16,28 @@
 	let scrollWrapper: HTMLDivElement;
 	let allowScrolling = false;
 
+	let attributeColumns: string[] = getAllAttributes(transactions);
+	$: attributeColumns = getAllAttributes(transactions);
+
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
 		scrollWrapper.style.maxWidth = `${width}px`;
 		allowScrolling = true;
 	});
 
+	function getAllAttributes(transactions: DetailedTransaction[]): string[] {
+		return [...new Set(transactions.flatMap((transaction) => Object.keys(transaction.attributes)))];
+	}
+
 	function getAccountById(accountId: number) {
 		return accountMap[accountId];
 	}
 
-	async function updateTransaction(newTransaction: DetailedTransaction) {
-		const response = await transactionApi.update(newTransaction.id, newTransaction.amount, newTransaction.description, newTransaction.date);
-
-		if (response.ok) {
-			transactions = transactions.map((transaction) => (transaction.id === newTransaction.id ? newTransaction : transaction));
-		}
+	async function onEdit(transactionId: number) {
+		console.log("start editing", transactionId);
 	}
 
-	async function deleteTransaction(transactionId: number) {
+	async function onDelete(transactionId: number) {
 		const response = await transactionApi.delete(transactionId);
 
 		if (response.ok) {
@@ -67,6 +70,11 @@
 			{/if}
 
 			<th>Tags</th>
+
+			{#each attributeColumns as attribute}
+				<th>{attribute}</th>
+			{/each}
+
 			<th></th>
 		</tr>
 
@@ -74,9 +82,10 @@
 			<tr>
 				<TransactionRow
 					{transaction}
+					{attributeColumns}
 					accountResolver={accounts.length > 1 ? getAccountById : undefined}
-					{updateTransaction}
-					{deleteTransaction}
+					{onEdit}
+					{onDelete}
 				/>
 			</tr>
 		{/each}
@@ -111,6 +120,6 @@
 
 	th,
 	:global(td) {
-		padding: 0.5rem 1.5rem;
+		padding: 0.5rem 1rem;
 	}
 </style>

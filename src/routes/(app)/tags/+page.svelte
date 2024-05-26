@@ -2,7 +2,6 @@
 	import { TagApi } from "$lib/api/tag.api";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { Tag } from "$lib/model/tag.model";
 	import { validateTagName } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
 	import TagRow from "./TagRow.svelte";
@@ -13,14 +12,14 @@
 
 	let searchInput = "";
 	let isValidTagName = false;
-	$: isValidTagName = validateTagName(searchInput) && data.tags.every((tag) => tag.name !== searchInput);
+	$: isValidTagName = validateTagName(searchInput) && data.tags.every((tag) => tag !== searchInput);
 
 	async function createTag() {
 		if (isValidTagName) {
 			const response = await tagApi.create(searchInput);
 
 			if (response.ok) {
-				data.tags.push((await response.json()) as Tag);
+				data.tags.push((await response.json()) as string);
 				data.tags = data.tags;
 				searchInput = "";
 			}
@@ -31,7 +30,7 @@
 		const response = await tagApi.update(tagName, newName);
 
 		if (response.ok) {
-			data.tags = data.tags.map((tag) => (tag.name === tagName ? { ...tag, name: newName } : tag));
+			data.tags = data.tags.map((tag) => (tag === tagName ? newName : tag));
 		}
 	}
 
@@ -39,17 +38,17 @@
 		const resposne = await tagApi.delete(tagName);
 
 		if (resposne.ok) {
-			data.tags = data.tags.filter((tag) => tag.name !== tagName);
+			data.tags = data.tags.filter((tag) => tag !== tagName);
 		}
 	}
 
-	function searchAndSort(tags: Tag[], search: string) {
+	function searchAndSort(tags: string[], search: string) {
 		const searches = search.split(/\s+/);
 
 		// prettier-ignore
 		return tags
-			.filter((tag) => searches.every((s) => tag.name.includes(s)))
-			.toSorted((a, b) => (a.name > b.name ? 1 : -1));
+			.filter((tag) => searches.every((s) => tag.includes(s)))
+			.toSorted((a, b) => (a > b ? 1 : -1));
 	}
 </script>
 
