@@ -1,12 +1,7 @@
 import { Tag } from "$lib/model/tag.model";
 import { tagRepo } from "$lib/server/repo/tag.repo";
-import { createJsonResponse, createNoContentResponse, createNotFoundResponse, createValidationErrorResponse, getIdParam, getRequiredParam } from "$lib/util/api.util";
+import { createJsonResponse, createNoContentResponse, createValidationErrorResponse, getRequiredParam } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
-
-export const GET: RequestHandler = async ({ locals, params }) => {
-	const tag = await tagRepo.getOne(locals.userId, getIdParam(params));
-	return tag ? createJsonResponse(tag) : createNotFoundResponse();
-};
 
 export const PATCH: RequestHandler = async ({ request, locals, params }) => {
 	const Payload = Tag.omit({ id: true, userId: true }).partial();

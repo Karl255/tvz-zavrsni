@@ -1,30 +1,25 @@
 <script lang="ts">
 	import Button from "$lib/component/Button.svelte";
-import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { Attribute } from "$lib/model/attribute.model";
+	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import { validateAttributeName } from "$lib/service/validation.service";
 
-	export let attribute: Attribute;
-	export let updateAttribute: (newAttribute: Attribute) => void;
-	export let deleteAttribute: (attributeId: number) => void;
+	export let attribute: string;
+	export let updateAttribute: (attributeName: string, newName: string) => void;
+	export let deleteAttribute: (attributeName: string) => void;
 
-	let newName = attribute.name;
+	let newName = attribute;
 	let isEditing = false;
 	let isNewNameValid = false;
 	$: isNewNameValid = validateAttributeName(newName);
 
 	function startEdit() {
-		newName = attribute.name;
+		newName = attribute;
 		isEditing = !isEditing;
 	}
 
 	function saveEdit() {
 		if (isNewNameValid) {
-			updateAttribute({
-				id: attribute.id,
-				name: newName,
-				userId: attribute.userId,
-			});
+			updateAttribute(attribute, newName);
 
 			isEditing = !isEditing;
 		}
@@ -35,7 +30,7 @@ import Icon, { IconType } from "$lib/component/Icon.svelte";
 	}
 
 	function deleteThisAttribute() {
-		deleteAttribute(attribute.id);
+		deleteAttribute(attribute);
 	}
 </script>
 
@@ -44,7 +39,7 @@ import Icon, { IconType } from "$lib/component/Icon.svelte";
 		<!-- prettier-ignore -->
 		<input type="text" bind:value={newName}>
 	{:else}
-		<p title="attribute name">{attribute.name}</p>
+		<p title="attribute name">{attribute}</p>
 	{/if}
 
 	<div class="actions">

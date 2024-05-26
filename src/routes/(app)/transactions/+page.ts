@@ -14,6 +14,6 @@ export const load: PageLoad = async ({ fetch }) => {
 		transactions: await transactionApi.getAll(),
 		accounts: await accountApi.getAll(),
 		availableTags: await tagApi.getAll(),
-		availableAttributes: (await attributeApi.getAll()).map((attribute) => attribute.name),
+		availableAttributes: await attributeApi.getAll(),
 	};
 };

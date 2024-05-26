@@ -2,7 +2,6 @@
 	import { AttributeApi } from "$lib/api/attribute.api";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { Attribute } from "$lib/model/attribute.model";
 	import { validateAttributeName } from "$lib/service/validation.service";
 	import type { PageData } from "./$types";
 	import AttributeRow from "./AttributeRow.svelte";
@@ -13,43 +12,43 @@
 
 	let searchInput = "";
 	let isValidAttributeName = false;
-	$: isValidAttributeName = validateAttributeName(searchInput) && data.attributes.every((attribute) => attribute.name !== searchInput);
+	$: isValidAttributeName = validateAttributeName(searchInput) && data.attributes.every((attribute) => attribute !== searchInput);
 
 	async function createAttribute() {
 		if (isValidAttributeName) {
 			const response = await attributeApi.create(searchInput);
 
 			if (response.ok) {
-				data.attributes.push((await response.json()) as Attribute);
+				data.attributes.push((await response.json()) as string);
 				data.attributes = data.attributes;
 				searchInput = "";
 			}
 		}
 	}
 
-	async function updateAttribute(newAttribute: Attribute) {
-		const response = await attributeApi.update(newAttribute.id, newAttribute.name);
+	async function updateAttribute(attributeName: string, newName: string) {
+		const response = await attributeApi.update(attributeName, newName);
 
 		if (response.ok) {
-			data.attributes = data.attributes.map((attribute) => (attribute.id === newAttribute.id ? newAttribute : attribute));
+			data.attributes = data.attributes.map((a) => (a === attributeName ? newName : a));
 		}
 	}
 
-	async function deleteAttribute(attributeId: number) {
-		const resposne = await attributeApi.delete(attributeId);
+	async function deleteAttribute(attributeName: string) {
+		const resposne = await attributeApi.delete(attributeName);
 
 		if (resposne.ok) {
-			data.attributes = data.attributes.filter((attribute) => attribute.id !== attributeId);
+			data.attributes = data.attributes.filter((a) => a !== attributeName);
 		}
 	}
 
-	function searchAndSort(attributes: Attribute[], search: string) {
+	function searchAndSort(attributes: string[], search: string) {
 		const searches = search.split(/\s+/);
 
 		// prettier-ignore
 		return attributes
-			.filter((attribute) => searches.every((s) => attribute.name.includes(s)))
-			.toSorted((a, b) => (a.name > b.name ? 1 : -1));
+			.filter((attribute) => searches.every((s) => attribute.includes(s)))
+			.toSorted((a, b) => (a > b ? 1 : -1));
 	}
 </script>
 

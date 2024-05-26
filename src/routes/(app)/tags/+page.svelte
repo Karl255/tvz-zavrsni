@@ -30,7 +30,7 @@
 		const response = await tagApi.update(tagName, newName);
 
 		if (response.ok) {
-			data.tags = data.tags.map((tag) => (tag === tagName ? newName : tag));
+			data.tags = data.tags.map((t) => (t === tagName ? newName : t));
 		}
 	}
 
@@ -38,7 +38,7 @@
 		const resposne = await tagApi.delete(tagName);
 
 		if (resposne.ok) {
-			data.tags = data.tags.filter((tag) => tag !== tagName);
+			data.tags = data.tags.filter((t) => t !== tagName);
 		}
 	}
 
