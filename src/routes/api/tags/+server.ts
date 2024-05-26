@@ -4,7 +4,7 @@ import { createJsonResponse, createValidationErrorResponse } from "$lib/util/api
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ locals }) => {
-	return createJsonResponse(await tagRepo.getAll(locals.userId));
+	return createJsonResponse((await tagRepo.getAll(locals.userId)).map((tag) => tag.name));
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {

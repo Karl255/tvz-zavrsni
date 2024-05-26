@@ -12,7 +12,7 @@ export class TagApi {
 	}
 
 	async getAll() {
-		return (await (await this.httpClient.get(endpoint, {})).json()) as Tag[];
+		return (await (await this.httpClient.get(endpoint, {})).json()) as string[];
 	}
 
 	async create(name: string) {

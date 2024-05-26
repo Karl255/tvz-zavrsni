@@ -1,18 +1,12 @@
 <script lang="ts">
-	import type { Tag } from "$lib/model/tag.model";
-
-	interface CheckableTag extends Tag {
-		checked: boolean;
-	}
-
 	export let id: string;
-	export let tags: Tag[];
-	export let selectedTags: Tag[] = [];
+	export let selectedTags: string[] = [];
+	export let availableTags: string[];
 
-	let checkableTags: CheckableTag[] = tags.map((tag) => ({ ...tag, checked: false }));
+	let checkableTags = availableTags.map((tag) => ({ name: tag, checked: false }));
 
 	function updateSelected() {
-		selectedTags = checkableTags.filter((tag) => tag.checked);
+		selectedTags = checkableTags.filter((tag) => tag.checked).map((tag) => tag.name);
 	}
 </script>
 
