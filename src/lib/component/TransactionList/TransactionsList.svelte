@@ -3,10 +3,12 @@
 	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { onMount } from "svelte";
-	import TransactionRow from "./TransactionRow.svelte";
+	import Row from "./_Row.svelte";
 	import TransactionEditor from "../TransactionEditor.svelte";
 	import { deepCopy } from "$lib/util/util";
-	import TransactionFilter from "./TransactionFilter.svelte";
+	import Filter from "./_Filter.svelte";
+	import Icon, { IconType } from "../Icon.svelte";
+	import Button from "../Button.svelte";
 
 	const transactionApi = new TransactionApi();
 
@@ -27,6 +29,9 @@
 
 	let editDialog: HTMLDialogElement;
 	let transactionBeingEdited: DetailedTransaction | null = null;
+
+	// for filter only
+	let showDescriptionFilter: boolean;
 
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
@@ -92,15 +97,26 @@
 	bind:this={scrollWrapper}
 	class:scroll={allowScrolling}
 >
-	<TransactionFilter
-		allTransactions={transactions}
-		bind:filteredTransactions
-	/>
+	<div class="filter">
+		<Filter
+			allTransactions={transactions}
+			bind:filteredTransactions
+			bind:showDescriptionFilter
+		/>
+	</div>
 
 	<table>
 		<tr>
 			<th>Amount</th>
-			<th>Description</th>
+			<th>
+				Description
+				<span class="filter-button">
+					<!-- prettier-ignore -->
+					<Button type="icon" on:click={() => showDescriptionFilter = true}>
+						<Icon icon={IconType.FILTER} />
+					</Button>
+				</span>
+			</th>
 			<th>Date</th>
 
 			{#if accounts.length > 1}
@@ -118,7 +134,7 @@
 
 		{#each sorted(filteredTransactions) as transaction}
 			<tr>
-				<TransactionRow
+				<Row
 					{transaction}
 					{attributeColumns}
 					accountResolver={accounts.length > 1 ? getAccountById : undefined}
@@ -148,6 +164,10 @@
 		overflow-x: hidden;
 	}
 
+	.filter {
+		max-width: 32rem;
+	}
+
 	table {
 		border-collapse: collapse;
 		table-layout: auto;
@@ -167,6 +187,18 @@
 
 	th {
 		font-weight: $fw-bold;
+		position: relative;
+
+		.filter-button {
+			position: absolute;
+			visibility: hidden;
+			color: $clr-icon;
+			margin-left: 0.25rem;
+		}
+
+		&:hover .filter-button {
+			visibility: visible;
+		}
 	}
 
 	th,
