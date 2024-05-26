@@ -32,6 +32,7 @@
 
 	// for filter only
 	let showDescriptionFilter: boolean;
+	let showAmountFilter: boolean;
 
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
@@ -102,14 +103,26 @@
 			allTransactions={transactions}
 			bind:filteredTransactions
 			bind:showDescriptionFilter
+			bind:showAmountFilter
 		/>
 	</div>
 
 	<table>
 		<tr>
-			<th>Amount</th>
+			<th>
+				Amount
+
+				<span class="filter-button">
+					<!-- prettier-ignore -->
+					<Button type="icon" on:click={() => showAmountFilter = true}>
+						<Icon icon={IconType.FILTER} />
+					</Button>
+				</span>
+			</th>
+
 			<th>
 				Description
+
 				<span class="filter-button">
 					<!-- prettier-ignore -->
 					<Button type="icon" on:click={() => showDescriptionFilter = true}>
@@ -165,7 +178,7 @@
 	}
 
 	.filter {
-		max-width: 32rem;
+		max-width: 100%;
 	}
 
 	table {
