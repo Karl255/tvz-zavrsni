@@ -51,13 +51,21 @@
 		editDialog.showModal();
 	}
 
-	function saveEdited(transaction: DetailedTransaction) {
-		console.log("should save", transaction);
+	async function saveEdited(transaction: DetailedTransaction) {
+		const response = await transactionApi.update(transaction.id, transaction.amount, transaction.description, transaction.date);
+
+		if (!response.ok) {
+			return;
+		}
+
+		transactions = transactions.map((t) => (t.id === transaction.id ? transaction : t));
+
+		closeEditor();
 	}
 
-	function cancelEdit() {
-		transactionBeingEdited = null;
+	function closeEditor() {
 		editDialog.close();
+		transactionBeingEdited = null;
 	}
 
 	async function onDelete(transactionId: number) {
@@ -123,7 +131,7 @@
 			{availableTags}
 			{availableAttributes}
 			onUpdate={saveEdited}
-			onCancel={cancelEdit}
+			onCancel={closeEditor}
 		/>
 	{/if}
 </dialog>

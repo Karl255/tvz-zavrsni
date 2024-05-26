@@ -52,9 +52,6 @@
 			onCreate(transaction);
 		}
 
-		transaction.amount = 0;
-		transaction.description = "";
-
 		function isExisting(transaction: NewOrExistingTransaction): transaction is DetailedTransaction {
 			return !!transaction.id;
 		}

@@ -34,6 +34,9 @@
 		transaction.tags.forEach((tag) => taggedApi.create(createdTransaction.id, tag));
 
 		attributeValueApi.set(createdTransaction.id, transaction.attributes);
+
+		transaction.amount = 0;
+		transaction.description = "";
 	}
 </script>
 
