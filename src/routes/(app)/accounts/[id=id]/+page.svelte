@@ -30,8 +30,12 @@
 	<p class="account__balance" title="balance">{sumBalance(data.transactions).toFixed(2)} €</p>
 </article>
 
-<!-- prettier-ignore -->
-<TransactionsList bind:transactions={data.transactions} accounts={[data.account]} />
+<TransactionsList
+	bind:transactions={data.transactions}
+	accounts={[data.account]}
+	availableTags={data.availableTags}
+	availableAttributes={data.availableAttributes}
+/>
 
 <style lang="scss">
 	.title {

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Icon, { IconType } from "$lib/component/Icon.svelte";
+	import Button from "$lib/component/Button.svelte";
+import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import type { Attribute } from "$lib/model/attribute.model";
 	import { validateAttributeName } from "$lib/service/validation.service";
 
@@ -49,23 +50,24 @@
 	<div class="actions">
 		{#if isEditing}
 			<!-- prettier-ignore -->
-			<button on:click={saveEdit} disabled={!isNewNameValid}>
+			<Button type="icon" on:click={saveEdit} disabled={!isNewNameValid}>
 				<Icon icon={IconType.SAVE} />
-			</button>
+			</Button>
 
-			<button on:click={cancelEdit}>
+			<!-- prettier-ignore -->
+			<Button type="icon" on:click={cancelEdit}>
 				<Icon icon={IconType.X} />
-			</button>
+			</Button>
 		{:else}
 			<!-- prettier-ignore -->
-			<button class="hover-only" on:click={startEdit}>
+			<Button type="icon" class="hover-only" on:click={startEdit}>
 				<Icon icon={IconType.EDIT_TAG} />
-			</button>
+			</Button>
 
 			<!-- prettier-ignore -->
-			<button class="hover-only" on:click={deleteThisAttribute}>
+			<Button type="icon" class="hover-only" on:click={deleteThisAttribute}>
 				<Icon icon={IconType.DELETE} />
-			</button>
+			</Button>
 		{/if}
 	</div>
 </article>
@@ -84,13 +86,14 @@
 		display: flex;
 		flex-direction: row;
 		gap: 1rem;
+		color: $clr-icon;
 	}
 
-	.hover-only {
+	:global(.hover-only) {
 		visibility: hidden;
 	}
 
-	.attribute:hover .hover-only {
+	.attribute:hover :global(.hover-only) {
 		visibility: visible;
 	}
 </style>

@@ -2,7 +2,7 @@
 	lang="ts"
 	context="module"
 >
-	export type ButtonType = "primary" | "secondary" | "tertiary";
+	export type ButtonType = "primary" | "secondary" | "tertiary" | "icon";
 </script>
 
 <script lang="ts">
@@ -68,6 +68,14 @@
 		&:disabled {
 			opacity: 0.7;
 			cursor: default;
+		}
+	}
+
+	.icon {
+		transition: color 100ms ease-out;
+
+		&:enabled:hover {
+			color: black;
 		}
 	}
 
