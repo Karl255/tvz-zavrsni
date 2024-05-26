@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TransactionsList from "$lib/component/TransactionsList.svelte";
+	import TransactionsList from "$lib/component/TransactionList/TransactionsList.svelte";
 	import type { PageData } from "./$types";
 
 	export let data: PageData;

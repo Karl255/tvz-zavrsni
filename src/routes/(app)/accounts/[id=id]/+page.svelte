@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import TransactionsList from "$lib/component/TransactionsList.svelte";
+	import TransactionsList from "$lib/component/TransactionList/TransactionsList.svelte";
 	import { AccountType } from "$lib/model/account.model";
 	import type { Transaction } from "$lib/model/transaction.model";
 	import type { PageData } from "./$types";
@@ -12,7 +12,7 @@
 	}
 </script>
 
-<h1 class="title">You are viewing the account:</h1>
+<h1 class="sr-only">You are viewing the account:</h1>
 
 <article class="account">
 	<div class="account__info">
@@ -38,10 +38,6 @@
 />
 
 <style lang="scss">
-	.title {
-		margin-bottom: 2rem;
-	}
-
 	.account {
 		background-color: $clr-light-gray;
 		border-radius: 5px;

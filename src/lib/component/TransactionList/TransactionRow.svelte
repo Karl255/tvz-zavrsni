@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
-	import Button from "./Button.svelte";
-	import Icon, { IconType } from "./Icon.svelte";
+	import Button from "../Button.svelte";
+	import Icon, { IconType } from "../Icon.svelte";
 
 	export let transaction: DetailedTransaction;
 	export let attributeColumns: string[];

@@ -4,12 +4,14 @@
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { onMount } from "svelte";
 	import TransactionRow from "./TransactionRow.svelte";
-	import TransactionEditor from "./TransactionEditor.svelte";
+	import TransactionEditor from "../TransactionEditor.svelte";
 	import { deepCopy } from "$lib/util/util";
+	import TransactionFilter from "./TransactionFilter.svelte";
 
 	const transactionApi = new TransactionApi();
 
 	export let transactions: DetailedTransaction[];
+	let filteredTransactions = transactions;
 	export let accounts: Account[];
 	export let availableTags: string[];
 	export let availableAttributes: string[];
@@ -17,8 +19,8 @@
 	let accountMap: Record<number, Account> = {};
 	$: accountMap = accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {});
 
-	let attributeColumns: string[] = getAllAttributes(transactions);
-	$: attributeColumns = getAllAttributes(transactions);
+	let attributeColumns: string[] = getAllAttributes(filteredTransactions);
+	$: attributeColumns = getAllAttributes(filteredTransactions);
 
 	let scrollWrapper: HTMLDivElement;
 	let allowScrolling = false;
@@ -76,7 +78,7 @@
 		}
 	}
 
-	function sortedTransactions(transactions: DetailedTransaction[]) {
+	function sorted(transactions: DetailedTransaction[]) {
 		return transactions.toSorted(compare);
 
 		function compare(a: DetailedTransaction, b: DetailedTransaction): number {
@@ -90,6 +92,11 @@
 	bind:this={scrollWrapper}
 	class:scroll={allowScrolling}
 >
+	<TransactionFilter
+		allTransactions={transactions}
+		bind:filteredTransactions
+	/>
+
 	<table>
 		<tr>
 			<th>Amount</th>
@@ -109,7 +116,7 @@
 			<th></th>
 		</tr>
 
-		{#each sortedTransactions(transactions) as transaction}
+		{#each sorted(filteredTransactions) as transaction}
 			<tr>
 				<TransactionRow
 					{transaction}
