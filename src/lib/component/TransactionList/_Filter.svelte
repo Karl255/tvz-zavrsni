@@ -2,17 +2,10 @@
 	import { DetailedTransaction } from "$lib/model/transaction.model";
 	import Button from "../Button.svelte";
 	import Icon, { IconType } from "../Icon.svelte";
+	import { type Filter, applyFilter } from "./_filter";
 
 	export let allTransactions: DetailedTransaction[];
 	export let filteredTransactions = allTransactions;
-	export let showDescriptionFilter = true;
-	export let showAmountFilter = true;
-
-	interface Filter {
-		descriptionSearch: string;
-		amountMin: number | null;
-		amountMax: number | null;
-	}
 
 	const filter: Filter = {
 		descriptionSearch: "",
@@ -21,14 +14,7 @@
 	};
 
 	$: filteredTransactions = applyFilter(allTransactions, filter);
-
-	function applyFilter(transactions: DetailedTransaction[], f: Filter) {
-		const descriptionWords = f.descriptionSearch.split(/ +/).map((word) => word.toLocaleLowerCase());
-
-		return transactions.filter((transaction) => {
-			return descriptionWords.every((word) => transaction.description.toLocaleLowerCase().includes(word));
-		});
-	}
+	$: console.info("filter", filter);
 
 	function clearDescriptionSearch() {
 		filter.descriptionSearch = "";
@@ -41,6 +27,9 @@
 		showAmountFilter = false;
 	}
 
+	export let showDescriptionFilter = false;
+	export let showAmountFilter = false;
+
 	let isAnyFilterShown = false;
 	$: isAnyFilterShown = showDescriptionFilter || showAmountFilter;
 </script>
@@ -49,25 +38,6 @@
 	class="filters"
 	class:hidden={!isAnyFilterShown}
 >
-	{#if showDescriptionFilter}
-		<div class="filter-row">
-			<!-- prettier-ignore -->
-			<Button type="tertiary" small on:click={clearDescriptionSearch}>
-				<Icon icon={IconType.X} />
-			</Button>
-
-			<p>
-				<span class="field">Description</span>
-				contains words
-			</p>
-
-			<input
-				type="text"
-				bind:value={filter.descriptionSearch}
-			/>
-		</div>
-	{/if}
-
 	{#if showAmountFilter}
 		<div class="filter-row">
 			<!-- prettier-ignore -->
@@ -86,6 +56,25 @@
 				<Icon icon={IconType.ARROW_RIGHT} inline />
 				<input type="number" step="0.01" bind:value={filter.amountMax}>
 			</div>
+		</div>
+	{/if}
+
+	{#if showDescriptionFilter}
+		<div class="filter-row">
+			<!-- prettier-ignore -->
+			<Button type="tertiary" small on:click={clearDescriptionSearch}>
+				<Icon icon={IconType.X} />
+			</Button>
+
+			<p>
+				<span class="field">Description</span>
+				contains words
+			</p>
+
+			<input
+				type="text"
+				bind:value={filter.descriptionSearch}
+			/>
 		</div>
 	{/if}
 </div>
