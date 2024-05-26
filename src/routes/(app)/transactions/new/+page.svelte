@@ -39,10 +39,18 @@
 
 <h1 class="title">Record transaction</h1>
 
-<TransactionEditor
-	bind:transaction
-	accounts={data.accounts}
-	availableTags={data.avaialbleTags}
-	availableAttributes={data.availableAttributes}
-	onCreate={create}
-/>
+<div class="wrapper">
+	<TransactionEditor
+		bind:transaction
+		accounts={data.accounts}
+		availableTags={data.avaialbleTags}
+		availableAttributes={data.availableAttributes}
+		onCreate={create}
+	/>
+</div>
+
+<style>
+	.wrapper {
+		max-width: 24rem;
+	}
+</style>

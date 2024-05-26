@@ -5,3 +5,9 @@ export function parsePartial<T extends object>(data: Partial<T>, requiredKeys: (
 		return null;
 	}
 }
+
+export function identity() {}
+
+export function deepCopy<T>(value: T): T {
+	return JSON.parse(JSON.stringify(value));
+}

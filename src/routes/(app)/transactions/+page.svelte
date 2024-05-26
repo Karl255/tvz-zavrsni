@@ -12,6 +12,8 @@
 		<TransactionsList
 			transactions={data.transactions}
 			accounts={data.accounts}
+			availableTags={data.availableTags}
+			availableAttributes={data.availableAttributes}
 		/>
 	</div>
 </div>

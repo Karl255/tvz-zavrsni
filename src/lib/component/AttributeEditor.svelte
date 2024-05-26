@@ -6,10 +6,14 @@
 	export let avaialbleAttributes: string[];
 	export let attributes: Record<string, string>;
 
-	let unsetAttributes: string[] = [];
-	$: unsetAttributes = avaialbleAttributes.filter((attributeName) => !Object.hasOwn(attributes, attributeName));
+	let unsetAttributes: string[] = getUnsetAttributes(attributes, avaialbleAttributes);
+	$: unsetAttributes = getUnsetAttributes(attributes, avaialbleAttributes);
 
 	let selectedUnsetAttribute: string | null = avaialbleAttributes[0] ?? null;
+
+	function getUnsetAttributes(attributes: Record<string, string>, available: string[]) {
+		return available.filter((attributeName) => !Object.hasOwn(attributes, attributeName));
+	}
 
 	function addAttribute() {
 		if (selectedUnsetAttribute) {

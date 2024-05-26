@@ -20,6 +20,7 @@
 	import type { DetailedTransaction, IsoDate } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
 	import { assertNever, type TypeDiff } from "$lib/util/type.util";
+	import { identity } from "$lib/util/util";
 	import AttributeEditor from "./AttributeEditor.svelte";
 	import Button from "./Button.svelte";
 	import Icon, { IconType } from "./Icon.svelte";
@@ -29,8 +30,9 @@
 	export let accounts: Account[];
 	export let availableTags: string[];
 	export let availableAttributes: string[];
-	export let onCreate: (transaction: Omit<DetailedTransaction, "id">) => void = () => {};
-	export let onUpdate: (transaction: DetailedTransaction) => void = () => {};
+	export let onCreate: (transaction: Omit<DetailedTransaction, "id">) => void = identity;
+	export let onUpdate: (transaction: DetailedTransaction) => void = identity;
+	export let onCancel: () => void = identity;
 
 	let isValid = false;
 	$: isValid = validate(transaction);
@@ -100,14 +102,35 @@
 		<TagSelect id="tags" bind:selectedTags={transaction.tags} {availableTags} />
 	</div>
 
-	<!-- prettier-ignore -->
-	<Button type="primary" class="submit" submit disabled={!isValid}>Record</Button>
+	<div class="actions">
+		{#if onCreate !== identity}
+			<!-- prettier-ignore -->
+			<Button type="primary" submit disabled={!isValid}>
+				Record
+			</Button>
+		{/if}
+
+		<div class="filler"></div>
+
+		{#if onCancel !== identity}
+			<!-- prettier-ignore -->
+			<Button type="tertiary" on:click={onCancel}>
+				Cancel
+			</Button>
+		{/if}
+
+		{#if onUpdate !== identity}
+			<!-- prettier-ignore -->
+			<Button type="primary" submit disabled={!isValid}>
+				Save
+			</Button>
+		{/if}
+	</div>
 </form>
 
 <style lang="scss">
 	form {
 		margin-top: 1rem;
-		max-width: 24rem;
 		display: flex;
 		flex-direction: column;
 
@@ -135,7 +158,13 @@
 		}
 	}
 
-	:global(.submit) {
-		align-self: start;
+	.actions {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+
+		.filler {
+			flex-grow: 1;
+		}
 	}
 </style>
