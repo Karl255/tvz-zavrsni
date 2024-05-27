@@ -46,7 +46,15 @@ function transformWithJoinedTags(rows: JoinedTransaction[]): DetailedTransaction
 }
 
 export const transactionRepo = {
-	create: async (userId: number, accountId: number, amount: number, description: string, date: IsoDate): Promise<Transaction | null> => {
+	create: async (
+		userId: number,
+		accountId: number,
+		amount: number,
+		description: string,
+		date: IsoDate,
+		tags: string[],
+		_attributes: Record<string, string>,
+	): Promise<Transaction | null> => {
 		const account = accountRepo.getOne(userId, accountId);
 
 		if (!account) {
@@ -58,6 +66,8 @@ export const transactionRepo = {
 			VALUES (${amount}, ${description}, ${date}, ${accountId})
 			RETURNING id, amount, description, to_char(date, 'YYYY-MM-DD') as date, account_id
 		`;
+
+		taggedRepo.createMany(userId, transactions[0].id, tags);
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
 
