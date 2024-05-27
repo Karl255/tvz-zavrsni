@@ -9,6 +9,7 @@
 	import Filter from "./_Filter.svelte";
 	import Icon, { IconType } from "../Icon.svelte";
 	import Button from "../Button.svelte";
+	import Aggregate from "./_Aggregate.svelte";
 
 	const transactionApi = new TransactionApi();
 
@@ -181,6 +182,8 @@
 			</tr>
 		{/each}
 	</table>
+
+	<Aggregate transactions={filteredTransactions} />
 </div>
 
 <dialog

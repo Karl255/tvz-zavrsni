@@ -11,9 +11,8 @@
 	export let onDelete: (transactionId: number) => void;
 </script>
 
-<td>
+<td class="amount">
 	<span
-		class="amount"
 		class:positive={transaction.amount > 0}
 		class:negative={transaction.amount < 0}
 	>
@@ -78,6 +77,7 @@
 <style lang="scss">
 	.amount {
 		font-weight: $fw-colored-text;
+		text-align: right;
 	}
 
 	.description {
