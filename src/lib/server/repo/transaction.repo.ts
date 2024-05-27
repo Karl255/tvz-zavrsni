@@ -160,7 +160,7 @@ export const transactionRepo = {
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
 		taggedRepo.deleteForTransaction(transactionId);
-		attributeValueRepo.deleteForTransaction(transactionId);
+		attributeValueRepo.deleteByTransactionId(transactionId);
 
 		await sql`
 			DELETE FROM transaction

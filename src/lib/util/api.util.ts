@@ -2,10 +2,6 @@ import type { ZodError } from "zod";
 
 type JsonValue = string | number | boolean | JsonValue[] | object;
 
-export function searchParamsHasAll(searchParams: URLSearchParams, params: string[]) {
-	return params.every((param) => searchParams.has(param));
-}
-
 export function createJsonResponse(body: JsonValue | null, initOrStatus: ResponseInit | number = 200) {
 	initOrStatus = typeof initOrStatus === "number" ? { status: initOrStatus } : initOrStatus;
 	initOrStatus = initOrStatus.status ? initOrStatus : { ...initOrStatus, status: 200 };
@@ -13,17 +9,8 @@ export function createJsonResponse(body: JsonValue | null, initOrStatus: Respons
 	return new Response(body === null ? null : JSON.stringify(body), initOrStatus);
 }
 
-export function createRequiredFieldsResponse(requiredParams: string[]): Response {
-	const message = "Required fields: " + requiredParams.join(", ");
-	return createJsonResponse({ message }, 400);
-}
-
 export function createValidationErrorResponse(error: ZodError): Response {
 	return createJsonResponse({ error }, 400);
-}
-
-export function createCreatedResponse(body: JsonValue) {
-	return createJsonResponse(body, 201);
 }
 
 export function createNoContentResponse() {
