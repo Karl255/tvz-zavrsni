@@ -67,7 +67,7 @@ export const transactionRepo = {
 			RETURNING id, amount, description, to_char(date, 'YYYY-MM-DD') as date, account_id
 		`;
 
-		taggedRepo.createMany(userId, transactions[0].id, tags);
+		await taggedRepo.setTagsForTransaction(userId, transactions[0].id, tags);
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
 
@@ -139,27 +139,14 @@ export const transactionRepo = {
 		`;
 
 		if (tags) {
-			const existingTags = await sql<{ name: string }[]>`
-				SELECT name
-				FROM tag
-				JOIN tagged ON tag.id = tagged.tag_id
-				WHERE tagged.transaction_id = ${transactionId};
-			`;
-
-			const [addedTags, removedTags] = getNewAndRemoved(
-				tags,
-				existingTags.map((tag) => tag.name),
-			);
-
-			await taggedRepo.createMany(userId, transactionId, addedTags);
-			await taggedRepo.deleteByTagNames(userId, transactionId, removedTags);
+			await taggedRepo.setTagsForTransaction(userId, transactionId, tags);
 		}
 
 		console.info(`Updated transaction ${transactionId}`);
 	},
 
 	delete: async (userId: number, transactionId: number): Promise<void> => {
-		taggedRepo.deleteForTransaction(transactionId);
+		taggedRepo.deleteByTransactionId(transactionId);
 		attributeValueRepo.deleteByTransactionId(transactionId);
 
 		await sql`
@@ -175,10 +162,3 @@ export const transactionRepo = {
 		console.info(`Deleted transaction ${transactionId}`);
 	},
 };
-
-function getNewAndRemoved(tags: string[], existingTags: string[]): [string[], string[]] {
-	const added: string[] = tags.filter((tag) => !existingTags.includes(tag));
-	const removed: string[] = existingTags.filter((existingTag) => !tags.includes(existingTag));
-
-	return [added, removed];
-}

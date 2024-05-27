@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from "$app/environment";
 	import type { Account } from "$lib/model/account.model";
 	import { DetailedTransaction } from "$lib/model/transaction.model";
 	import Button from "../Button.svelte";
@@ -19,7 +20,12 @@
 	};
 
 	$: filteredTransactions = applyFilter(allTransactions, filter);
-	$: console.info("filter", filter);
+
+	$: {
+		if (browser) {
+			console.info("filter", filter);
+		}
+	}
 
 	let accountPicker: HTMLDialogElement;
 

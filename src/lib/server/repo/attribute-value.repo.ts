@@ -45,17 +45,17 @@ export const attributeValueRepo = {
 		return true;
 	},
 
-	deleteByTransactionId: async (transactionId: number): Promise<void> => {
-		await sql`
-			DELETE FROM attribute_value
-			WHERE transaction_id = ${transactionId}
-		`;
-	},
-
 	deleteByAttributeId: async (attributeId: number): Promise<void> => {
 		await sql`
 			DELETE FROM attribute_value
 			WHERE attribute_id = ${attributeId}
+		`;
+	},
+
+	deleteByTransactionId: async (transactionId: number): Promise<void> => {
+		await sql`
+			DELETE FROM attribute_value
+			WHERE transaction_id = ${transactionId}
 		`;
 	},
 };
