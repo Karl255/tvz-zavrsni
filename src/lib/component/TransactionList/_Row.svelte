@@ -3,6 +3,7 @@
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import Button from "../Button.svelte";
 	import Icon, { IconType } from "../Icon.svelte";
+	import Value from "../Value.svelte";
 
 	export let transaction: DetailedTransaction;
 	export let attributeColumns: string[];
@@ -12,12 +13,7 @@
 </script>
 
 <td class="amount">
-	<span
-		class:positive={transaction.amount > 0}
-		class:negative={transaction.amount < 0}
-	>
-		{transaction.amount.toFixed(2)} €
-	</span>
+	<Value amount={transaction.amount} />
 </td>
 
 <td
@@ -76,7 +72,6 @@
 
 <style lang="scss">
 	.amount {
-		font-weight: $fw-colored-text;
 		text-align: right;
 	}
 
@@ -85,14 +80,6 @@
 		white-space: pre;
 		overflow-x: clip;
 		text-overflow: ellipsis;
-	}
-
-	.positive {
-		color: $clr-green;
-	}
-
-	.negative {
-		color: $clr-red;
 	}
 
 	.actions {

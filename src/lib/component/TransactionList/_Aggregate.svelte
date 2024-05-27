@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
+	import Value from "../Value.svelte";
 
 	export let transactions: DetailedTransaction[];
 
@@ -26,14 +27,20 @@
 
 <dl>
 	<dt>Sum</dt>
-	<dd>{sum(transactions).toFixed(2)} €</dd>
+	<dd>
+		<Value amount={sum(transactions)} />
+	</dd>
 
 	<dt>Average</dt>
-	<dd>{(sum(transactions) / transactions.length).toFixed(2)} €</dd>
-
-	<dt>Min/max spend</dt>
-	<dd>{max(negative(transactions)).toFixed(2)} €, {min(negative(transactions)).toFixed(2)} €</dd>
+	<dd>
+		<Value amount={sum(transactions) / transactions.length} />
+	</dd>
 
 	<dt>Min/max gained</dt>
-	<dd>{min(positive(transactions)).toFixed(2)} €, {max(positive(transactions)).toFixed(2)} €</dd>
+	<dd><Value amount={min(positive(transactions))} />, <Value amount={max(positive(transactions))} /></dd>
+
+	<dt>Min/max spend</dt>
+	<dd>
+		<Value amount={max(negative(transactions))} />, <Value amount={min(negative(transactions))} />
+	</dd>
 </dl>
