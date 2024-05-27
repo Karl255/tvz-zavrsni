@@ -11,15 +11,12 @@
 		descriptionSearch: "",
 		amountMin: null,
 		amountMax: null,
+		dateFrom: null,
+		dateTo: null,
 	};
 
 	$: filteredTransactions = applyFilter(allTransactions, filter);
 	$: console.info("filter", filter);
-
-	function clearDescriptionSearch() {
-		filter.descriptionSearch = "";
-		showDescriptionFilter = false;
-	}
 
 	function clearAmountFilter() {
 		filter.amountMin = null;
@@ -27,11 +24,23 @@
 		showAmountFilter = false;
 	}
 
-	export let showDescriptionFilter = false;
+	function clearDescriptionSearch() {
+		filter.descriptionSearch = "";
+		showDescriptionFilter = false;
+	}
+
+	function clearDateFilter() {
+		filter.dateFrom = null;
+		filter.dateTo = null;
+		showDateFilter = false;
+	}
+
 	export let showAmountFilter = false;
+	export let showDescriptionFilter = false;
+	export let showDateFilter = false;
 
 	let isAnyFilterShown = false;
-	$: isAnyFilterShown = showDescriptionFilter || showAmountFilter;
+	$: isAnyFilterShown = showAmountFilter || showDescriptionFilter || showDateFilter;
 </script>
 
 <div
@@ -75,6 +84,27 @@
 				type="text"
 				bind:value={filter.descriptionSearch}
 			/>
+		</div>
+	{/if}
+
+	{#if showDateFilter}
+		<div class="filter-row">
+			<!-- prettier-ignore -->
+			<Button type="tertiary" small on:click={clearDateFilter}>
+				<Icon icon={IconType.X} />
+			</Button>
+
+			<p>
+				<span class="field">Date</span>
+				is in range
+			</p>
+
+			<!-- prettier-ignore -->
+			<div>
+				<input type="date" bind:value={filter.dateFrom}>
+				<Icon icon={IconType.ARROW_RIGHT} inline />
+				<input type="date" bind:value={filter.dateTo}>
+			</div>
 		</div>
 	{/if}
 </div>

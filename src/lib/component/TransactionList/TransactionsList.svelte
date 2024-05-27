@@ -33,6 +33,7 @@
 	// for filter only
 	let showDescriptionFilter: boolean;
 	let showAmountFilter: boolean;
+	let showDateFilter: boolean;
 
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
@@ -104,6 +105,7 @@
 			bind:filteredTransactions
 			bind:showDescriptionFilter
 			bind:showAmountFilter
+			bind:showDateFilter
 		/>
 	</div>
 
@@ -130,7 +132,17 @@
 					</Button>
 				</span>
 			</th>
-			<th>Date</th>
+
+			<th>
+				Date
+
+				<span class="filter-button">
+					<!-- prettier-ignore -->
+					<Button type="icon" on:click={() => showDateFilter = true}>
+						<Icon icon={IconType.FILTER} />
+					</Button>
+				</span>
+			</th>
 
 			{#if accounts.length > 1}
 				<th>Account</th>
