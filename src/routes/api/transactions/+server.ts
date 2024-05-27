@@ -9,6 +9,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	return createJsonResponse(await transactionRepo.getAll(locals.userId, accountId ? parseInt(accountId, 10) : null));
 };
 
+// TODO set tags and attributes through this
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const Payload = Transaction.omit({ id: true });
 

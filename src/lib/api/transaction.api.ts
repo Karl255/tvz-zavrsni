@@ -1,4 +1,4 @@
-import type { IsoDate, Transaction, DetailedTransaction } from "$lib/model/transaction.model";
+import type { IsoDate, DetailedTransaction } from "$lib/model/transaction.model";
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
 const endpoint = resolveEndpoint("/api/transactions");
@@ -19,11 +19,13 @@ export class TransactionApi {
 		return await this.httpClient.post(endpoint, { accountId, amount, description, date });
 	}
 
-	async update(transactionId: number, newAmount: number, newDescription: string, newDate: IsoDate) {
-		const payload: Partial<Transaction> = {
+	async update(transactionId: number, newAmount: number, newDescription: string, newDate: IsoDate, newTags: string[], newAttributes: Record<string, string>) {
+		const payload: Partial<DetailedTransaction> = {
 			amount: newAmount,
 			description: newDescription,
 			date: newDate,
+			tags: newTags,
+			attributes: newAttributes,
 		};
 
 		return await this.httpClient.patch(idEndpoint(transactionId), payload);

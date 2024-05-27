@@ -49,6 +49,16 @@ export const tagRepo = {
 		return tags[0] ?? null;
 	},
 
+	getByNames: async (userId: number, names: string[]): Promise<Tag[] | null> => {
+		const tags = await sql<Tag[]>`
+			SELECT id, name, user_id
+			FROM tag
+			WHERE user_id = ${userId} AND name IN ${sql(names)}
+		`;
+
+		return tags;
+	},
+
 	update: async (userId: number, tagName: string, newName: string | null): Promise<void> => {
 		await sql`
 			UPDATE tag

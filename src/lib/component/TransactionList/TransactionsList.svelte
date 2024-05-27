@@ -63,7 +63,7 @@
 	}
 
 	async function saveEdited(transaction: DetailedTransaction) {
-		const response = await transactionApi.update(transaction.id, transaction.amount, transaction.description, transaction.date);
+		const response = await transactionApi.update(transaction.id, transaction.amount, transaction.description, transaction.date, transaction.tags, transaction.attributes);
 
 		if (!response.ok) {
 			return;

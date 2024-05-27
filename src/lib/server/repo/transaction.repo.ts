@@ -105,7 +105,15 @@ export const transactionRepo = {
 		return transformWithJoinedTags(records)[0] ?? null;
 	},
 
-	update: async (userId: number, transactionId: number, amount: number | null, description: string | null, date: IsoDate | null): Promise<void> => {
+	update: async (
+		userId: number,
+		transactionId: number,
+		amount: number | null,
+		description: string | null,
+		date: IsoDate | null,
+		tags: string[] | null,
+		_attributes: Record<string, string> | null,
+	): Promise<void> => {
 		await sql`
 			UPDATE transaction
 			SET
@@ -119,6 +127,23 @@ export const transactionRepo = {
 				WHERE t.id = ${transactionId} AND a.user_id = ${userId}
 			);
 		`;
+
+		if (tags) {
+			const existingTags = await sql<{ name: string }[]>`
+				SELECT name
+				FROM tag
+				JOIN tagged ON tag.id = tagged.tag_id
+				WHERE tagged.transaction_id = ${transactionId};
+			`;
+
+			const [addedTags, removedTags] = getNewAndRemoved(
+				tags,
+				existingTags.map((tag) => tag.name),
+			);
+
+			await taggedRepo.createMany(userId, transactionId, addedTags);
+			await taggedRepo.deleteByTagNames(userId, transactionId, removedTags);
+		}
 
 		console.info(`Updated transaction ${transactionId}`);
 	},
@@ -140,3 +165,10 @@ export const transactionRepo = {
 		console.info(`Deleted transaction ${transactionId}`);
 	},
 };
+
+function getNewAndRemoved(tags: string[], existingTags: string[]): [string[], string[]] {
+	const added: string[] = tags.filter((tag) => !existingTags.includes(tag));
+	const removed: string[] = existingTags.filter((existingTag) => !tags.includes(existingTag));
+
+	return [added, removed];
+}
