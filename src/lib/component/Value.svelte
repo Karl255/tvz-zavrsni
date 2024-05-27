@@ -1,12 +1,16 @@
 <script lang="ts">
-	export let amount = 0;
+	export let amount: number | null = 0;
 </script>
 
 <span
-	class:positive={amount > 0}
-	class:negative={amount < 0}
+	class:positive={(amount ?? 0) > 0}
+	class:negative={(amount ?? 0) < 0}
 >
-	{amount.toFixed(2)} €
+	{#if amount !== null}
+		{amount.toFixed(2)} €
+	{:else}
+		-.-- €
+	{/if}
 </span>
 
 <style lang="scss">

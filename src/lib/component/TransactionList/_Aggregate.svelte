@@ -9,11 +9,19 @@
 	}
 
 	function min(transactions: DetailedTransaction[]) {
-		return transactions.reduce((a, b) => (a.amount < b.amount ? a : b)).amount;
+		if (transactions.length === 0) {
+			return null;
+		}
+
+		return transactions.reduce((minimum, transaction) => (transaction.amount < minimum ? transaction.amount : minimum), Infinity);
 	}
 
 	function max(transactions: DetailedTransaction[]) {
-		return transactions.reduce((a, b) => (a.amount > b.amount ? a : b)).amount;
+		if (transactions.length === 0) {
+			return null;
+		}
+
+		return transactions.reduce((minimum, transaction) => (transaction.amount > minimum ? transaction.amount : minimum), -Infinity);
 	}
 
 	function positive(transactions: DetailedTransaction[]): DetailedTransaction[] {
