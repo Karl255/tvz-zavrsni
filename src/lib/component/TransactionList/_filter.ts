@@ -6,6 +6,7 @@ export interface Filter {
 	amountMax: number | null;
 	dateFrom: IsoDate | null;
 	dateTo: IsoDate | null;
+	accountIds: number[];
 }
 
 export function applyFilter(transactions: DetailedTransaction[], filter: Filter) {
@@ -14,7 +15,12 @@ export function applyFilter(transactions: DetailedTransaction[], filter: Filter)
 	const dateTo = filter.dateTo === null ? null : new Date(filter.dateTo);
 
 	return transactions.filter((transaction) => {
-		return byDescription(transaction.description, descriptionWords) && byAmount(transaction.amount, filter) && byDate(new Date(transaction.date), dateFrom, dateTo);
+		return (
+			byDescription(transaction.description, descriptionWords) &&
+			byAmount(transaction.amount, filter) &&
+			byDate(new Date(transaction.date), dateFrom, dateTo) &&
+			byAccount(transaction.accountId, filter.accountIds)
+		);
 	});
 }
 
@@ -28,4 +34,8 @@ function byAmount(amount: number, filter: Filter): boolean {
 
 function byDate(date: Date, from: Date | null, to: Date | null): boolean {
 	return (from === null || date >= from) && (to === null || date <= to);
+}
+
+function byAccount(accountId: number, accountIds: number[]): boolean {
+	return accountIds.length === 0 || accountIds.includes(accountId);
 }

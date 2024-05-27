@@ -68,3 +68,14 @@ ul, ol {
 	font-weight: $fw-bold;
 	font-size: $fz-title;
 }
+
+.modal {
+	border: none;
+	border-radius: 0.5rem;
+	box-shadow: 0 0 0.25rem rgb(0 0 0 / 0.75);
+
+	&::backdrop {
+		background-color: black;
+		opacity: 0.25;
+	}
+}

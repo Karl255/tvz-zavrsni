@@ -34,6 +34,7 @@
 	let showDescriptionFilter: boolean;
 	let showAmountFilter: boolean;
 	let showDateFilter: boolean;
+	let showAccountFilter: boolean;
 
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
@@ -103,9 +104,11 @@
 		<Filter
 			allTransactions={transactions}
 			bind:filteredTransactions
+			{accounts}
 			bind:showDescriptionFilter
 			bind:showAmountFilter
 			bind:showDateFilter
+			bind:showAccountFilter
 		/>
 	</div>
 
@@ -145,7 +148,16 @@
 			</th>
 
 			{#if accounts.length > 1}
-				<th>Account</th>
+				<th>
+					Account
+
+					<span class="filter-button">
+						<!-- prettier-ignore -->
+						<Button type="icon" on:click={() => showAccountFilter = true}>
+							<Icon icon={IconType.FILTER} />
+						</Button>
+					</span>
+				</th>
 			{/if}
 
 			<th>Tags</th>
@@ -171,7 +183,10 @@
 	</table>
 </div>
 
-<dialog bind:this={editDialog}>
+<dialog
+	class="modal"
+	bind:this={editDialog}
+>
 	{#if transactionBeingEdited}
 		<TransactionEditor
 			transaction={transactionBeingEdited}
@@ -218,7 +233,7 @@
 			position: absolute;
 			visibility: hidden;
 			color: $clr-icon;
-			margin-left: 0.25rem;
+			margin-left: 0.15rem;
 		}
 
 		&:hover .filter-button {
@@ -233,13 +248,5 @@
 
 	dialog {
 		width: 32rem;
-		border: none;
-		border-radius: 0.5rem;
-		box-shadow: 0 0 0.25rem rgb(0 0 0 / 0.75);
-
-		&::backdrop {
-			background-color: black;
-			opacity: 0.25;
-		}
 	}
 </style>
