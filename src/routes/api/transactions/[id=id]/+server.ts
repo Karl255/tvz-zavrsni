@@ -14,6 +14,7 @@ export const PATCH: RequestHandler = async ({ request, locals, params }) => {
 	if (!parsing.success) {
 		return createValidationErrorResponse(parsing.error);
 	}
+
 	await transactionRepo.update(
 		locals.userId,
 		getIdParam(params),

@@ -9,7 +9,7 @@
 	let unsetAttributes: string[] = getUnsetAttributes(attributes, avaialbleAttributes);
 	$: unsetAttributes = getUnsetAttributes(attributes, avaialbleAttributes);
 
-	let selectedUnsetAttribute: string | null = avaialbleAttributes[0] ?? null;
+	let selectedUnsetAttribute: string | null = null;
 
 	function getUnsetAttributes(attributes: Record<string, string>, available: string[]) {
 		return available.filter((attributeName) => !Object.hasOwn(attributes, attributeName));
@@ -18,7 +18,7 @@
 	function addAttribute() {
 		if (selectedUnsetAttribute) {
 			attributes[selectedUnsetAttribute] = "";
-			selectedUnsetAttribute = unsetAttributes.filter((attribute) => attribute !== selectedUnsetAttribute)[0] ?? null;
+			selectedUnsetAttribute = null;
 			attributes = attributes;
 		}
 	}

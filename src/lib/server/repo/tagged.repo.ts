@@ -17,10 +17,6 @@ export const taggedRepo = {
 	},
 
 	setTagsForTransaction: async (userId: number, transactionId: number, tagNames: string[]): Promise<boolean> => {
-		if (tagNames.length === 0) {
-			return true;
-		}
-
 		const transaction = await transactionRepo.getOne(userId, transactionId);
 
 		if (!transaction) {
@@ -44,7 +40,7 @@ export const taggedRepo = {
 				tag.user_id = ${userId}
 				AND tagged.transaction_id = ${transactionId}
 				AND tagged.tag_id = tag.id
-				AND tag.name NOT IN ${sql(tagNames)}
+				${tagNames.length === 0 ? sql`` : sql`AND tag.name NOT IN ${sql(tagNames)}`}
 		`;
 
 		return true;

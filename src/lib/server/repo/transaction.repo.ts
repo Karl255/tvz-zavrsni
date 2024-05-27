@@ -53,7 +53,7 @@ export const transactionRepo = {
 		description: string,
 		date: IsoDate,
 		tags: string[],
-		_attributes: Record<string, string>,
+		attributes: Record<string, string>,
 	): Promise<Transaction | null> => {
 		const account = accountRepo.getOne(userId, accountId);
 
@@ -68,6 +68,7 @@ export const transactionRepo = {
 		`;
 
 		await taggedRepo.setTagsForTransaction(userId, transactions[0].id, tags);
+		await attributeValueRepo.setAttributesForTransaction(userId, transactions[0].id, attributes);
 
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
 
@@ -122,7 +123,7 @@ export const transactionRepo = {
 		description: string | null,
 		date: IsoDate | null,
 		tags: string[] | null,
-		_attributes: Record<string, string> | null,
+		attributes: Record<string, string> | null,
 	): Promise<void> => {
 		await sql`
 			UPDATE transaction
@@ -140,6 +141,10 @@ export const transactionRepo = {
 
 		if (tags) {
 			await taggedRepo.setTagsForTransaction(userId, transactionId, tags);
+		}
+
+		if (attributes) {
+			await attributeValueRepo.setAttributesForTransaction(userId, transactionId, attributes);
 		}
 
 		console.info(`Updated transaction ${transactionId}`);
