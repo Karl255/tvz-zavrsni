@@ -1,22 +1,53 @@
 <script lang="ts">
+	import FilePicker from "./FilePicker.svelte";
 	import ImportProgress from "./ImportProgress.svelte";
 
-	let files: FileList;
-	let step = 1;
+	enum Step {
+		CHOOSE_FILE = 1,
+		REVIEW_DATA = 2,
+		DONE = 3,
+	}
+
+	let step = Step.CHOOSE_FILE;
+	let csv: string | null = null;
+
+	async function chooseFile(file: File) {
+		csv = await file.text();
+		step = Step.REVIEW_DATA;
+	}
 </script>
 
 <ImportProgress {step} />
 
-<input
-	type="file"
-	bind:files
-	accept="text/csv,text/plain"
-/>
+<div class="stack">
+	<div
+		class="step"
+		class:visible={step === Step.CHOOSE_FILE}
+	>
+		<FilePicker onPick={chooseFile} />
+	</div>
 
-<input
-	type="number"
-	bind:value={step}
-/>
+	<div
+		class="step"
+		class:visible={step === Step.REVIEW_DATA}
+	>
+		{#if csv}
+			<pre>{csv}</pre>
+		{/if}
+	</div>
+</div>
 
 <style lang="scss">
+	.stack {
+		display: grid;
+	}
+
+	.step {
+		grid-area: 1 / 1;
+		visibility: hidden;
+	}
+
+	.step.visible {
+		visibility: visible;
+	}
 </style>

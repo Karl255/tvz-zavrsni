@@ -6,7 +6,6 @@
 	let progressContainer: HTMLElement;
 	let availableWidth: number | null;
 	let stepWidths: number[] | null = null;
-	$: console.log(stepWidths);
 
 	onMount(() => {
 		availableWidth = progressContainer.clientWidth;
@@ -24,16 +23,20 @@
 	style:grid-template-columns={availableWidth && stepWidths ? getGtcForStep(availableWidth, stepWidths, step) : null}
 	bind:this={progressContainer}
 >
-	<li>1. Upload</li>
-	<li>2. Review</li>
-	<li>3. Save</li>
+	<li>1. Choose file</li>
+	<li>2. Review data</li>
+	<li>3. Import records</li>
 </ol>
 
 <style lang="scss">
 	.import-progress {
+		--gap: 0.5rem;
+
 		display: grid;
 		grid-template-columns: 0fr 0fr 0fr;
 		justify-content: center;
+		margin-inline: calc(0px - var(--gap));
+		margin-bottom: 2rem;
 
 		font-weight: $fw-bold;
 		transition: grid-template-columns 1s;
