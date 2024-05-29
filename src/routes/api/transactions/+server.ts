@@ -24,6 +24,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		parsing.data.amount,
 		parsing.data.description,
 		parsing.data.date,
+		parsing.data.importedId,
 		parsing.data.tags,
 		parsing.data.attributes,
 	);

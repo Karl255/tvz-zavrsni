@@ -18,7 +18,6 @@ const TOKEN_LIFETIME_SECONDS = 24 * 60 * 60; // 24h
 
 export interface AuthTokenPayload extends jose.JWTPayload {
 	userId: number;
-	isAdmin: boolean;
 	exp: number;
 }
 
@@ -31,7 +30,6 @@ export async function attemptLogin(email: string, password: string): Promise<Use
 			return {
 				id: userEntity.id,
 				email: userEntity.email,
-				isAdmin: userEntity.isAdmin,
 			} satisfies User;
 		} else {
 			return {
@@ -58,10 +56,10 @@ export async function registerUser(email: string, password: string): Promise<Use
 	}
 }
 
-export async function createToken(userId: number, isAdmin: boolean): Promise<string> {
+export async function createToken(userId: number): Promise<string> {
 	const exp = getSecondsSinceEpoch() + TOKEN_LIFETIME_SECONDS;
 
-	return await createAuthToken({ userId, isAdmin, exp }, "HS512", secret);
+	return await createAuthToken({ userId, exp }, "HS512", secret);
 }
 
 export async function createAuthToken(payload: AuthTokenPayload, alg: string, secret: Uint8Array) {

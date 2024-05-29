@@ -8,6 +8,7 @@ export interface Transaction {
 	amount: number;
 	description: string;
 	date: IsoDate;
+	importedId: string | null;
 	accountId: number;
 }
 
@@ -16,6 +17,7 @@ export const Transaction = z.object({
 	amount: z.number(),
 	description: z.string(),
 	date: z.string(),
+	importedId: z.string().nullable(),
 	accountId: z.number(),
 });
 

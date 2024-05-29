@@ -13,8 +13,9 @@
 		date: "",
 		description: "",
 		amount: 0,
-		attributes: {},
+		importedId: null,
 		tags: [],
+		attributes: {},
 	};
 
 	async function create(transaction: Omit<DetailedTransaction, "id">) {
@@ -23,6 +24,7 @@
 			transaction.amount,
 			transaction.description,
 			transaction.date,
+			null,
 			transaction.tags,
 			transaction.attributes,
 		);

@@ -8,6 +8,7 @@
 		description: string;
 		date: IsoDate;
 		accountId: number;
+		importedId: string | null;
 		tags: string[];
 		attributes: Record<string, string>;
 	}

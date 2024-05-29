@@ -4,9 +4,7 @@ import type { Handle, RequestEvent } from "@sveltejs/kit";
 
 const unauthenticatedRoutes = ["/login", "/register"];
 const unauthenticatedApiRoutes = ["/api/user"];
-const adminRoutePrefix = "/admin";
 const apiRoutePrefix = "/api";
-const adminApiRoutePrefix = "/api/admin";
 
 // https://stackoverflow.com/questions/2839585/what-is-correct-http-status-code-when-redirecting-to-a-login-page
 const REDIRECT_STATUS = 302;
@@ -27,7 +25,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (authTokenPayload) {
 		setRequestEventLocals(event, {
 			userId: authTokenPayload.userId,
-			isAdmin: authTokenPayload.isAdmin,
 		});
 	}
 
@@ -60,10 +57,6 @@ async function handleApiRoutes(event: RequestEvent, resolve: ResolveHandler, aut
 	const routeNeedsAuthentication = !unauthenticatedApiRoutes.some((route) => event.url.pathname.startsWith(route));
 	const isAuthenticated = !!authTokenPayload;
 
-	if (event.url.pathname.startsWith(adminApiRoutePrefix) && authTokenPayload?.isAdmin !== true) {
-		return new Response("Unauthorized", { status: UNAUTHORIZED_STATUS });
-	}
-
 	// prettier-ignore
 	return !isAuthenticated && routeNeedsAuthentication
 		? new Response("Unauthorized", { status: UNAUTHORIZED_STATUS })
@@ -74,9 +67,7 @@ function determineRedirectLocation(pathname: string, authTokenPayload: AuthToken
 	const routeNeedsAuthentication = !unauthenticatedRoutes.some((route) => pathname.startsWith(route));
 	const isAuthenticated = !!authTokenPayload;
 
-	if (pathname.startsWith(adminRoutePrefix) && authTokenPayload?.isAdmin !== true) {
-		return "/";
-	} else if (isAuthenticated && !routeNeedsAuthentication) {
+	if (isAuthenticated && !routeNeedsAuthentication) {
 		return "/";
 	} else if (!isAuthenticated && routeNeedsAuthentication) {
 		return "/login";

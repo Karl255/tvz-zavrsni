@@ -15,15 +15,24 @@ export class TransactionApi {
 		return (await (await this.httpClient.get(endpoint, { accountId })).json()) as DetailedTransaction[];
 	}
 
-	async create(accountId: number, amount: number, description: string, date: IsoDate, tags: string[], attributes: Record<string, string>) {
-		return await this.httpClient.post(endpoint, { accountId, amount, description, date, tags, attributes });
+	async create(accountId: number, amount: number, description: string, date: IsoDate, importedId: string | null, tags: string[], attributes: Record<string, string>) {
+		return await this.httpClient.post(endpoint, { accountId, amount, description, date, importedId, tags, attributes });
 	}
 
-	async update(transactionId: number, newAmount: number, newDescription: string, newDate: IsoDate, newTags: string[], newAttributes: Record<string, string>) {
+	async update(
+		transactionId: number,
+		newAmount: number,
+		newDescription: string,
+		newDate: IsoDate,
+		newImportedId: string | null | undefined,
+		newTags: string[],
+		newAttributes: Record<string, string>,
+	) {
 		const payload: Partial<DetailedTransaction> = {
 			amount: newAmount,
 			description: newDescription,
 			date: newDate,
+			importedId: newImportedId,
 			tags: newTags,
 			attributes: newAttributes,
 		};

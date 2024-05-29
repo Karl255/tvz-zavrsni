@@ -21,6 +21,7 @@ export const PATCH: RequestHandler = async ({ request, locals, params }) => {
 		parsing.data.amount ?? null,
 		parsing.data.description ?? null,
 		parsing.data.date ?? null,
+		parsing.data.importedId,
 		parsing.data.tags ?? null,
 		parsing.data.attributes ?? null,
 	);

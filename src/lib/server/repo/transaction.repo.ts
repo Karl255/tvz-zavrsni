@@ -22,6 +22,7 @@ function transformWithJoinedTags(rows: JoinedTransaction[]): DetailedTransaction
 			amount: transactionRows[0].amount,
 			description: transactionRows[0].description,
 			date: transactionRows[0].date,
+			importedId: transactionRows[0].importedId,
 			accountId: transactionRows[0].accountId,
 			tags: extractTags(transactionRows),
 			attributes: extractAttributes(transactionRows),
@@ -52,6 +53,7 @@ export const transactionRepo = {
 		amount: number,
 		description: string,
 		date: IsoDate,
+		importedId: string | null,
 		tags: string[],
 		attributes: Record<string, string>,
 	): Promise<Transaction | null> => {
@@ -62,8 +64,8 @@ export const transactionRepo = {
 		}
 
 		const transactions = await sql<Transaction[]>`
-			INSERT INTO transaction (amount, description, date, account_id)
-			VALUES (${amount}, ${description}, ${date}, ${accountId})
+			INSERT INTO transaction (amount, description, date, imported_id, account_id)
+			VALUES (${amount}, ${description}, ${date}, ${importedId}, ${accountId})
 			RETURNING id, amount, description, to_char(date, 'YYYY-MM-DD') as date, account_id
 		`;
 
@@ -78,7 +80,7 @@ export const transactionRepo = {
 	getAll: async (userId: number, accountId: number | null): Promise<DetailedTransaction[]> => {
 		const records = await sql<JoinedTransaction[]>`
 			SELECT
-				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date,
+				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date, transaction.imported_id,
 				tag.name AS tag_name,
 				attr.id AS attribute_id, attr.name AS attribute_name, attrv.value AS attribute_value,
 				account.id AS account_id
@@ -100,7 +102,7 @@ export const transactionRepo = {
 	getOne: async (userId: number, transactionId: number): Promise<DetailedTransaction | null> => {
 		const records = await sql<JoinedTransaction[]>`
 			SELECT
-				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date,
+				transaction.id, transaction.amount, transaction.description, to_char(transaction.date, 'YYYY-MM-DD') as date, transaction.imported_id,
 				tag.name AS tag_name,
 				attr.id AS attribute_id, attr.name AS attribute_name, attrv.value AS attribute_value,
 				account.id AS account_id
@@ -122,12 +124,14 @@ export const transactionRepo = {
 		amount: number | null,
 		description: string | null,
 		date: IsoDate | null,
+		importedId: string | null | undefined,
 		tags: string[] | null,
 		attributes: Record<string, string> | null,
 	): Promise<void> => {
 		await sql`
 			UPDATE transaction
 			SET
+				${importedId === undefined ? sql`` : sql`imported_id = ${importedId},`}
 				amount = COALESCE(${amount}, amount),
 				description = COALESCE(${description}, description),
 				date = COALESCE(${date}, date)

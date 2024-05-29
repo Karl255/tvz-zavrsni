@@ -5,9 +5,6 @@
 	import LinkButton from "$lib/component/LinkButton.svelte";
 	import { AUTH_TOKEN_COOKIE_NAME } from "$lib/constants";
 	import "../../app.scss";
-	import type { PageData } from "./$types";
-
-	export let data: PageData;
 
 	function logout() {
 		document.cookie = `${AUTH_TOKEN_COOKIE_NAME}=; Max-Age=0; Path=/; Secure`;
@@ -75,16 +72,6 @@
 					Record transaction
 				</LinkButton>
 			</li>
-
-			{#if data.locals.isAdmin}
-				<li>
-					<!-- prettier-ignore -->
-					<LinkButton type="tertiary" href="/admin">
-					<Icon icon={IconType.ADMIN} />
-						Admin panel
-					</LinkButton>
-				</li>
-			{/if}
 		</ul>
 	</nav>
 

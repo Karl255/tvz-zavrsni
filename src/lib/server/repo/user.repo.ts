@@ -4,7 +4,7 @@ import { sql } from "$lib/server/sql";
 export const userRepo = {
 	getAll: async (): Promise<User[]> => {
 		const users = await sql<UserEntity[]>`
-			SELECT id, email, is_admin
+			SELECT id, email
 			FROM "user"
 		`;
 
@@ -13,7 +13,7 @@ export const userRepo = {
 
 	getOneByEmail: async (email: string): Promise<UserEntity | null> => {
 		const users = await sql<UserEntity[]>`
-			SELECT id, email, password_hash, is_admin
+			SELECT id, email, password_hash
 			FROM "user"
 			WHERE email = ${email}
 		`;
@@ -23,25 +23,14 @@ export const userRepo = {
 
 	create: async (email: string, passwordHash: string): Promise<User> => {
 		const users = await sql<User[]>`
-			INSERT INTO "user" (email, password_hash, is_admin)
+			INSERT INTO "user" (email, password_hash)
 			VALUES (${email}, ${passwordHash}, FALSE)
-			RETURNING id, email, is_admin
+			RETURNING id, email
 		`;
 
 		console.info(`Created ${users.length} users with email ${email}`);
 
 		return users[0];
-	},
-
-	update: async (userId: number, isAdmin: boolean | null): Promise<User | null> => {
-		const users = await sql<User[]>`
-			UPDATE "user"
-			SET is_admin = COALESCE(${isAdmin}, is_admin)
-			WHERE id = ${userId}
-			RETURNING id, email, is_admin
-		`;
-
-		return users[0] ?? null;
 	},
 
 	delete: async (userId: number): Promise<void> => {

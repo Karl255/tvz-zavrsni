@@ -31,7 +31,7 @@ export const GET: RequestHandler<Partial<LoginQueryParams>> = async ({ url }) =>
 
 	if ((userOrError as User).email) {
 		const user = userOrError as User;
-		const token = await createToken(user.id, user.isAdmin);
+		const token = await createToken(user.id);
 		const headers = createAuthHeaders(token);
 
 		return createJsonResponse({ user }, { headers });
@@ -55,7 +55,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const createdUser = await registerUser(parsing.data.email, parsing.data.password);
 
 	if (createdUser) {
-		const token = await createToken(createdUser.id, createdUser.isAdmin);
+		const token = await createToken(createdUser.id);
 		const headers = createAuthHeaders(token);
 
 		return createJsonResponse({ user: createdUser }, { headers });

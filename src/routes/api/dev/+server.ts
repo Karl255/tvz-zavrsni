@@ -14,8 +14,7 @@ async function initDb() {
 		CREATE TABLE IF NOT EXISTS "user" (
 			id SERIAL PRIMARY KEY,
 			email VARCHAR(50) NOT NULL,
-			password_hash CHAR(128) NOT NULL,
-			is_admin BOOLEAN NOT NULL
+			password_hash CHAR(128) NOT NULL
 		);
 	`;
 
@@ -33,7 +32,8 @@ async function initDb() {
 			id SERIAL PRIMARY KEY,
 			amount DECIMAL(6, 2) NOT NULL,
 			description VARCHAR(128) NOT NULL,
-			account_id SERIAL NOT NULL REFERENCES account(id)
+			account_id SERIAL NOT NULL REFERENCES account(id),
+			imported_id VARCHAR(64) NULL
 		);
 	`;
 
@@ -76,7 +76,6 @@ async function initDb() {
 }
 
 async function seedDb() {
-	// TODO #12: seed admin account with permissions
 	return Promise.resolve("nothing to seed");
 }
 
