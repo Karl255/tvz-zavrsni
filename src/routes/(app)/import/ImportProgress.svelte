@@ -23,9 +23,10 @@
 	style:grid-template-columns={availableWidth && stepWidths ? getGtcForStep(availableWidth, stepWidths, step) : null}
 	bind:this={progressContainer}
 >
-	<li>1. Choose file</li>
-	<li>2. Review data</li>
-	<li>3. Import records</li>
+	<li class:active={step === 1}>1. Choose file</li>
+	<li class:active={step === 2}>2. Pick data</li>
+	<li class:active={step === 3}>3. Review data</li>
+	<li class:active={step === 4}>4. Import records</li>
 </ol>
 
 <style lang="scss">
@@ -33,18 +34,22 @@
 		--gap: 0.5rem;
 
 		display: grid;
-		grid-template-columns: 0fr 0fr 0fr;
+		grid-template-columns: repeat(4, 0fr);
 		justify-content: center;
 		margin-inline: calc(0px - var(--gap));
 		margin-bottom: 2rem;
 
 		font-weight: $fw-bold;
-		transition: grid-template-columns 1s;
+		transition: grid-template-columns 500ms ease-in-out;
 
 		li {
-			white-space: pre;
 			display: flex;
 			align-items: center;
+
+			color: $clr-faded-text;
+			white-space: pre;
+
+			transition: color 500ms ease-in-out;
 
 			&::before,
 			&::after {
@@ -56,6 +61,10 @@
 				height: 2px;
 				background-color: currentColor;
 			}
+		}
+
+		.active {
+			color: black;
 		}
 	}
 </style>
