@@ -1,14 +1,18 @@
 <script lang="ts">
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { ImportColumn } from "$lib/service/import.service";
-	import type { ImportData } from "$lib/util/csv.util";
+	import type { DetailedTransaction } from "$lib/model/transaction.model";
+	import type { ImportColumn, ParsedImportData } from "$lib/service/import.service";
 
-	export let importData: ImportData;
+	export let importData: ParsedImportData;
 	export let columns: (ImportColumn | null)[];
 	export let onCancel: () => void;
-	export let onImport: () => void;
+	export let onImport: (transactions: Omit<DetailedTransaction, "id">[]) => void;
 	let isValid = true;
+
+	function next() {
+		onImport([]);
+	}
 </script>
 
 <div class="container">
@@ -43,7 +47,7 @@
 			Back
 		</Button>
 		
-		<Button type="primary" disabled={!isValid} on:click={onImport}>
+		<Button type="primary" disabled={!isValid} on:click={next}>
 			Next
 			<Icon icon={IconType.ARROW_RIGHT} />
 		</Button>

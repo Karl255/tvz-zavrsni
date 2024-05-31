@@ -2,21 +2,20 @@
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import type { Account } from "$lib/model/account.model";
-	import { STANDARD_COLUMNS, type ImportColumn } from "$lib/service/import.service";
-	import type { ImportData } from "$lib/util/csv.util";
+	import { STANDARD_COLUMNS, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 
-	export let importData: ImportData;
+	export let importData: RawImportData;
 	export let accounts: Account[];
 	export let onCancel: () => void;
-	export let onProceed: (columnMapping: (ImportColumn | null)[], accountId: number) => void;
+	export let onProceed: (columnMapping: ImportColumn[], accountId: number) => void;
 
-	let columns: (ImportColumn | null)[] = importData.headers.map(() => null);
+	let columns: ImportColumn[] = importData.headers.map(() => STANDARD_COLUMNS[0]);
 	let accountId: number | null = null;
 
 	let isValid = validate(columns, accountId);
 	$: isValid = validate(columns, accountId);
 
-	function validate(columns: (ImportColumn | null)[], accountId: number | null): accountId is number {
+	function validate(columns: ImportColumn[], accountId: number | null): accountId is number {
 		return STANDARD_COLUMNS.every((standardColumn) => columns.includes(standardColumn)) && accountId !== null;
 	}
 

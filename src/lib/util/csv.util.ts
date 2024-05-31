@@ -1,11 +1,7 @@
+import type { RawImportData } from "$lib/service/import.service";
 import { parse } from "csv-parse/browser/esm/sync";
 
-export interface ImportData {
-	headers: string[];
-	data: string[][];
-}
-
-export function parseImportData(csv: string): ImportData {
+export function parseCsv(csv: string): RawImportData {
 	const rows = parse(csv, {
 		skip_empty_lines: true,
 		trim: true,

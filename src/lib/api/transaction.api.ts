@@ -2,6 +2,7 @@ import type { IsoDate, DetailedTransaction } from "$lib/model/transaction.model"
 import { HttpClient, resolveEndpoint } from "./httpClient";
 
 const endpoint = resolveEndpoint("/api/transactions");
+const importEndpoint = endpoint + "/import";
 const idEndpoint = (id: number) => `${endpoint}/${id}`;
 
 export class TransactionApi {
@@ -42,5 +43,9 @@ export class TransactionApi {
 
 	async delete(transactionId: number) {
 		return await this.httpClient.delete(idEndpoint(transactionId), {});
+	}
+
+	async import(transactions: Omit<DetailedTransaction, "id">[]) {
+		return await this.httpClient.post(importEndpoint, transactions);
 	}
 }

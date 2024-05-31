@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return createValidationErrorResponse(parsing.error);
 	}
 
-	const account = await transactionRepo.create(
+	const transaction = await transactionRepo.create(
 		locals.userId,
 		parsing.data.accountId,
 		parsing.data.amount,
@@ -29,5 +29,5 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		parsing.data.attributes,
 	);
 
-	return account ? createJsonResponse(account) : createUnauthorizedResponse();
+	return transaction ? createJsonResponse(transaction) : createUnauthorizedResponse();
 };

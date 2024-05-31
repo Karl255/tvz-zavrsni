@@ -66,6 +66,7 @@ export const transactionRepo = {
 		const transactions = await sql<Transaction[]>`
 			INSERT INTO transaction (amount, description, date, imported_id, account_id)
 			VALUES (${amount}, ${description}, ${date}, ${importedId}, ${accountId})
+			ON CONFLICT (imported_id) DO NOTHING
 			RETURNING id, amount, description, to_char(date, 'YYYY-MM-DD') as date, account_id
 		`;
 
@@ -75,6 +76,29 @@ export const transactionRepo = {
 		console.info(`Created transaction "${transactions[0].id}" for user ${userId}`);
 
 		return transactions[0];
+	},
+
+	createMany: async (userId: number, transactions: Omit<DetailedTransaction, "id">[]): Promise<number> => {
+		let insertedCount = 0;
+
+		for (const transaction of transactions) {
+			const inserted = await transactionRepo.create(
+				userId,
+				transaction.accountId,
+				transaction.amount,
+				transaction.description,
+				transaction.date,
+				transaction.importedId,
+				transaction.tags,
+				transaction.attributes,
+			);
+
+			if (inserted) {
+				insertedCount++;
+			}
+		}
+
+		return insertedCount;
 	},
 
 	getAll: async (userId: number, accountId: number | null): Promise<DetailedTransaction[]> => {

@@ -1,6 +1,8 @@
 <script lang="ts">
-	import type { ImportColumn } from "$lib/service/import.service";
-	import { parseImportData, type ImportData } from "$lib/util/csv.util";
+	import { TransactionApi } from "$lib/api/transaction.api";
+	import type { DetailedTransaction } from "$lib/model/transaction.model";
+	import { type ImportColumn, type ParsedImportData, type RawImportData, parseImportData } from "$lib/service/import.service";
+	import { parseCsv } from "$lib/util/csv.util";
 	import type { PageData } from "./$types";
 	import DataPicker from "./DataPicker.svelte";
 	import FilePicker from "./FilePicker.svelte";
@@ -8,6 +10,8 @@
 	import ReviewTable from "./ReviewTable.svelte";
 
 	export let data: PageData;
+
+	const transactionApi = new TransactionApi();
 
 	enum Step {
 		CHOOSE_FILE = 1,
@@ -21,10 +25,10 @@
 		step: Step.CHOOSE_FILE;
 	} | {
 		step: Step.MAP_COLUMNS;
-		importData: ImportData;
+		importData: RawImportData;
 	} | {
 		step: Step.REVIEW_DATA;
-		importData: ImportData;
+		importData: ParsedImportData;
 		columns: (ImportColumn | null)[],
 		accountId: number,
 	} | {
@@ -37,24 +41,28 @@
 		const csv = await file.text();
 		state = {
 			step: Step.MAP_COLUMNS,
-			importData: parseImportData(csv),
+			importData: parseCsv(csv),
 		};
 	}
 
-	function pickData(columnMapping: (ImportColumn | null)[], accountId: number) {
+	function pickData(columnMapping: ImportColumn[], accountId: number) {
 		if (state.step !== Step.MAP_COLUMNS) {
 			return;
 		}
+
+		const parsedImportData = parseImportData(state.importData, columnMapping);
 
 		state = {
 			step: Step.REVIEW_DATA,
 			columns: columnMapping,
 			accountId,
-			importData: state.importData,
+			importData: parsedImportData,
 		};
 	}
 
-	function importData() {}
+	function importData(transactions: Omit<DetailedTransaction, "id">[]) {
+		transactionApi.import(transactions);
+	}
 </script>
 
 <ImportProgress step={state.step} />
