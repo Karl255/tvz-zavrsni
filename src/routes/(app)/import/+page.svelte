@@ -5,6 +5,7 @@
 	import DataPicker from "./DataPicker.svelte";
 	import FilePicker from "./FilePicker.svelte";
 	import ImportProgress from "./ImportProgress.svelte";
+	import ReviewTable from "./ReviewTable.svelte";
 
 	export let data: PageData;
 
@@ -52,6 +53,8 @@
 			importData: state.importData,
 		};
 	}
+
+	function importData() {}
 </script>
 
 <ImportProgress step={state.step} />
@@ -69,29 +72,20 @@
 			<DataPicker
 				importData={state.importData}
 				accounts={data.accounts}
-				onProceed={pickData}
 				onCancel={() => (state = { step: Step.CHOOSE_FILE })}
+				onProceed={pickData}
 			/>
 		</div>
 	{/if}
 
 	{#if state.step === Step.REVIEW_DATA}
 		<div class="step">
-			<table>
-				<tr>
-					{#each state.importData.headers as header}
-						<td>{header}</td>
-					{/each}
-				</tr>
-
-				{#each state.importData.data as row}
-					<tr>
-						{#each row as item}
-							<td>{item}</td>
-						{/each}
-					</tr>
-				{/each}
-			</table>
+			<ReviewTable
+				importData={state.importData}
+				columns={state.columns}
+				onCancel={() => (state = { step: Step.MAP_COLUMNS, importData: state.importData})}
+				onImport={importData}
+			/>
 		</div>
 	{/if}
 
