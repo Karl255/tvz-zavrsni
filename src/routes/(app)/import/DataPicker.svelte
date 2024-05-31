@@ -28,6 +28,19 @@
 	}
 </script>
 
+<!-- prettier-ignore -->
+<div class="actions">
+	<Button type="tertiary" on:click={onCancel}>
+		<Icon icon={IconType.ARROW_LEFT} />
+		Back
+	</Button>
+	
+	<Button type="primary" disabled={!isValid} on:click={proceed}>
+		Next
+		<Icon icon={IconType.ARROW_RIGHT} />
+	</Button>
+</div>
+
 <div class="container">
 	<div class="account">
 		<label for="accountId">Account</label>
@@ -58,19 +71,6 @@
 			</select>
 		{/each}
 	</div>
-
-	<!-- prettier-ignore -->
-	<div class="actions">
-		<Button type="tertiary" on:click={onCancel}>
-			<Icon icon={IconType.ARROW_LEFT} />
-			Back
-		</Button>
-		
-		<Button type="primary" disabled={!isValid} on:click={proceed}>
-			Next
-			<Icon icon={IconType.ARROW_RIGHT} />
-		</Button>
-	</div>
 </div>
 
 <style lang="scss">
@@ -92,7 +92,7 @@
 		display: grid;
 		grid-template-columns: auto 1fr;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.5rem 1rem;
 
 		p {
 			grid-column: 1 / -1;
@@ -100,6 +100,8 @@
 	}
 
 	.actions {
+		align-self: stretch;
+
 		display: flex;
 		gap: 1rem;
 		justify-content: space-between;

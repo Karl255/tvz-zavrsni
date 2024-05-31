@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
+	import Button from "$lib/component/Button.svelte";
+	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 	import { parseCsv } from "$lib/util/csv.util";
@@ -46,7 +48,7 @@
 		};
 	}
 
-	function pickData(columnMapping: ImportColumn[], accountId: number) {
+	function transformData(columnMapping: ImportColumn[], accountId: number) {
 		if (state.step !== Step.MAP_COLUMNS) {
 			return;
 		}
@@ -62,6 +64,12 @@
 
 	async function importTransactions(transactions: DetailedTransaction[]) {
 		const response = await transactionApi.import(transactions.map((t) => ({ ...t, id: undefined })));
+
+		if (!response.ok) {
+			console.error(await response.json());
+			return;
+		}
+
 		const created = (await response.json()).created as number;
 
 		state = {
@@ -77,8 +85,8 @@
 <div class="stack">
 	{#if state.step === Step.CHOOSE_FILE}
 		<div class="step">
+			<p>Here you can import data from a CSV file. The CSV file has to have headers.</p>
 			<FilePicker onPick={chooseFile} />
-			<p>Here you can import data from a CSV file. The CSV file is required to have headers.</p>
 		</div>
 	{/if}
 
@@ -88,7 +96,7 @@
 				importData={state.importData}
 				accounts={data.accounts}
 				onCancel={() => (state = { step: Step.CHOOSE_FILE })}
-				onProceed={pickData}
+				onProceed={transformData}
 			/>
 		</div>
 	{/if}
@@ -98,8 +106,8 @@
 			<ReviewTable
 				transactions={state.transactions}
 				accounts={data.accounts}
-				availableTags={[]}
-				availableAttributes={[]}
+				availableTags={data.availableTags}
+				availableAttributes={data.availableAttributes}
 				onCancel={() => (state = { step: Step.MAP_COLUMNS, importData: state.importData })}
 				onImport={importTransactions}
 			/>
@@ -108,7 +116,19 @@
 
 	{#if state.step === Step.DONE}
 		<div class="step">
-			<p>Created {state.created} out of {state.total} provided transactions</p>
+			<p>
+				<Icon
+					icon={state.created > 0 ? IconType.CHECK : IconType.X}
+					inline
+				/>
+				Created {state.created} out of {state.total} provided transactions
+			</p>
+			<Button
+				type="primary"
+				on:click={() => (state = { step: Step.CHOOSE_FILE })}
+			>
+				Import again
+			</Button>
 		</div>
 	{/if}
 </div>
@@ -123,6 +143,7 @@
 
 		display: flex;
 		flex-direction: column;
+		align-items: start;
 		gap: 1rem;
 	}
 </style>

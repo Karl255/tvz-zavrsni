@@ -71,6 +71,21 @@ export const transactionRepo = {
 			RETURNING id, amount, description, to_char(date, 'YYYY-MM-DD') as date, account_id
 		`;
 
+		if (transactions.length === 0) {
+			console.info("Didn't insert dulpicate transaction: ", {
+				userId,
+				accountId,
+				amount,
+				description,
+				date,
+				importedId,
+				tags,
+				attributes,
+			});
+
+			return null;
+		}
+
 		await taggedRepo.setTagsForTransaction(userId, transactions[0].id, tags);
 		await attributeValueRepo.setAttributesForTransaction(userId, transactions[0].id, attributes);
 

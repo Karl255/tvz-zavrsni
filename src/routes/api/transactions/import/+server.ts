@@ -1,6 +1,6 @@
 import { DetailedTransaction } from "$lib/model/transaction.model";
 import { transactionRepo } from "$lib/server/repo/transaction.repo";
-import { createJsonResponse, createUnauthorizedResponse, createValidationErrorResponse } from "$lib/util/api.util";
+import { createJsonResponse, createValidationErrorResponse } from "$lib/util/api.util";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
@@ -14,5 +14,5 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const created = await transactionRepo.createMany(locals.userId, parsing.data);
 
-	return created ? createJsonResponse({ created }) : createUnauthorizedResponse();
+	return createJsonResponse({ created });
 };

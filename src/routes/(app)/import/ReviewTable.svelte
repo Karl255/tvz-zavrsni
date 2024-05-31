@@ -18,9 +18,8 @@
 	}
 </script>
 
-<div class="container">
-	<!-- prettier-ignore -->
-	<div class="actions">
+<!-- prettier-ignore -->
+<div class="actions">
 		<Button type="tertiary" on:click={onCancel}>
 			<Icon icon={IconType.ARROW_LEFT} />
 			Back
@@ -32,18 +31,19 @@
 		</Button>
 	</div>
 
-	<p class="note">Note: filters you set here won't affect the importing</p>
+<p class="note">Note: filters you set here won't affect the importing</p>
 
-	<TransactionsList
-		bind:transactions
-		{accounts}
-		{availableTags}
-		{availableAttributes}
-	/>
-</div>
+<TransactionsList
+	bind:transactions
+	{accounts}
+	{availableTags}
+	{availableAttributes}
+/>
 
 <style lang="scss">
 	.actions {
+		align-self: stretch;
+
 		display: flex;
 		gap: 1rem;
 		justify-content: space-between;
