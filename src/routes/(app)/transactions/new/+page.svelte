@@ -3,6 +3,7 @@
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import type { PageData } from "./$types";
 	import TransactionEditor, { type NewOrExistingTransaction } from "$lib/component/TransactionEditor.svelte";
+	import type { NoId } from "$lib/util/type.util";
 
 	export let data: PageData;
 
@@ -18,7 +19,7 @@
 		attributes: {},
 	};
 
-	async function create(transaction: Omit<DetailedTransaction, "id">) {
+	async function create(transaction: NoId<DetailedTransaction>) {
 		const transactionResponse = await transactionApi.create(
 			transaction.accountId,
 			transaction.amount,

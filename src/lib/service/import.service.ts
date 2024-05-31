@@ -1,70 +1,75 @@
-import type { IsoDate } from "$lib/model/transaction.model";
-
-export const STANDARD_COLUMNS: ImportColumn[] = [
-	{
-		title: "-",
-		fieldName: "",
-		type: "ignored",
-		required: false,
-		parse: (value) => ({ type: "ignored", value }),
-	},
-	{
-		title: "External ID",
-		fieldName: "importedId",
-		type: "string",
-		required: false,
-		parse: (value) => ({ type: "string", value }),
-	},
-	{
-		title: "Amount",
-		fieldName: "amount",
-		type: "number",
-		required: true,
-		parse: (value) => ({ type: "number", value: Number(value) }),
-	},
-	{
-		title: "Description",
-		fieldName: "description",
-		type: "string",
-		required: true,
-		parse: (value) => ({ type: "string", value }),
-	},
-	{
-		title: "Date",
-		fieldName: "date",
-		type: "date",
-		required: true,
-		parse: (value) => ({ type: "date", value }),
-	},
-];
-
-export interface RawImportData {
-	headers: string[];
-	rows: string[][];
-}
-
-export type ImportValue = { type: "string"; value: string } | { type: "number"; value: number } | { type: "date"; value: IsoDate } | { type: "ignored"; value: string };
+import { DetailedTransaction } from "$lib/model/transaction.model";
+import type { NoId } from "$lib/util/type.util";
 
 export interface ImportColumn {
 	title: string;
 	fieldName: string;
 	type: "string" | "number" | "date" | "ignored";
 	required: boolean;
-	parse: (rawValue: string) => ImportValue;
 }
 
-export interface ParsedImportData {
+const IGNORED_COLUMN = {
+	title: "-",
+	fieldName: "",
+	type: "ignored",
+	required: false,
+} satisfies ImportColumn;
+
+const IMPORTED_ID_COLUMN = {
+	title: "External ID",
+	fieldName: "importedId",
+	type: "string",
+	required: false,
+} satisfies ImportColumn;
+
+const AMOUNT_COLUMN = {
+	title: "Amount",
+	fieldName: "amount",
+	type: "number",
+	required: true,
+} satisfies ImportColumn;
+
+const DESCRIPTION_COLUMN = {
+	title: "Description",
+	fieldName: "description",
+	type: "string",
+	required: true,
+} satisfies ImportColumn;
+
+const DATE_COLUMN = {
+	title: "Date",
+	fieldName: "date",
+	type: "date",
+	required: true,
+} satisfies ImportColumn;
+
+export const STANDARD_COLUMNS: ImportColumn[] = [IGNORED_COLUMN, IMPORTED_ID_COLUMN, AMOUNT_COLUMN, DESCRIPTION_COLUMN, DATE_COLUMN];
+export const REQUIRED_COLUMNS = STANDARD_COLUMNS.filter((c) => c.required);
+
+export interface RawImportData {
 	headers: string[];
-	rows: ImportValue[][];
+	rows: string[][];
 }
 
-export function parseImportData(importData: RawImportData, columns: ImportColumn[]): ParsedImportData {
-	const rows = importData.rows.map((row) => {
-		return row.map((rawValue, index) => columns[index].parse(rawValue));
-	});
+export function parseTransactions(importData: RawImportData, columns: ImportColumn[], accountId: number): NoId<DetailedTransaction>[] {
+	const parseTransaction = getTransactionParser(columns, accountId);
 
-	return {
-		headers: importData.headers,
-		rows: rows,
-	};
+	return importData.rows.map((row) => parseTransaction(row));
+}
+
+function getTransactionParser(columns: ImportColumn[], accountId: number) {
+	const importedIdIndex = columns.indexOf(IMPORTED_ID_COLUMN);
+	const amountIndex = columns.indexOf(AMOUNT_COLUMN);
+	const descriptionIndex = columns.indexOf(DESCRIPTION_COLUMN);
+	const dateIndex = columns.indexOf(DATE_COLUMN);
+
+	return (row: string[]): NoId<DetailedTransaction> => ({
+		importedId: row[importedIdIndex],
+		amount: Number(row[amountIndex]),
+		description: row[descriptionIndex],
+		date: row[dateIndex],
+		accountId,
+		tags: [],
+		attributes: {},
+	});
 }

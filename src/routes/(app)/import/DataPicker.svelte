@@ -2,7 +2,7 @@
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import type { Account } from "$lib/model/account.model";
-	import { STANDARD_COLUMNS, type ImportColumn, type RawImportData } from "$lib/service/import.service";
+	import { REQUIRED_COLUMNS, STANDARD_COLUMNS, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 
 	export let importData: RawImportData;
 	export let accounts: Account[];
@@ -16,7 +16,7 @@
 	$: isValid = validate(columns, accountId);
 
 	function validate(columns: ImportColumn[], accountId: number | null): accountId is number {
-		return STANDARD_COLUMNS.every((standardColumn) => columns.includes(standardColumn)) && accountId !== null;
+		return REQUIRED_COLUMNS.every((standardColumn) => columns.includes(standardColumn)) && accountId !== null;
 	}
 
 	function proceed() {

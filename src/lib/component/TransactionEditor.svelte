@@ -13,14 +13,14 @@
 		attributes: Record<string, string>;
 	}
 
-	assertNever<TypeDiff<Omit<DetailedTransaction, "id">, NewOrExistingTransaction>>();
+	assertNever<TypeDiff<NoId<DetailedTransaction>, NewOrExistingTransaction>>();
 </script>
 
 <script lang="ts">
 	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction, IsoDate } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
-	import { assertNever, type TypeDiff } from "$lib/util/type.util";
+	import { assertNever, type NoId, type TypeDiff } from "$lib/util/type.util";
 	import { identity } from "$lib/util/util";
 	import AttributeEditor from "./AttributeEditor.svelte";
 	import Button from "./Button.svelte";
@@ -31,7 +31,7 @@
 	export let accounts: Account[];
 	export let availableTags: string[];
 	export let availableAttributes: string[];
-	export let onCreate: (transaction: Omit<DetailedTransaction, "id">) => void = identity;
+	export let onCreate: (transaction: NoId<DetailedTransaction>) => void = identity;
 	export let onUpdate: (transaction: DetailedTransaction) => void = identity;
 	export let onCancel: () => void = identity;
 

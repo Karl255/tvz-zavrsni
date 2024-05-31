@@ -72,6 +72,14 @@
 					Record transaction
 				</LinkButton>
 			</li>
+
+			<li>
+				<!-- prettier-ignore -->
+				<LinkButton type="tertiary" href="/import">
+					<Icon icon={IconType.IMPORT} />
+					Import
+				</LinkButton>
+			</li>
 		</ul>
 	</nav>
 

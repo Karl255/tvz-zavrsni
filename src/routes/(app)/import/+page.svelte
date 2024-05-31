@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
+	import TransactionsList from "$lib/component/TransactionList/TransactionsList.svelte";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
-	import { type ImportColumn, type ParsedImportData, type RawImportData, parseImportData } from "$lib/service/import.service";
+	import { parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 	import { parseCsv } from "$lib/util/csv.util";
 	import type { PageData } from "./$types";
 	import DataPicker from "./DataPicker.svelte";
@@ -28,9 +29,8 @@
 		importData: RawImportData;
 	} | {
 		step: Step.REVIEW_DATA;
-		importData: ParsedImportData;
-		columns: (ImportColumn | null)[],
-		accountId: number,
+		importData: RawImportData;
+		transactions: DetailedTransaction[]
 	} | {
 		step: Step.DONE;
 	};
@@ -50,18 +50,17 @@
 			return;
 		}
 
-		const parsedImportData = parseImportData(state.importData, columnMapping);
+		const transactions = parseTransactions(state.importData, columnMapping, accountId).map((transaction, index) => ({ ...transaction, id: index }));
 
 		state = {
 			step: Step.REVIEW_DATA,
-			columns: columnMapping,
-			accountId,
-			importData: parsedImportData,
+			importData: state.importData,
+			transactions,
 		};
 	}
 
-	function importData(transactions: Omit<DetailedTransaction, "id">[]) {
-		transactionApi.import(transactions);
+	function importTransactions(transactions: DetailedTransaction[]) {
+		transactionApi.import(transactions.map((t) => ({ ...t, id: undefined })));
 	}
 </script>
 
@@ -89,10 +88,12 @@
 	{#if state.step === Step.REVIEW_DATA}
 		<div class="step">
 			<ReviewTable
-				importData={state.importData}
-				columns={state.columns}
-				onCancel={() => (state = { step: Step.MAP_COLUMNS, importData: state.importData})}
-				onImport={importData}
+				transactions={state.transactions}
+				accounts={data.accounts}
+				availableTags={[]}
+				availableAttributes={[]}
+				onCancel={() => (state = { step: Step.MAP_COLUMNS, importData: state.importData })}
+				onImport={importTransactions}
 			/>
 		</div>
 	{/if}
