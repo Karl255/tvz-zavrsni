@@ -2,7 +2,7 @@ import type { IsoDate } from "$lib/model/transaction.model";
 
 export const STANDARD_COLUMNS: ImportColumn[] = [
 	{
-		title: "Ignored",
+		title: "-",
 		fieldName: "",
 		type: "ignored",
 		required: false,
@@ -40,31 +40,31 @@ export const STANDARD_COLUMNS: ImportColumn[] = [
 
 export interface RawImportData {
 	headers: string[];
-	data: string[][];
+	rows: string[][];
 }
 
-export type ParsedData = { type: "string"; value: string } | { type: "number"; value: number } | { type: "date"; value: IsoDate } | { type: "ignored"; value: string };
+export type ImportValue = { type: "string"; value: string } | { type: "number"; value: number } | { type: "date"; value: IsoDate } | { type: "ignored"; value: string };
 
 export interface ImportColumn {
 	title: string;
 	fieldName: string;
 	type: "string" | "number" | "date" | "ignored";
 	required: boolean;
-	parse: (rawValue: string) => ParsedData;
+	parse: (rawValue: string) => ImportValue;
 }
 
 export interface ParsedImportData {
 	headers: string[];
-	data: ParsedData[][];
+	rows: ImportValue[][];
 }
 
-export function parseImportData(importData: RawImportData, columns: ImportColumn[]) {
-	const rows = importData.data.map((row) => {
+export function parseImportData(importData: RawImportData, columns: ImportColumn[]): ParsedImportData {
+	const rows = importData.rows.map((row) => {
 		return row.map((rawValue, index) => columns[index].parse(rawValue));
 	});
 
 	return {
 		headers: importData.headers,
-		data: rows,
+		rows: rows,
 	};
 }

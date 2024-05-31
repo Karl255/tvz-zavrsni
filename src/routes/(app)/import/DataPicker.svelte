@@ -52,7 +52,6 @@
 				id="column-{header}"
 				bind:value={columns[i]}
 			>
-				<option value={null}>Ignore</option>
 				{#each STANDARD_COLUMNS as column}
 					<option value={column}>{column.title}</option>
 				{/each}

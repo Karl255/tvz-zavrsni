@@ -9,6 +9,6 @@ export function parseCsv(csv: string): RawImportData {
 
 	return {
 		headers: rows[0],
-		data: rows.slice(1),
+		rows: rows.slice(1),
 	};
 }
