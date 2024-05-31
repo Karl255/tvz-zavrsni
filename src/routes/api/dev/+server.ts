@@ -33,7 +33,8 @@ async function initDb() {
 			amount DECIMAL(6, 2) NOT NULL,
 			description VARCHAR(128) NOT NULL,
 			account_id SERIAL NOT NULL REFERENCES account(id),
-			imported_id VARCHAR(64) NULL
+			imported_id VARCHAR(64) NULL,
+			CONSTRAINT unique_imported_id_per_account_id UNIQUE (imported_id, account_id)
 		);
 	`;
 

@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS transaction (
 	description VARCHAR(128) NOT NULL,
 	date DATE NOT NULL,
 	imported_id VARCHAR(64) NULL,
-	account_id SERIAL NOT NULL REFERENCES account(id)
+	account_id SERIAL NOT NULL REFERENCES account(id),
+	CONSTRAINT unique_imported_id_per_account_id UNIQUE (imported_id, account_id)
 );
 
 CREATE TABLE IF NOT EXISTS tag (

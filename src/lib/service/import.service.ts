@@ -3,45 +3,14 @@ import type { NoId } from "$lib/util/type.util";
 
 export interface ImportColumn {
 	title: string;
-	fieldName: string;
-	type: "string" | "number" | "date" | "ignored";
 	required: boolean;
 }
 
-const IGNORED_COLUMN = {
-	title: "-",
-	fieldName: "",
-	type: "ignored",
-	required: false,
-} satisfies ImportColumn;
-
-const IMPORTED_ID_COLUMN = {
-	title: "External ID",
-	fieldName: "importedId",
-	type: "string",
-	required: false,
-} satisfies ImportColumn;
-
-const AMOUNT_COLUMN = {
-	title: "Amount",
-	fieldName: "amount",
-	type: "number",
-	required: true,
-} satisfies ImportColumn;
-
-const DESCRIPTION_COLUMN = {
-	title: "Description",
-	fieldName: "description",
-	type: "string",
-	required: true,
-} satisfies ImportColumn;
-
-const DATE_COLUMN = {
-	title: "Date",
-	fieldName: "date",
-	type: "date",
-	required: true,
-} satisfies ImportColumn;
+const IGNORED_COLUMN = { title: "-", required: false } satisfies ImportColumn;
+const IMPORTED_ID_COLUMN = { title: "External ID", required: false } satisfies ImportColumn;
+const AMOUNT_COLUMN = { title: "Amount", required: true } satisfies ImportColumn;
+const DESCRIPTION_COLUMN = { title: "Description", required: true } satisfies ImportColumn;
+const DATE_COLUMN = { title: "Date", required: true } satisfies ImportColumn;
 
 export const STANDARD_COLUMNS: ImportColumn[] = [IGNORED_COLUMN, IMPORTED_ID_COLUMN, AMOUNT_COLUMN, DESCRIPTION_COLUMN, DATE_COLUMN];
 export const REQUIRED_COLUMNS = STANDARD_COLUMNS.filter((c) => c.required);

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { TransactionApi } from "$lib/api/transaction.api";
-	import TransactionsList from "$lib/component/TransactionList/TransactionsList.svelte";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 	import { parseCsv } from "$lib/util/csv.util";
@@ -30,9 +29,11 @@
 	} | {
 		step: Step.REVIEW_DATA;
 		importData: RawImportData;
-		transactions: DetailedTransaction[]
+		transactions: DetailedTransaction[];
 	} | {
 		step: Step.DONE;
+		total: number;
+		created: number;
 	};
 
 	let state: State = { step: Step.CHOOSE_FILE };
@@ -59,8 +60,15 @@
 		};
 	}
 
-	function importTransactions(transactions: DetailedTransaction[]) {
-		transactionApi.import(transactions.map((t) => ({ ...t, id: undefined })));
+	async function importTransactions(transactions: DetailedTransaction[]) {
+		const response = await transactionApi.import(transactions.map((t) => ({ ...t, id: undefined })));
+		const created = (await response.json()).created as number;
+
+		state = {
+			step: Step.DONE,
+			total: transactions.length,
+			created,
+		};
 	}
 </script>
 
@@ -100,7 +108,7 @@
 
 	{#if state.step === Step.DONE}
 		<div class="step">
-			<p>finito</p>
+			<p>Created {state.created} out of {state.total} provided transactions</p>
 		</div>
 	{/if}
 </div>
