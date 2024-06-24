@@ -11,8 +11,16 @@ function hashAsHex(password: string): string {
 	return createHash("sha3-512").update(password).digest("hex");
 }
 
-// TODO: get from env
-const secret = new Uint8Array([...atob("4XOj3bFVrVrZrCVC4HkQyV++43VUP7rxMgOKJ2ku630xNy3nWqMGCVyQK+lKcQb/xyLVXClzrz7G8AmdaC5G1A==")].map((x) => x.charCodeAt(0)));
+const secret = new Uint8Array(
+	[
+		...atob(
+			process.env.JWT_SECRET ??
+				((): never => {
+					throw Error("");
+				})(),
+		),
+	].map((x) => x.charCodeAt(0)),
+);
 
 const TOKEN_LIFETIME_SECONDS = 24 * 60 * 60; // 24h
 

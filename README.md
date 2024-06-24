@@ -15,6 +15,8 @@ Potrebno je imati instaliranu PostgreSQL bazu podataka. Podatke za spajanje na n
 | connect_timeout | PGCONNECT_TIMEOUT     |
 | url (dodatno)   | POSTGRES_URL          |
 
+Također je potrebno imati env varijablu JWT_SECRET (64B enkodirano u base64).
+
 Primjer:
 
 ```sh
@@ -22,6 +24,7 @@ Primjer:
 export PGDATABASE=tvz-zavrsni
 export PGUSERNAME=postgres
 export PGPASSWORD=postgres
+export JWT_SECRET=4XOj3bFVrVrZrCVC4HkQyV++43VUP7rxMgOKJ2ku630xNy3nWqMGCVyQK+lKcQb/xyLVXClzrz7G8AmdaC5G1A==
 ```
 
 Ova funkcionalnost dolazi od postgres biblioteke. [Dokumentaicja](https://www.npmjs.com/package/postgres#environmental-variables).

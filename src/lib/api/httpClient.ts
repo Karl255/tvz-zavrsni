@@ -20,8 +20,7 @@ export class HttpClient {
 			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string | number | boolean)}`)
 			.join("&");
 
-		// TODO: don't add ? with empty params
-		const url = `${endpoint}?${queryParams}`;
+		const url = Object.entries(queryParams).length === 0 ? endpoint : `${endpoint}?${queryParams}`;
 
 		return await this.fetchFunction(url, { method: "GET" });
 	}
