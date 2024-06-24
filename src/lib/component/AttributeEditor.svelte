@@ -11,7 +11,7 @@
 	let unsetAttributes: string[] = getUnsetAttributes(attributes, appContext.availableAttributes);
 	$: unsetAttributes = getUnsetAttributes(attributes, appContext.availableAttributes);
 
-	let selectedUnsetAttribute: string | null = null;
+	let selectedUnsetAttribute: string | null = unsetAttributes[0] ?? null;
 
 	function getUnsetAttributes(attributes: Record<string, string>, available: string[]) {
 		return available.filter((attributeName) => !Object.hasOwn(attributes, attributeName));

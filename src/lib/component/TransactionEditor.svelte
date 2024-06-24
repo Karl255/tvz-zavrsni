@@ -23,6 +23,7 @@
 	import { validateIsoDate } from "$lib/service/validation.service";
 	import { assertNever, type NoId, type TypeDiff } from "$lib/util/type.util";
 	import { identity } from "$lib/util/util";
+	import { onMount } from "svelte";
 	import AttributeEditor from "./AttributeEditor.svelte";
 	import Button from "./Button.svelte";
 	import Icon, { IconType } from "./Icon.svelte";
@@ -34,6 +35,8 @@
 	export let onCreate: (transaction: NoId<DetailedTransaction>) => void = identity;
 	export let onUpdate: (transaction: DetailedTransaction) => void = identity;
 	export let onCancel: () => void = identity;
+
+	let amountInput: HTMLInputElement;
 
 	let isValid = false;
 	$: isValid = validate(transaction);
@@ -58,15 +61,27 @@
 		}
 	}
 
-	function formatCurrency(e: { currentTarget: HTMLInputElement }) {
-		e.currentTarget.value = Number(e.currentTarget.value).toFixed(2);
+	function formatAmount() {
+		amountInput.value = Number(amountInput.value).toFixed(2);
 	}
+
+	function negateAmount() {
+		amountInput.value = (-Number(amountInput.value)).toFixed(2);
+		formatAmount();
+	}
+
+	onMount(() => {
+		formatAmount();
+	});
 </script>
 
 <form on:submit={save}>
 	<label for="accountId">Account</label>
-	<!-- prettier-ignore -->
-	<select id="accountId" bind:value={transaction.accountId}>
+
+	<select
+		id="accountId"
+		bind:value={transaction.accountId}
+	>
 		{#each appContext.accounts as account}
 			<option value={account.id}>{account.name}</option>
 		{/each}
@@ -75,7 +90,18 @@
 	<label for="amount">Amount</label>
 	<div class="amount">
 		<!-- prettier-ignore -->
-		<input type="number" id="amount" step="0.01" bind:value={transaction.amount} on:blur={formatCurrency}>
+		<Button type="tertiary" small on:click={negateAmount}>
+			<Icon icon={IconType.PLUS_MINUS} />
+		</Button>
+
+		<input
+			type="number"
+			id="amount"
+			step="0.01"
+			bind:this={amountInput}
+			bind:value={transaction.amount}
+			on:blur={formatAmount}
+		/>
 
 		<Icon icon={IconType.EURO} />
 	</div>
@@ -146,10 +172,13 @@
 	}
 
 	.amount {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+
+		input {
+			flex-grow: 1;
+		}
 
 		:global(svg) {
 			color: $clr-bold-text;
