@@ -16,6 +16,13 @@ export const attributeValueRepo = {
 		`;
 	},
 
+	deleteByTransactionIds: async (transactionIds: number[]): Promise<void> => {
+		await sql`
+			DELETE FROM attribute_value
+			WHERE transaction_id IN ${sql(transactionIds)}
+		`;
+	},
+
 	setAttributesForTransaction: async (userId: number, transactionId: number, attributes: Record<string, string>): Promise<boolean> => {
 		const attributeNames = Object.keys(attributes);
 		const transaction = await transactionRepo.getOne(userId, transactionId);

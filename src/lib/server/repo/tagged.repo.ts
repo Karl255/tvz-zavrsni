@@ -16,6 +16,13 @@ export const taggedRepo = {
 		`;
 	},
 
+	deleteByTransactionIds: async (transactionIds: number[]): Promise<void> => {
+		await sql`
+			DELETE FROM tagged
+			WHERE transaction_id IN ${sql(transactionIds)}
+		`;
+	},
+
 	setTagsForTransaction: async (userId: number, transactionId: number, tagNames: string[]): Promise<boolean> => {
 		const transaction = await transactionRepo.getOne(userId, transactionId);
 

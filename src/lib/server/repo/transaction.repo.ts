@@ -210,4 +210,18 @@ export const transactionRepo = {
 
 		console.info(`Deleted transaction ${transactionId}`);
 	},
+
+	deleteByAccountId: async (userId: number, accountId: number): Promise<void> => {
+		const transactionIds = (await transactionRepo.getAll(userId, accountId)).map((transaction) => transaction.id);
+
+		await taggedRepo.deleteByTransactionIds(transactionIds);
+		await attributeValueRepo.deleteByTransactionIds(transactionIds);
+
+		await sql`
+			DELETE FROM transaction
+			WHERE id IN ${sql(transactionIds)}
+		`;
+
+		console.info("Deleted transactions:", transactionIds);
+	},
 };

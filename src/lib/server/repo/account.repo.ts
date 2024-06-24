@@ -1,5 +1,6 @@
 import type { Account, AccountType } from "$lib/model/account.model";
 import { sql } from "$lib/server/sql";
+import { transactionRepo } from "./transaction.repo";
 
 export const accountRepo = {
 	create: async (userId: number, name: string, type: AccountType): Promise<Account> => {
@@ -50,6 +51,8 @@ export const accountRepo = {
 	},
 
 	delete: async (userId: number, accountId: number): Promise<void> => {
+		transactionRepo.deleteByAccountId(userId, accountId);
+
 		await sql`
 			DELETE FROM account
 			WHERE user_id = ${userId} AND id = ${accountId}
