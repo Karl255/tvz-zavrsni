@@ -19,7 +19,7 @@
 
 	async function create() {
 		await accountApi.create(name, type);
-		goto(`/accounts`);
+		goto(`/accounts`, { invalidateAll: true });
 	}
 </script>
 

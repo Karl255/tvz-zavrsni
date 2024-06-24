@@ -22,4 +22,8 @@ export class AccountApi {
 	async create(name: string, type: AccountType) {
 		return (await (await this.httpClient.post(endpoint, { name, type })).json()) as Account;
 	}
+
+	async delete(accountId: number) {
+		return await this.httpClient.delete(idEndpoint(accountId), {});
+	}
 }
