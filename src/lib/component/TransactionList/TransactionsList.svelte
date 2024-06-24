@@ -11,6 +11,7 @@
 	import Button from "../Button.svelte";
 	import Aggregate from "./_Aggregate.svelte";
 	import { getAppContext } from "$lib/app.context";
+	import { invalidateAll } from "$app/navigation";
 
 	const appContext = getAppContext();
 	const transactionApi = new TransactionApi();
@@ -81,6 +82,7 @@
 		transactions = transactions.map((t) => (t.id === transaction.id ? transaction : t));
 
 		closeEditor();
+		invalidateAll();
 	}
 
 	function closeEditor() {
@@ -93,6 +95,7 @@
 
 		if (response.ok) {
 			transactions = transactions.filter((transaction) => transaction.id !== transactionId);
+			invalidateAll();
 		}
 	}
 

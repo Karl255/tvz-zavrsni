@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from "$app/navigation";
 	import { AttributeApi } from "$lib/api/attribute.api";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
@@ -22,6 +23,8 @@
 				data.availableAttributes.push((await response.json()) as string);
 				data.availableAttributes = data.availableAttributes;
 				searchInput = "";
+
+				invalidateAll();
 			}
 		}
 	}
@@ -31,6 +34,8 @@
 
 		if (response.ok) {
 			data.availableAttributes = data.availableAttributes.map((a) => (a === attributeName ? newName : a));
+
+			invalidateAll();
 		}
 	}
 
@@ -39,6 +44,8 @@
 
 		if (resposne.ok) {
 			data.availableAttributes = data.availableAttributes.filter((a) => a !== attributeName);
+
+			invalidateAll();
 		}
 	}
 

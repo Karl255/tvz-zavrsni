@@ -4,6 +4,7 @@
 	import type { PageData } from "./$types";
 	import TransactionEditor, { type NewOrExistingTransaction } from "$lib/component/TransactionEditor.svelte";
 	import type { NoId } from "$lib/util/type.util";
+	import { invalidateAll } from "$app/navigation";
 
 	export let data: PageData;
 
@@ -37,6 +38,8 @@
 
 		transaction.amount = 0;
 		transaction.description = "";
+
+		invalidateAll();
 	}
 </script>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from "$app/navigation";
 	import { TagApi } from "$lib/api/tag.api";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
@@ -21,6 +22,8 @@
 				data.availableTags.push((await response.json()) as string);
 				data.availableTags = data.availableTags;
 				searchInput = "";
+
+				invalidateAll();
 			}
 		}
 	}
@@ -30,6 +33,8 @@
 
 		if (response.ok) {
 			data.availableTags = data.availableTags.map((t) => (t === tagName ? newName : t));
+
+			invalidateAll();
 		}
 	}
 
@@ -38,6 +43,8 @@
 
 		if (resposne.ok) {
 			data.availableTags = data.availableTags.filter((t) => t !== tagName);
+
+			invalidateAll();
 		}
 	}
 

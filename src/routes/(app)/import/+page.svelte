@@ -9,6 +9,7 @@
 	import FilePicker from "./FilePicker.svelte";
 	import ImportProgress from "./ImportProgress.svelte";
 	import ReviewTable from "./ReviewTable.svelte";
+	import { invalidateAll } from "$app/navigation";
 
 	const transactionApi = new TransactionApi();
 
@@ -74,6 +75,8 @@
 			total: transactions.length,
 			created,
 		};
+
+		invalidateAll();
 	}
 
 	function reviewDataPreviousStep(state: State): State {
