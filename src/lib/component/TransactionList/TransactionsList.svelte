@@ -36,6 +36,7 @@
 	let showDateFilter: boolean;
 	let showAccountFilter: boolean;
 	let showTagsFilter: boolean;
+	let shownAttributeSearches: string[];
 
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
@@ -102,6 +103,11 @@
 			return new Date(b.date).valueOf() - new Date(a.date).valueOf() || b.id - a.id;
 		}
 	}
+
+	function showAttributeSearch(attribute: string) {
+		shownAttributeSearches.push(attribute);
+		shownAttributeSearches = shownAttributeSearches;
+	}
 </script>
 
 <div
@@ -118,6 +124,7 @@
 			bind:showDateFilter
 			bind:showAccountFilter
 			bind:showTagsFilter
+			bind:shownAttributeSearches
 		/>
 	</div>
 
@@ -181,7 +188,16 @@
 			</th>
 
 			{#each attributeColumns as attribute}
-				<th>{attribute}</th>
+				<th>
+					{attribute}
+
+					<span class="filter-button">
+						<!-- prettier-ignore -->
+						<Button type="icon" on:click={() => showAttributeSearch(attribute)}>
+							<Icon icon={IconType.FILTER} />
+						</Button>
+					</span>
+				</th>
 			{/each}
 
 			<th></th>

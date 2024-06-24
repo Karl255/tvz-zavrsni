@@ -21,6 +21,7 @@
 		accountIds: [],
 		hasTags: [],
 		doesntHaveTags: [],
+		attributeSearches: {},
 	};
 
 	$: filteredTransactions = applyFilter(allTransactions, filter);
@@ -62,14 +63,21 @@
 		showTagsFilter = false;
 	}
 
+	function clearAttributeSearch(name: string) {
+		filter.attributeSearches[name] = "";
+		delete filter.attributeSearches[name];
+		shownAttributeSearches = shownAttributeSearches.filter((shownName) => shownName !== name);
+	}
+
 	export let showAmountFilter = false;
 	export let showDescriptionFilter = false;
 	export let showDateFilter = false;
 	export let showAccountFilter = false;
 	export let showTagsFilter = false;
+	export let shownAttributeSearches: string[] = [];
 
 	let isAnyFilterShown = false;
-	$: isAnyFilterShown = showAmountFilter || showDescriptionFilter || showDateFilter || showAccountFilter || showTagsFilter;
+	$: isAnyFilterShown = showAmountFilter || showDescriptionFilter || showDateFilter || showAccountFilter || showTagsFilter || shownAttributeSearches.length > 0;
 </script>
 
 <div
@@ -208,6 +216,26 @@
 			</dialog>
 		</div>
 	{/if}
+
+	{#each shownAttributeSearches as attributeSearchName}
+		<div class="filter-row">
+			<!-- prettier-ignore -->
+			<Button type="tertiary" small on:click={() => clearAttributeSearch(attributeSearchName)}>
+				<Icon icon={IconType.X} />
+			</Button>
+
+			<p>
+				<span class="field">{attributeSearchName}</span>
+				contains words
+			</p>
+
+			<input
+				type="text"
+				class="input"
+				bind:value={filter.attributeSearches[attributeSearchName]}
+			/>
+		</div>
+	{/each}
 </div>
 
 <style lang="scss">
