@@ -35,6 +35,7 @@
 	let showAmountFilter: boolean;
 	let showDateFilter: boolean;
 	let showAccountFilter: boolean;
+	let showTagsFilter: boolean;
 
 	onMount(() => {
 		const width = scrollWrapper.clientWidth;
@@ -116,6 +117,7 @@
 			bind:showAmountFilter
 			bind:showDateFilter
 			bind:showAccountFilter
+			bind:showTagsFilter
 		/>
 	</div>
 
@@ -167,7 +169,16 @@
 				</th>
 			{/if}
 
-			<th>Tags</th>
+			<th>
+				Tags
+
+				<span class="filter-button">
+					<!-- prettier-ignore -->
+					<Button type="icon" on:click={() => showTagsFilter = true}>
+						<Icon icon={IconType.FILTER} />
+					</Button>
+				</span>
+			</th>
 
 			{#each attributeColumns as attribute}
 				<th>{attribute}</th>

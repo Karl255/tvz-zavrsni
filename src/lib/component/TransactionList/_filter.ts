@@ -7,6 +7,8 @@ export interface Filter {
 	dateFrom: IsoDate | null;
 	dateTo: IsoDate | null;
 	accountIds: number[];
+	hasTags: string[];
+	doesntHaveTags: string[];
 }
 
 export function applyFilter(transactions: DetailedTransaction[], filter: Filter) {
@@ -19,7 +21,8 @@ export function applyFilter(transactions: DetailedTransaction[], filter: Filter)
 			byDescription(transaction.description, descriptionWords) &&
 			byAmount(transaction.amount, filter) &&
 			byDate(new Date(transaction.date), dateFrom, dateTo) &&
-			byAccount(transaction.accountId, filter.accountIds)
+			byAccount(transaction.accountId, filter.accountIds) &&
+			byTag(transaction.tags, filter.hasTags, filter.doesntHaveTags)
 		);
 	});
 }
@@ -38,4 +41,8 @@ function byDate(date: Date, from: Date | null, to: Date | null): boolean {
 
 function byAccount(accountId: number, accountIds: number[]): boolean {
 	return accountIds.length === 0 || accountIds.includes(accountId);
+}
+
+function byTag(tags: string[], hasTags: string[], doesntHaveTags: string[]): boolean {
+	return hasTags.every((hasTag) => tags.includes(hasTag)) && doesntHaveTags.every((doesntHaveTag) => !tags.includes(doesntHaveTag));
 }

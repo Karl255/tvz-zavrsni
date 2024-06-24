@@ -4,6 +4,7 @@
 	import { DetailedTransaction } from "$lib/model/transaction.model";
 	import Button from "../Button.svelte";
 	import Icon, { IconType } from "../Icon.svelte";
+	import FilterTagsPicker from "./_FilterTagsPicker.svelte";
 	import { type Filter, applyFilter } from "./_filter";
 
 	export let allTransactions: DetailedTransaction[];
@@ -18,6 +19,8 @@
 		dateFrom: null,
 		dateTo: null,
 		accountIds: [],
+		hasTags: [],
+		doesntHaveTags: [],
 	};
 
 	$: filteredTransactions = applyFilter(allTransactions, filter);
@@ -29,6 +32,7 @@
 	}
 
 	let accountPicker: HTMLDialogElement;
+	let tagsPicker: HTMLDialogElement;
 
 	function clearAmountFilter() {
 		filter.amountMin = null;
@@ -52,13 +56,20 @@
 		showAccountFilter = false;
 	}
 
+	function clearTagsFilter() {
+		filter.hasTags = [];
+		filter.doesntHaveTags = [];
+		showTagsFilter = false;
+	}
+
 	export let showAmountFilter = false;
 	export let showDescriptionFilter = false;
 	export let showDateFilter = false;
 	export let showAccountFilter = false;
+	export let showTagsFilter = false;
 
 	let isAnyFilterShown = false;
-	$: isAnyFilterShown = showAmountFilter || showDescriptionFilter || showDateFilter || showAccountFilter;
+	$: isAnyFilterShown = showAmountFilter || showDescriptionFilter || showDateFilter || showAccountFilter || showTagsFilter;
 </script>
 
 <div
@@ -168,6 +179,35 @@
 			</dialog>
 		</div>
 	{/if}
+
+	{#if showTagsFilter}
+		<div class="filter-row">
+			<!-- prettier-ignore -->
+			<Button type="tertiary" small on:click={clearTagsFilter}>
+				<Icon icon={IconType.X} />
+			</Button>
+
+			<p>
+				<span class="field">Tags</span>: has <span class="input">{filter.hasTags.join(", ")}</span>, doesn't have <span class="input">{filter.doesntHaveTags.join(", ")}</span>
+			</p>
+
+			<!-- prettier-ignore -->
+			<Button type="tertiary" small on:click={() => (tagsPicker.showModal())}>
+				<Icon icon={IconType.SELECT_LIST} />
+			</Button>
+
+			<dialog
+				class="modal"
+				bind:this={tagsPicker}
+			>
+				<FilterTagsPicker
+					bind:hasTags={filter.hasTags}
+					bind:doesntHaveTags={filter.doesntHaveTags}
+					onClose={() => tagsPicker.close()}
+				/>
+			</dialog>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -176,8 +216,7 @@
 		flex-direction: column;
 		gap: 2rem;
 
-		margin-top: 1rem;
-		margin-bottom: 2rem;
+		margin-bottom: 1rem;
 
 		background-color: $clr-light-gray;
 		padding: 1rem 1rem 1rem 0.5rem;
