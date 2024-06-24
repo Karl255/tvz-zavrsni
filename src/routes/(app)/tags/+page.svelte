@@ -7,20 +7,19 @@
 	import TagRow from "./TagRow.svelte";
 
 	export let data: PageData;
-
 	const tagApi = new TagApi();
 
 	let searchInput = "";
 	let isValidTagName = false;
-	$: isValidTagName = validateTagName(searchInput) && data.tags.every((tag) => tag !== searchInput);
+	$: isValidTagName = validateTagName(searchInput) && data.availableTags.every((tag) => tag !== searchInput);
 
 	async function createTag() {
 		if (isValidTagName) {
 			const response = await tagApi.create(searchInput);
 
 			if (response.ok) {
-				data.tags.push((await response.json()) as string);
-				data.tags = data.tags;
+				data.availableTags.push((await response.json()) as string);
+				data.availableTags = data.availableTags;
 				searchInput = "";
 			}
 		}
@@ -30,7 +29,7 @@
 		const response = await tagApi.update(tagName, newName);
 
 		if (response.ok) {
-			data.tags = data.tags.map((t) => (t === tagName ? newName : t));
+			data.availableTags = data.availableTags.map((t) => (t === tagName ? newName : t));
 		}
 	}
 
@@ -38,7 +37,7 @@
 		const resposne = await tagApi.delete(tagName);
 
 		if (resposne.ok) {
-			data.tags = data.tags.filter((t) => t !== tagName);
+			data.availableTags = data.availableTags.filter((t) => t !== tagName);
 		}
 	}
 
@@ -69,7 +68,7 @@
 	</div>
 
 	<ul class="list">
-		{#each searchAndSort(data.tags, searchInput) as tag}
+		{#each searchAndSort(data.availableTags, searchInput) as tag}
 			<li>
 				<TagRow
 					{tag}

@@ -12,15 +12,15 @@
 
 	let searchInput = "";
 	let isValidAttributeName = false;
-	$: isValidAttributeName = validateAttributeName(searchInput) && data.attributes.every((attribute) => attribute !== searchInput);
+	$: isValidAttributeName = validateAttributeName(searchInput) && data.availableAttributes.every((attribute) => attribute !== searchInput);
 
 	async function createAttribute() {
 		if (isValidAttributeName) {
 			const response = await attributeApi.create(searchInput);
 
 			if (response.ok) {
-				data.attributes.push((await response.json()) as string);
-				data.attributes = data.attributes;
+				data.availableAttributes.push((await response.json()) as string);
+				data.availableAttributes = data.availableAttributes;
 				searchInput = "";
 			}
 		}
@@ -30,7 +30,7 @@
 		const response = await attributeApi.update(attributeName, newName);
 
 		if (response.ok) {
-			data.attributes = data.attributes.map((a) => (a === attributeName ? newName : a));
+			data.availableAttributes = data.availableAttributes.map((a) => (a === attributeName ? newName : a));
 		}
 	}
 
@@ -38,7 +38,7 @@
 		const resposne = await attributeApi.delete(attributeName);
 
 		if (resposne.ok) {
-			data.attributes = data.attributes.filter((a) => a !== attributeName);
+			data.availableAttributes = data.availableAttributes.filter((a) => a !== attributeName);
 		}
 	}
 
@@ -69,7 +69,7 @@
 	</div>
 
 	<ul class="list">
-		{#each searchAndSort(data.attributes, searchInput) as attribute}
+		{#each searchAndSort(data.availableAttributes, searchInput) as attribute}
 			<li>
 				<AttributeRow
 					{attribute}
