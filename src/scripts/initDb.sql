@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS account (
 CREATE TABLE IF NOT EXISTS transaction (
 	id SERIAL PRIMARY KEY,
 	amount DECIMAL(20, 2) NOT NULL,
-	description VARCHAR(128) NOT NULL,
+	description VARCHAR(256) NOT NULL,
 	date DATE NOT NULL,
 	imported_id VARCHAR(64) NULL,
 	account_id SERIAL NOT NULL REFERENCES account(id),
@@ -44,6 +44,6 @@ CREATE TABLE attribute (
 CREATE TABLE attribute_value (
     transaction_id SERIAL REFERENCES transaction(id),
     attribute_id SERIAL REFERENCES attribute(id),
-    value VARCHAR(50),
+    value VARCHAR(256),
     PRIMARY KEY (transaction_id, attribute_id)
 );

@@ -31,7 +31,7 @@ async function initDb() {
 		CREATE TABLE IF NOT EXISTS transaction (
 			id SERIAL PRIMARY KEY,
 			amount DECIMAL(6, 2) NOT NULL,
-			description VARCHAR(128) NOT NULL,
+			description VARCHAR(256) NOT NULL,
 			account_id SERIAL NOT NULL REFERENCES account(id),
 			imported_id VARCHAR(64) NULL,
 			CONSTRAINT unique_imported_id_per_account_id UNIQUE (imported_id, account_id)
@@ -68,7 +68,7 @@ async function initDb() {
 		CREATE TABLE attribute_value (
 			transaction_id SERIAL REFERENCES transaction(id),
 			attribute_id SERIAL REFERENCES attribute(id),
-			value VARCHAR(50),
+			value VARCHAR(256),
 			PRIMARY KEY (transaction_id, attribute_id)
 		);
 	`;

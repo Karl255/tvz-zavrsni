@@ -196,7 +196,8 @@
 			</Button>
 
 			<p>
-				<span class="field">Tags</span>: has <span class="input">{filter.hasTags.join(", ")}</span>, doesn't have <span class="input">{filter.doesntHaveTags.join(", ")}</span>
+				<span class="field">Tags</span>: has <span class="input">{filter.hasTags.join(", ")}</span>, doesn't have
+				<span class="input">{filter.doesntHaveTags.join(", ")}</span>
 			</p>
 
 			<!-- prettier-ignore -->
