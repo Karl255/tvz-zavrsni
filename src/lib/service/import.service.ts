@@ -52,7 +52,7 @@ function getTransactionParser(columns: ImportColumn[], accountId: number, dateFo
 	};
 
 	const parseToIsoDate = (date: string): IsoDate => {
-		const dateValues = date.split(/ -.\//);
+		const dateValues = date.split(/[ ./-]/);
 
 		return dateFormat === DateFormat.YYYY_MM_DD ? dateValues.join("-") : dateValues.reverse().join("-");
 	};
