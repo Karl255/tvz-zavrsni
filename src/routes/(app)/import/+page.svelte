@@ -5,7 +5,7 @@
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { DateFormat, parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 	import { parseCsv } from "$lib/util/csv.util";
-	import DataPicker from "./DataPicker.svelte";
+	import FormatChooser from "./FormatChooser.svelte";
 	import FilePicker from "./FilePicker.svelte";
 	import ImportProgress from "./ImportProgress.svelte";
 	import ReviewTable from "./ReviewTable.svelte";
@@ -100,7 +100,7 @@
 
 	{#if state.step === Step.MAP_COLUMNS}
 		<div class="step">
-			<DataPicker
+			<FormatChooser
 				importData={state.importData}
 				onCancel={() => (state = { step: Step.CHOOSE_FILE })}
 				onProceed={transformData}

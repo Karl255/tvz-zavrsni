@@ -2,7 +2,7 @@
 	import { getAppContext } from "$lib/app.context";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import { DateFormat, STANDARD_COLUMNS, validateColumnMapping, type ImportColumn, type RawImportData } from "$lib/service/import.service";
+	import { DateFormat, IGNORED_COLUMN, STANDARD_COLUMNS, getAttributeImportColumns, validateColumnMapping, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 
 	const appContext = getAppContext();
 
@@ -10,7 +10,7 @@
 	export let onCancel: () => void;
 	export let onProceed: (columnMapping: ImportColumn[], accountId: number, dateFormat: DateFormat) => void;
 
-	let columns: ImportColumn[] = importData.headers.map(() => STANDARD_COLUMNS[0]);
+	let columns: ImportColumn[] = importData.headers.map(() => IGNORED_COLUMN);
 	let accountId: number | null = null;
 	let dateFormat: DateFormat = DateFormat.YYYY_MM_DD;
 
@@ -78,9 +78,19 @@
 				id="column-{header}"
 				bind:value={columns[i]}
 			>
-				{#each STANDARD_COLUMNS as column}
-					<option value={column}>{column.title}</option>
-				{/each}
+				<option value={IGNORED_COLUMN}>{IGNORED_COLUMN.title}</option>
+
+				<optgroup label="Standard">
+					{#each STANDARD_COLUMNS as column}
+						<option value={column}>{column.title}</option>
+					{/each}
+				</optgroup>
+
+				<optgroup label="Attributes">
+					{#each getAttributeImportColumns(appContext.availableAttributes) as attributeColumn}
+						<option value={attributeColumn}>{attributeColumn.title}</option>
+					{/each}
+				</optgroup>
 			</select>
 		{/each}
 	</div>

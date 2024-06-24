@@ -24,7 +24,7 @@
 	bind:this={progressContainer}
 >
 	<li class:active={step === 1}>1. Choose file</li>
-	<li class:active={step === 2}>2. Pick data</li>
+	<li class:active={step === 2}>2. Choose data format</li>
 	<li class:active={step === 3}>3. Review data</li>
 	<li class:active={step === 4}>4. Done</li>
 </ol>
