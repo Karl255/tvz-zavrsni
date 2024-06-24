@@ -5,13 +5,10 @@
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { DateFormat, parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 	import { parseCsv } from "$lib/util/csv.util";
-	import type { PageData } from "./$types";
 	import DataPicker from "./DataPicker.svelte";
 	import FilePicker from "./FilePicker.svelte";
 	import ImportProgress from "./ImportProgress.svelte";
 	import ReviewTable from "./ReviewTable.svelte";
-
-	export let data: PageData;
 
 	const transactionApi = new TransactionApi();
 
@@ -78,6 +75,17 @@
 			created,
 		};
 	}
+
+	function reviewDataPreviousStep(state: State): State {
+		if (state.step === Step.REVIEW_DATA) {
+			return {
+				step: Step.MAP_COLUMNS,
+				importData: state.importData,
+			};
+		}
+
+		throw Error("Unreachable code");
+	}
 </script>
 
 <ImportProgress step={state.step} />
@@ -94,7 +102,6 @@
 		<div class="step">
 			<DataPicker
 				importData={state.importData}
-				accounts={data.accounts}
 				onCancel={() => (state = { step: Step.CHOOSE_FILE })}
 				onProceed={transformData}
 			/>
@@ -105,10 +112,7 @@
 		<div class="step">
 			<ReviewTable
 				transactions={state.transactions}
-				accounts={data.accounts}
-				availableTags={data.availableTags}
-				availableAttributes={data.availableAttributes}
-				onCancel={() => (state = { step: Step.MAP_COLUMNS, importData: state.importData })}
+				onCancel={() => (state = reviewDataPreviousStep(state))}
 				onImport={importTransactions}
 			/>
 		</div>

@@ -9,12 +9,7 @@
 	<h1 class="title">Transaction history</h1>
 
 	<div>
-		<TransactionsList
-			transactions={data.transactions}
-			accounts={data.accounts}
-			availableTags={data.availableTags}
-			availableAttributes={data.availableAttributes}
-		/>
+		<TransactionsList transactions={data.transactions} />
 	</div>
 </div>
 

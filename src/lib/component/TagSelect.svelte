@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { getAppContext } from "$lib/app.context";
+
+	const appContext = getAppContext();
+
 	export let id: string;
 	export let selectedTags: string[] = [];
-	export let availableTags: string[];
 
-	let checkableTags = availableTags.map((tag) => ({ name: tag, checked: !!selectedTags.find((selected) => selected === tag) }));
+	let checkableTags = appContext.availableTags.map((tag) => ({ name: tag, checked: !!selectedTags.find((selected) => selected === tag) }));
 
 	function updateSelected() {
 		selectedTags = checkableTags.filter((tag) => tag.checked).map((tag) => tag.name);

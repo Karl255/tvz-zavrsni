@@ -1,13 +1,15 @@
 <script lang="ts">
+	import { getAppContext } from "$lib/app.context";
 	import Button from "./Button.svelte";
 	import Icon, { IconType } from "./Icon.svelte";
 
+	const appContext = getAppContext();
+
 	export let id: string | null = null;
-	export let avaialbleAttributes: string[];
 	export let attributes: Record<string, string>;
 
-	let unsetAttributes: string[] = getUnsetAttributes(attributes, avaialbleAttributes);
-	$: unsetAttributes = getUnsetAttributes(attributes, avaialbleAttributes);
+	let unsetAttributes: string[] = getUnsetAttributes(attributes, appContext.availableAttributes);
+	$: unsetAttributes = getUnsetAttributes(attributes, appContext.availableAttributes);
 
 	let selectedUnsetAttribute: string | null = null;
 

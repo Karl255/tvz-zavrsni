@@ -10,17 +10,16 @@
 	import Icon, { IconType } from "../Icon.svelte";
 	import Button from "../Button.svelte";
 	import Aggregate from "./_Aggregate.svelte";
+	import { getAppContext } from "$lib/app.context";
 
+	const appContext = getAppContext();
 	const transactionApi = new TransactionApi();
 
 	export let transactions: DetailedTransaction[];
 	let filteredTransactions = transactions;
-	export let accounts: Account[];
-	export let availableTags: string[];
-	export let availableAttributes: string[];
 
 	let accountMap: Record<number, Account> = {};
-	$: accountMap = accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {});
+	$: accountMap = appContext.accounts.reduce((map, account) => ({ ...map, [account.id]: account }), {});
 
 	let attributeColumns: string[] = getAllAttributes(filteredTransactions);
 	$: attributeColumns = getAllAttributes(filteredTransactions);
@@ -113,7 +112,6 @@
 		<Filter
 			allTransactions={transactions}
 			bind:filteredTransactions
-			{accounts}
 			bind:showDescriptionFilter
 			bind:showAmountFilter
 			bind:showDateFilter
@@ -156,7 +154,7 @@
 				</span>
 			</th>
 
-			{#if accounts.length > 1}
+			{#if appContext.accounts.length > 1}
 				<th>
 					Account
 
@@ -182,7 +180,7 @@
 			<Row
 				{transaction}
 				{attributeColumns}
-				accountResolver={accounts.length > 1 ? getAccountById : undefined}
+				accountResolver={appContext.accounts.length > 1 ? getAccountById : undefined}
 				onEdit={startEdit}
 				{onDelete}
 			/>
@@ -199,9 +197,6 @@
 	{#if transactionBeingEdited}
 		<TransactionEditor
 			transaction={transactionBeingEdited}
-			{accounts}
-			{availableTags}
-			{availableAttributes}
 			onUpdate={saveEdited}
 			onCancel={closeEditor}
 		/>

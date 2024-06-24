@@ -2,14 +2,10 @@
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import TransactionsList from "$lib/component/TransactionList/TransactionsList.svelte";
-	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
 	import { validateTransaction } from "$lib/service/validation.service";
 
 	export let transactions: DetailedTransaction[];
-	export let accounts: Account[];
-	export let availableTags: string[];
-	export let availableAttributes: string[];
 	export let onCancel: () => void;
 	export let onImport: (transactions: DetailedTransaction[]) => void;
 
@@ -36,12 +32,7 @@
 
 <p class="note">Note: filters you set here won't affect the importing</p>
 
-<TransactionsList
-	bind:transactions
-	{accounts}
-	{availableTags}
-	{availableAttributes}
-/>
+<TransactionsList bind:transactions />
 
 <style lang="scss">
 	.actions {

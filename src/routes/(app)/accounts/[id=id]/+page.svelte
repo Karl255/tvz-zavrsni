@@ -30,12 +30,7 @@
 	<p class="account__balance" title="balance">{sumBalance(data.transactions).toFixed(2)} €</p>
 </article>
 
-<TransactionsList
-	bind:transactions={data.transactions}
-	accounts={[data.account]}
-	availableTags={data.availableTags}
-	availableAttributes={data.availableAttributes}
-/>
+<TransactionsList bind:transactions={data.transactions} />
 
 <style lang="scss">
 	.account {

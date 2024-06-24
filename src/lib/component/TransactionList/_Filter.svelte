@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from "$app/environment";
-	import type { Account } from "$lib/model/account.model";
+	import { getAppContext } from "$lib/app.context";
 	import { DetailedTransaction } from "$lib/model/transaction.model";
 	import Button from "../Button.svelte";
 	import Icon, { IconType } from "../Icon.svelte";
@@ -8,7 +8,8 @@
 
 	export let allTransactions: DetailedTransaction[];
 	export let filteredTransactions = allTransactions;
-	export let accounts: Account[];
+
+	const appContext = getAppContext();
 
 	const filter: Filter = {
 		descriptionSearch: "",
@@ -139,7 +140,7 @@
 			</p>
 
 			<span class="input">
-				{filter.accountIds.map((accountId) => accounts.find((account) => account.id === accountId)?.name)}
+				{filter.accountIds.map((accountId) => appContext.accounts.find((account) => account.id === accountId)?.name)}
 			</span>
 
 			<!-- prettier-ignore -->
@@ -156,7 +157,7 @@
 						multiple
 						bind:value={filter.accountIds}
 					>
-						{#each accounts as account}
+						{#each appContext.accounts as account}
 							<option value={account.id}>{account.name}</option>
 						{/each}
 					</select>

@@ -45,9 +45,6 @@
 <div class="wrapper">
 	<TransactionEditor
 		bind:transaction
-		accounts={data.accounts}
-		availableTags={data.avaialbleTags}
-		availableAttributes={data.availableAttributes}
 		onCreate={create}
 	/>
 </div>

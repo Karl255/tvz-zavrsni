@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { getAppContext } from "$lib/app.context";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
-	import type { Account } from "$lib/model/account.model";
 	import { DateFormat, STANDARD_COLUMNS, validateColumnMapping, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 
+	const appContext = getAppContext();
+
 	export let importData: RawImportData;
-	export let accounts: Account[];
 	export let onCancel: () => void;
 	export let onProceed: (columnMapping: ImportColumn[], accountId: number, dateFormat: DateFormat) => void;
 
@@ -50,7 +51,7 @@
 			id="accountId"
 			bind:value={accountId}
 		>
-			{#each accounts as account}
+			{#each appContext.accounts as account}
 				<option value={account.id}>{account.name}</option>
 			{/each}
 		</select>

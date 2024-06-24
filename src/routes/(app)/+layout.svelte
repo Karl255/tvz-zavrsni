@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
+	import { setAppContext } from "$lib/app.context";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import LinkButton from "$lib/component/LinkButton.svelte";
 	import { AUTH_TOKEN_COOKIE_NAME } from "$lib/constants";
 	import "../../app.scss";
+	import type { LayoutData } from "./$types";
+
+	export let data: LayoutData;
+	setAppContext(data);
 
 	function logout() {
 		document.cookie = `${AUTH_TOKEN_COOKIE_NAME}=; Max-Age=0; Path=/; Secure`;

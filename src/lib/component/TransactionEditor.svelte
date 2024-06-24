@@ -17,7 +17,8 @@
 </script>
 
 <script lang="ts">
-	import type { Account } from "$lib/model/account.model";
+	import { getAppContext } from "$lib/app.context";
+
 	import type { DetailedTransaction, IsoDate } from "$lib/model/transaction.model";
 	import { validateIsoDate } from "$lib/service/validation.service";
 	import { assertNever, type NoId, type TypeDiff } from "$lib/util/type.util";
@@ -27,10 +28,9 @@
 	import Icon, { IconType } from "./Icon.svelte";
 	import TagSelect from "./TagSelect.svelte";
 
+	const appContext = getAppContext();
+
 	export let transaction: NewOrExistingTransaction;
-	export let accounts: Account[];
-	export let availableTags: string[];
-	export let availableAttributes: string[];
 	export let onCreate: (transaction: NoId<DetailedTransaction>) => void = identity;
 	export let onUpdate: (transaction: DetailedTransaction) => void = identity;
 	export let onCancel: () => void = identity;
@@ -67,7 +67,7 @@
 	<label for="accountId">Account</label>
 	<!-- prettier-ignore -->
 	<select id="accountId" bind:value={transaction.accountId}>
-		{#each accounts as account}
+		{#each appContext.accounts as account}
 			<option value={account.id}>{account.name}</option>
 		{/each}
 	</select>
@@ -91,13 +91,13 @@
 	<label for="attributes">Attributes</label>
 	<div>
 		<!-- prettier-ignore -->
-		<AttributeEditor id="attributes" bind:attributes={transaction.attributes} avaialbleAttributes={availableAttributes} />
+		<AttributeEditor id="attributes" bind:attributes={transaction.attributes} />
 	</div>
 
 	<label for="tags">Tags</label>
 	<div>
 		<!-- prettier-ignore -->
-		<TagSelect id="tags" bind:selectedTags={transaction.tags} {availableTags} />
+		<TagSelect id="tags" bind:selectedTags={transaction.tags} />
 	</div>
 
 	<div class="actions">
