@@ -23,6 +23,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Create account</title>
+</svelte:head>
+
 <h1 class="title">Create account</h1>
 
 <form on:submit={create}>

@@ -51,6 +51,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>My tags</title>
+</svelte:head>
+
 <div class="content">
 	<h1 class="title">My tags</h1>
 

@@ -40,6 +40,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Record transaction</title>
+</svelte:head>
+
 <h1 class="title">Record transaction</h1>
 
 <div class="wrapper">

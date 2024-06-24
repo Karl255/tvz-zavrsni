@@ -5,6 +5,10 @@
 	export let data: PageData;
 </script>
 
+<svelte:head>
+	<title>Transactions</title>
+</svelte:head>
+
 <div class="content">
 	<h1 class="title">Transaction history</h1>
 

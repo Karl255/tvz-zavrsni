@@ -88,6 +88,12 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Import transactions</title>
+</svelte:head>
+
+<h1 class="sr-only">Import transactions</h1>
+
 <ImportProgress step={state.step} />
 
 <div class="stack">

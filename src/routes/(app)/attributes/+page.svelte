@@ -52,6 +52,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>My attributes</title>
+</svelte:head>
+
 <div class="content">
 	<h1 class="title">My attributes</h1>
 

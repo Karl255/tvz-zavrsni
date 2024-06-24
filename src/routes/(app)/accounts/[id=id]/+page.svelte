@@ -12,6 +12,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Transactions - {data.account.name}</title>
+</svelte:head>
+
 <h1 class="sr-only">You are viewing the account:</h1>
 
 <article class="account">

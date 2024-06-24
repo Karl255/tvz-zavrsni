@@ -8,6 +8,10 @@
 	let totalBalance = data.accounts.reduce((total, account) => total + (account.balance ?? 0), 0);
 </script>
 
+<svelte:head>
+	<title>Dashboard</title>
+</svelte:head>
+
 <div class="content">
 	<h1 class="title">Dashboard</h1>
 

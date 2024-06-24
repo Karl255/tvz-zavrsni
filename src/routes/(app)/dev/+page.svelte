@@ -25,6 +25,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Developer page</title>
+</svelte:head>
+
 <div class="content">
 	<h1 class="title">Development stuff</h1>
 
