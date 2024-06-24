@@ -41,7 +41,7 @@
 
 	<dt>Average</dt>
 	<dd>
-		<Value amount={sum(transactions) / transactions.length} />
+		<Value amount={transactions.length === 0 ? null : sum(transactions) / transactions.length} />
 	</dd>
 
 	<dt>Min/max gained</dt>

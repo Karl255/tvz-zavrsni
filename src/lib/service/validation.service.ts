@@ -3,7 +3,7 @@ import { AccountType } from "$lib/model/account.model";
 const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
 const passwordMinLength = 8;
 const tagMinLength = 3;
-const accountNameMinLength = 5;
+const accountNameMinLength = 1;
 const isoDateRegex = /\d{4}-[01]\d-[0-3]\d/;
 
 export function validatePassword(password: string) {

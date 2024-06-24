@@ -38,7 +38,7 @@
 	</select>
 
 	<!-- prettier-ignore -->
-	<Button type="primary" disabled={!isValid}>Create</Button>
+	<Button type="primary" submit disabled={!isValid}>Create</Button>
 </form>
 
 <style lang="scss">
