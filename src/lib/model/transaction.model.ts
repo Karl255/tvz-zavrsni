@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { assertNever, type TypeDiff } from "$lib/util/type.util";
 
+const TRANSACTION_DESCRIPTION_MAX_LENGTH = 128;
+
 /** String containing a date in the ISO 8601 format (YYYY-MM-DD). */
 export type IsoDate = string;
 
@@ -16,8 +18,8 @@ export interface Transaction {
 export const Transaction = z.object({
 	id: z.number(),
 	amount: z.number(),
-	description: z.string(),
-	date: z.string(),
+	description: z.string().max(TRANSACTION_DESCRIPTION_MAX_LENGTH),
+	date: z.string().date(),
 	importedId: z.string().nullable(),
 	accountId: z.number(),
 });

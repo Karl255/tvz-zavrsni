@@ -92,7 +92,7 @@
 	.page {
 		display: grid;
 		grid-template-areas: "header header" "nav content";
-		grid-template-columns: auto 1fr;
+		grid-template-columns: 16rem 1fr;
 		grid-template-rows: auto 1fr;
 		gap: 0 1rem;
 

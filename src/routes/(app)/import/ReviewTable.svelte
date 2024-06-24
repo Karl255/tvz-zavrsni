@@ -4,6 +4,7 @@
 	import TransactionsList from "$lib/component/TransactionList/TransactionsList.svelte";
 	import type { Account } from "$lib/model/account.model";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
+	import { validateTransaction } from "$lib/service/validation.service";
 
 	export let transactions: DetailedTransaction[];
 	export let accounts: Account[];
@@ -11,7 +12,9 @@
 	export let availableAttributes: string[];
 	export let onCancel: () => void;
 	export let onImport: (transactions: DetailedTransaction[]) => void;
-	let isValid = true;
+
+	let isValid = false;
+	$: isValid = transactions.every((transaction) => validateTransaction(transaction));
 
 	function next() {
 		onImport(transactions);

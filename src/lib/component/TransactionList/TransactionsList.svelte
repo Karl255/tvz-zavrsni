@@ -178,16 +178,14 @@
 			<th></th>
 		</tr>
 
-		{#each sorted(filteredTransactions) as transaction}
-			<tr>
-				<Row
-					{transaction}
-					{attributeColumns}
-					accountResolver={accounts.length > 1 ? getAccountById : undefined}
-					onEdit={startEdit}
-					{onDelete}
-				/>
-			</tr>
+		{#each sorted(filteredTransactions) as transaction (transaction)}
+			<Row
+				{transaction}
+				{attributeColumns}
+				accountResolver={accounts.length > 1 ? getAccountById : undefined}
+				onEdit={startEdit}
+				{onDelete}
+			/>
 		{/each}
 	</table>
 
@@ -230,10 +228,6 @@
 		table {
 			width: max-content;
 		}
-	}
-
-	tr:nth-child(even) {
-		background-color: $clr-light-gray;
 	}
 
 	th {
