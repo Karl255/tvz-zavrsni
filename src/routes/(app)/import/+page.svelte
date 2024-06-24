@@ -3,7 +3,7 @@
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import type { DetailedTransaction } from "$lib/model/transaction.model";
-	import { parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
+	import { DateFormat, parseTransactions, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 	import { parseCsv } from "$lib/util/csv.util";
 	import type { PageData } from "./$types";
 	import DataPicker from "./DataPicker.svelte";
@@ -48,12 +48,12 @@
 		};
 	}
 
-	function transformData(columnMapping: ImportColumn[], accountId: number) {
+	function transformData(columnMapping: ImportColumn[], accountId: number, dateFormat: DateFormat) {
 		if (state.step !== Step.MAP_COLUMNS) {
 			return;
 		}
 
-		const transactions = parseTransactions(state.importData, columnMapping, accountId).map((transaction, index) => ({ ...transaction, id: index }));
+		const transactions = parseTransactions(state.importData, columnMapping, accountId, dateFormat).map((transaction, index) => ({ ...transaction, id: index }));
 
 		state = {
 			step: Step.REVIEW_DATA,

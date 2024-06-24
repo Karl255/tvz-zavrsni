@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { assertNever, type TypeDiff } from "$lib/util/type.util";
 
+/** String containing a date in the ISO 8601 format (YYYY-MM-DD). */
 export type IsoDate = string;
 
 export interface Transaction {

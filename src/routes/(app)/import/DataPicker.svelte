@@ -2,15 +2,16 @@
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
 	import type { Account } from "$lib/model/account.model";
-	import { STANDARD_COLUMNS, validateColumnMapping, type ImportColumn, type RawImportData } from "$lib/service/import.service";
+	import { DateFormat, STANDARD_COLUMNS, validateColumnMapping, type ImportColumn, type RawImportData } from "$lib/service/import.service";
 
 	export let importData: RawImportData;
 	export let accounts: Account[];
 	export let onCancel: () => void;
-	export let onProceed: (columnMapping: ImportColumn[], accountId: number) => void;
+	export let onProceed: (columnMapping: ImportColumn[], accountId: number, dateFormat: DateFormat) => void;
 
 	let columns: ImportColumn[] = importData.headers.map(() => STANDARD_COLUMNS[0]);
 	let accountId: number | null = null;
+	let dateFormat: DateFormat = DateFormat.YYYY_MM_DD;
 
 	let isValid = validate(columns, accountId);
 	$: isValid = validate(columns, accountId);
@@ -24,7 +25,7 @@
 			return;
 		}
 
-		onProceed(columns, accountId);
+		onProceed(columns, accountId, dateFormat);
 	}
 </script>
 
@@ -42,7 +43,7 @@
 </div>
 
 <div class="container">
-	<div class="account">
+	<div class="metadata">
 		<label for="accountId">Account</label>
 
 		<select
@@ -51,6 +52,17 @@
 		>
 			{#each accounts as account}
 				<option value={account.id}>{account.name}</option>
+			{/each}
+		</select>
+
+		<label for="dateFormat">Date format</label>
+
+		<select
+			id="dateFormat"
+			bind:value={dateFormat}
+		>
+			{#each Object.values(DateFormat) as dateFormat}
+				<option>{dateFormat}</option>
 			{/each}
 		</select>
 	</div>
@@ -82,7 +94,7 @@
 		}
 	}
 
-	.account {
+	.metadata {
 		display: grid;
 		grid-template-columns: auto 1fr;
 		align-items: center;

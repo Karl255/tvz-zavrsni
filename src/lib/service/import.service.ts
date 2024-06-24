@@ -1,4 +1,4 @@
-import { DetailedTransaction } from "$lib/model/transaction.model";
+import { DetailedTransaction, type IsoDate } from "$lib/model/transaction.model";
 import type { NoId } from "$lib/util/type.util";
 
 export interface ImportColumn {
@@ -12,6 +12,11 @@ const AMOUNT_INGOING_COLUMN = { title: "Amount (ingoing)", required: false } sat
 const AMOUNT_OUTGOING_COLUMN = { title: "Amount (outgoing)", required: false } satisfies ImportColumn;
 const DESCRIPTION_COLUMN = { title: "Description", required: true } satisfies ImportColumn;
 const DATE_COLUMN = { title: "Date", required: true } satisfies ImportColumn;
+
+export enum DateFormat {
+	YYYY_MM_DD = "YYYY MM DD",
+	DD_MM_YYYY = "DD MM YYYY",
+}
 
 export const STANDARD_COLUMNS: ImportColumn[] = [IGNORED_COLUMN, IMPORTED_ID_COLUMN, AMOUNT_INGOING_COLUMN, AMOUNT_OUTGOING_COLUMN, DESCRIPTION_COLUMN, DATE_COLUMN];
 
@@ -27,13 +32,13 @@ export function validateColumnMapping(columns: ImportColumn[]) {
 	return hasRequired && hasAmount;
 }
 
-export function parseTransactions(importData: RawImportData, columns: ImportColumn[], accountId: number): NoId<DetailedTransaction>[] {
-	const parseTransaction = getTransactionParser(columns, accountId);
+export function parseTransactions(importData: RawImportData, columns: ImportColumn[], accountId: number, dateFormat: DateFormat): NoId<DetailedTransaction>[] {
+	const parseTransaction = getTransactionParser(columns, accountId, dateFormat);
 
 	return importData.rows.map((row) => parseTransaction(row));
 }
 
-function getTransactionParser(columns: ImportColumn[], accountId: number) {
+function getTransactionParser(columns: ImportColumn[], accountId: number, dateFormat: DateFormat) {
 	const importedIdIndex = columns.indexOf(IMPORTED_ID_COLUMN);
 	const ingoingAmountIndex = columns.indexOf(AMOUNT_INGOING_COLUMN);
 	const outgoingAmountIndex = columns.indexOf(AMOUNT_OUTGOING_COLUMN);
@@ -41,16 +46,22 @@ function getTransactionParser(columns: ImportColumn[], accountId: number) {
 	const dateIndex = columns.indexOf(DATE_COLUMN);
 
 	const getAmount = (row: string[]): number => {
-		const ingoing = ingoingAmountIndex !== -1 ? Number(row[ingoingAmountIndex]) : 0;
-		const outgoing = outgoingAmountIndex !== -1 ? Number(row[outgoingAmountIndex]) : 0;
+		const ingoing = ingoingAmountIndex !== -1 ? Number(row[ingoingAmountIndex].replaceAll(" ", "")) : 0;
+		const outgoing = outgoingAmountIndex !== -1 ? Number(row[outgoingAmountIndex].replaceAll(" ", "")) : 0;
 		return ingoing - outgoing;
+	};
+
+	const parseToIsoDate = (date: string): IsoDate => {
+		const dateValues = date.split(/ -.\//);
+
+		return dateFormat === DateFormat.YYYY_MM_DD ? dateValues.join("-") : dateValues.reverse().join("-");
 	};
 
 	return (row: string[]): NoId<DetailedTransaction> => ({
 		importedId: row[importedIdIndex],
 		amount: getAmount(row),
 		description: row[descriptionIndex],
-		date: row[dateIndex],
+		date: parseToIsoDate(row[dateIndex]),
 		accountId,
 		tags: [],
 		attributes: {},
