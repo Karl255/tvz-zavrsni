@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import { AccountApi } from "$lib/api/account.api";
 	import Button from "$lib/component/Button.svelte";
 	import Icon, { IconType } from "$lib/component/Icon.svelte";
@@ -19,8 +19,7 @@
 
 	async function deleteAccount() {
 		await accountApi.delete(data.account.id);
-		invalidateAll();
-		goto("/accounts");
+		await goto("/accounts", { invalidateAll: true });
 	}
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidateAll } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import { AccountApi } from "$lib/api/account.api";
 	import Button from "$lib/component/Button.svelte";
 	import { AccountType } from "$lib/model/account.model";
@@ -19,8 +19,7 @@
 
 	async function create() {
 		await accountApi.create(name, type);
-		invalidateAll();
-		goto("/accounts");
+		await goto("/accounts", { invalidateAll: true });
 	}
 </script>
 
