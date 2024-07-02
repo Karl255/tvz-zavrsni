@@ -1,6 +1,6 @@
 import type { Tag } from "$lib/model/tag.model";
 import { sql } from "$lib/server/sql";
-import { taggedRepo } from "./tagged.repo";
+import { taggedRepo } from "./_tagged.repo";
 
 export const tagRepo = {
 	create: async (userId: number, name: string): Promise<string | null> => {

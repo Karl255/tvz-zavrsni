@@ -2,8 +2,8 @@ import type { IsoDate, Transaction, DetailedTransaction } from "$lib/model/trans
 import { sql } from "$lib/server/sql";
 import type { NoId } from "$lib/util/type.util";
 import { accountRepo } from "./account.repo";
-import { attributeValueRepo } from "./attribute-value.repo";
-import { taggedRepo } from "./tagged.repo";
+import { attributeValueRepo } from "./_attribute-value.repo";
+import { taggedRepo } from "./_tagged.repo";
 
 interface JoinedTransaction extends Transaction {
 	tagName: string | null;

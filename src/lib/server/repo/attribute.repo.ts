@@ -1,6 +1,6 @@
 import type { Attribute } from "$lib/model/attribute.model";
 import { sql } from "$lib/server/sql";
-import { attributeValueRepo } from "./attribute-value.repo";
+import { attributeValueRepo } from "./_attribute-value.repo";
 
 export const attributeRepo = {
 	create: async (userId: number, name: string): Promise<string | null> => {
