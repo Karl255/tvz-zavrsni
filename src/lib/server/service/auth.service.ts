@@ -70,7 +70,7 @@ export async function createToken(userId: number): Promise<string> {
 	return await createAuthToken({ userId, exp }, "HS512", secret);
 }
 
-export async function createAuthToken(payload: AuthTokenPayload, alg: string, secret: Uint8Array) {
+async function createAuthToken(payload: AuthTokenPayload, alg: string, secret: Uint8Array) {
 	return await new jose.SignJWT(payload).setProtectedHeader({ alg }).sign(secret);
 }
 
