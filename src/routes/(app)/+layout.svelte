@@ -9,7 +9,7 @@
 	import type { LayoutData } from "./$types";
 
 	export let data: LayoutData;
-	setAppContext(data);
+	$: setAppContext(data);
 
 	function logout() {
 		document.cookie = `${AUTH_TOKEN_COOKIE_NAME}=; Max-Age=0; Path=/; Secure`;
