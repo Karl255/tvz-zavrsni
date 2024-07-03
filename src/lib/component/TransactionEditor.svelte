@@ -66,6 +66,7 @@
 	}
 
 	function negateAmount() {
+		transaction.amount = -transaction.amount;
 		amountInput.value = (-Number(amountInput.value)).toFixed(2);
 		formatAmount();
 	}
