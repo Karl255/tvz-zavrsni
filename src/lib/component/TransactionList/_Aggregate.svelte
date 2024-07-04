@@ -47,7 +47,7 @@
 	<dt>Min/max gained</dt>
 	<dd><Value amount={min(positive(transactions))} />, <Value amount={max(positive(transactions))} /></dd>
 
-	<dt>Min/max spend</dt>
+	<dt>Min/max spent</dt>
 	<dd>
 		<Value amount={max(negative(transactions))} />, <Value amount={min(negative(transactions))} />
 	</dd>

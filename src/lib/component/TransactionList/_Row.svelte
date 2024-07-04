@@ -66,13 +66,13 @@
 	<td class="actions">
 		<!-- prettier-ignore -->
 		<Button type="icon" on:click={() => onEdit(transaction.id)}>
-		<Icon icon={IconType.EDIT} />
-	</Button>
+			<Icon icon={IconType.EDIT} />
+		</Button>
 
 		<!-- prettier-ignore -->
 		<Button type="icon" on:click={() => onDelete(transaction.id)}>
-		<Icon icon={IconType.DELETE} />
-	</Button>
+			<Icon icon={IconType.DELETE} />
+		</Button>
 	</td>
 </tr>
 

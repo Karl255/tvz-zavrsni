@@ -67,7 +67,7 @@
 	label {
 		font-weight: $fw-bold;
 	}
-	
+
 	select {
 		overflow-y: auto;
 	}
