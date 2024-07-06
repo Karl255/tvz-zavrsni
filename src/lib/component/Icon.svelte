@@ -36,6 +36,7 @@
 	export let inline = false;
 </script>
 
+<!-- Material Design Icons -->
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	width="24"
